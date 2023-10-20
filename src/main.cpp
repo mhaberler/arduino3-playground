@@ -2,6 +2,7 @@
 #undef B1 // fmt workaround
 #undef F
 #include <fmt/core.h>
+#ifdef TEST_SPDLOG
 
 #include <array>
 #include <numeric>
@@ -11,6 +12,7 @@
 #include "spdlog/fmt/bin_to_hex.h"
 
 auto main_log = spdlog::stdout_color_mt("main", spdlog::color_mode::always);
+#endif
 
 M5GFX display;
 
@@ -36,7 +38,7 @@ void setup(void)
   M5.begin(cfg);
 
   std::string s = fmt::format("The answer is {}.", 42);
-
+#ifdef TEST_SPDLOG
   spdlog::set_level(spdlog::level::trace); // Set global log level to trace
   spdlog::set_pattern("[%t] [%C-%m-%d %H:%M:%S.%e] [%n] [%^%l%$] %v");
 
@@ -51,7 +53,7 @@ void setup(void)
   std::array<char, 64> a;
   std::iota(a.begin(), a.end(), 1);
   main_log->critical("{:s:X}", spdlog::to_hex(a));
-
+#endif
   display.init();
   display.startWrite();
   display.fillScreen(TFT_BLACK);
