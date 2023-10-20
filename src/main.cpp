@@ -1,14 +1,14 @@
-
 #include <M5Unified.h>
-#include <M5GFX.h>
+
 M5GFX display;
+
 static constexpr size_t BAR_COUNT = 64;
 static int max_y[BAR_COUNT];
 static int prev_y[BAR_COUNT];
 static uint32_t colors[BAR_COUNT];
+
 void setup(void)
 {
-
   auto cfg = M5.config();
   cfg.serial_baudrate = 115200;
   cfg.led_brightness = 128;
