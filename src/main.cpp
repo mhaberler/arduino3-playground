@@ -1,5 +1,6 @@
 #include <M5Unified.h>
 #undef B1 // fmt workaround
+#undef F
 #include <fmt/core.h>
 
 M5GFX display;
@@ -8,6 +9,14 @@ static constexpr size_t BAR_COUNT = 64;
 static int max_y[BAR_COUNT];
 static int prev_y[BAR_COUNT];
 static uint32_t colors[BAR_COUNT];
+
+extern "C"
+{
+  void fmtlib_error(const char *file, int line, const char *message)
+  {
+    Serial.printf("%s:%d: assertion failed: %s\n", file, line, message);
+  }
+}
 
 void setup(void)
 {
