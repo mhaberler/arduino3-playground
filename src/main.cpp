@@ -1,4 +1,6 @@
 #include <M5Unified.h>
+#undef B1 // fmt workaround
+#include <fmt/core.h>
 
 M5GFX display;
 
@@ -14,6 +16,8 @@ void setup(void)
   cfg.led_brightness = 128;
   cfg.clear_display = true;
   M5.begin(cfg);
+
+  std::string s = fmt::format("The answer is {}.", 42);
 
   display.init();
   display.startWrite();
