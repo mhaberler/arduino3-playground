@@ -20,7 +20,7 @@ static void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area,
 
   M5.Lcd.startWrite();
   M5.Lcd.setAddrWindow(area->x1, area->y1, w, h);
-  M5.Lcd.pushColors((uint16_t *)&color_p->full, w * h, true);
+  M5.Lcd.pushPixels((uint16_t *)&color_p->full, w * h, true);
   M5.Lcd.endWrite();
 
   lv_disp_flush_ready(disp);
