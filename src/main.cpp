@@ -5,7 +5,7 @@
 
 #ifdef LVGL_DEMO
 #include "lv_setup.h"
-#include "ui/ui.h"
+#include "ui.h"
 #endif
 
 #ifdef TEST_SPDLOG
