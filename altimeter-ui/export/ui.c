@@ -97,6 +97,7 @@ lv_indev_wait_release(lv_indev_get_act());
 if ( event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_RIGHT  ) {
 lv_indev_wait_release(lv_indev_get_act());
       _ui_screen_change( &ui_MENU, LV_SCR_LOAD_ANIM_MOVE_RIGHT, 500, 0, &ui_MENU_screen_init);
+      mainPreviousPage( e );
 }
 }
 void ui_event_ALT_Plot( lv_event_t * e) {

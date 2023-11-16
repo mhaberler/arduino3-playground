@@ -4,49 +4,44 @@
 
 #include <lvgl.h>
 
-/* Core2 screen size */
-static const uint16_t screenWidth = 320;
-static const uint16_t screenHeight = 240;
+M5GFX display;
 
 static lv_disp_draw_buf_t draw_buf;
-static lv_color_t buf[screenWidth * screenHeight / 10];
+static lv_color_t *buf;
+const char *boardName(void);
 
-/* Display flushing */
-static void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area,
-                          lv_color_t *color_p)
+static void m5gfx_lvgl_flush(lv_disp_drv_t *disp, const lv_area_t *area,
+                             lv_color_t *color_p)
 {
-  uint32_t w = (area->x2 - area->x1 + 1);
-  uint32_t h = (area->y2 - area->y1 + 1);
+  int w = (area->x2 - area->x1 + 1);
+  int h = (area->y2 - area->y1 + 1);
 
-  M5.Lcd.startWrite();
-  M5.Lcd.setAddrWindow(area->x1, area->y1, w, h);
-  M5.Lcd.pushPixels((uint16_t *)&color_p->full, w * h, true);
-  M5.Lcd.endWrite();
-
+  M5.Display.startWrite();
+  M5.Display.setAddrWindow(area->x1, area->y1, w, h);
+  M5.Display.pushPixels((uint16_t *)&color_p->full, w * h, true);
+  M5.Display.endWrite();
   lv_disp_flush_ready(disp);
 }
 
-/* Read the touchpad */
-static void my_touchpad_read(lv_indev_drv_t *indev_driver,
-                             lv_indev_data_t *data)
+static void m5gfx_lvgl_read(lv_indev_drv_t *indev_driver,
+                            lv_indev_data_t *data)
 {
+  uint16_t touchX, touchY;
+  lgfx::touch_point_t tp[1];
 
   M5.update();
-  auto count = M5.Touch.getCount();
-  if (!count)
-  {
-    data->state = LV_INDEV_STATE_REL;
-    return;
-  }
-  auto t = M5.Touch.getDetail();
-  if (t.wasPressed())
+
+  M5.Display.getTouchRaw(&touchX, &touchY);
+
+  int nums = M5.Display.getTouchRaw(tp, 1);
+  if (nums)
   {
     data->state = LV_INDEV_STATE_PR;
-    /*Set the coordinates*/
-    data->point.x = t.x;
-    data->point.y = t.y;
-    Serial.println("x: " + String(data->point.x) + " y: " +
-                   String(data->point.y));
+    data->point.x = tp[0].x;
+    data->point.y = tp[0].y;
+#ifdef TRACE_TOUCH
+    Serial.printf("x: %d y: %d\n", data->point.x, data->point.y);
+#endif
   }
   else
   {
@@ -59,18 +54,19 @@ void lv_begin()
 {
   lv_init(); // call this before any other lvgl function
 
+  display.init();
+  size_t buf_size = display.width() * display.height() / 10;
+  buf = (lv_color_t *)malloc(buf_size);
   lv_disp_draw_buf_init(&draw_buf, buf, NULL,
-                        screenWidth * screenHeight /
-                            10); // initialize the display buffer
+                        buf_size); // initialize the display buffer
 
   /*Initialize the display*/
   static lv_disp_drv_t disp_drv;
   lv_disp_drv_init(&disp_drv);
 
-  /*Change the following line to your display resolution*/
-  disp_drv.hor_res = screenWidth;
-  disp_drv.ver_res = screenHeight;
-  disp_drv.flush_cb = my_disp_flush;
+  disp_drv.hor_res = display.width();
+  disp_drv.ver_res = display.height();
+  disp_drv.flush_cb = m5gfx_lvgl_flush;
   disp_drv.draw_buf = &draw_buf;
   lv_disp_drv_register(&disp_drv);
 
@@ -78,11 +74,11 @@ void lv_begin()
   static lv_indev_drv_t indev_drv;
   lv_indev_drv_init(&indev_drv);
   indev_drv.type = LV_INDEV_TYPE_POINTER;
-  indev_drv.read_cb = my_touchpad_read;
+  indev_drv.read_cb = m5gfx_lvgl_read;
   lv_indev_drv_register(&indev_drv);
 
-  Serial.printf("LVGL v%d.%d.%d initialized\n", lv_version_major(),
-                lv_version_minor(), lv_version_patch());
+  Serial.printf("LVGL v%d.%d.%d initialized, board=%s\n", lv_version_major(),
+                lv_version_minor(), lv_version_patch(), boardName());
 }
 
 /* Handles updating the display and touch events */
@@ -94,7 +90,7 @@ void lv_handler()
   if (millis() - previousUpdate > interval)
   {
     previousUpdate = millis();
-    uint32_t interval = lv_timer_handler(); // Update the UI
+    interval = lv_timer_handler(); // Update the UI
   }
 }
 #else

@@ -26,6 +26,7 @@ extern "C" {
 #include "ui_events.h"
 // SCREEN: ui_Main
 void ui_Main_screen_init(void);
+void ui_event_Main( lv_event_t * e);
 extern lv_obj_t *ui_Main;
 extern lv_obj_t *ui_Top;
 extern lv_obj_t *ui_Values;
@@ -40,6 +41,13 @@ extern lv_obj_t *ui_ClearCountLabel;
 extern lv_obj_t *ui_Bottom;
 extern lv_obj_t *ui_FlowRate;
 extern lv_obj_t *ui_Battery;
+// SCREEN: ui_second
+void ui_second_screen_init(void);
+void ui_event_second( lv_event_t * e);
+extern lv_obj_t *ui_second;
+extern lv_obj_t *ui_Button1;
+extern lv_obj_t *ui_Label1;
+extern lv_obj_t *ui_Switch1;
 extern lv_obj_t *ui____initial_actions0;
 
 

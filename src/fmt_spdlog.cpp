@@ -11,6 +11,8 @@
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/spdlog.h"
 
+const char *boardName(void);
+
 auto main_log = spdlog::stdout_color_mt("main", spdlog::color_mode::always);
 
 extern "C"
@@ -39,6 +41,8 @@ void test_spdlog(void)
     std::array<char, 64> a;
     std::iota(a.begin(), a.end(), 1);
     main_log->critical("{:s:X}", spdlog::to_hex(a));
+
+    main_log->info("board type: {}", boardName());
 }
 #else
 void test_spdlog(void) {}

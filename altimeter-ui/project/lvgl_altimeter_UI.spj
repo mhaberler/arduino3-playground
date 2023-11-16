@@ -1869,6 +1869,33 @@
                     "strtype": "LABEL/Recolor",
                     "strval": "False",
                     "InheritedType": 2
+                  },
+                  {
+                    "disabled": false,
+                    "nid": 1567233744,
+                    "strtype": "LABEL/EventHandler",
+                    "strval": "GESTURE_RIGHT(GESTURE)",
+                    "childs": [
+                      {
+                        "nid": -1520041953,
+                        "strtype": "_custom/name",
+                        "strval": "Event1",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": 2015106857,
+                        "strtype": "_custom/condition_C",
+                        "strval": "",
+                        "InheritedType": 10
+                      },
+                      {
+                        "nid": -1362457361,
+                        "strtype": "_custom/condition_P",
+                        "strval": "",
+                        "InheritedType": 10
+                      }
+                    ],
+                    "InheritedType": 4
                   }
                 ],
                 "saved_objtypeKey": "LABEL",
@@ -9100,6 +9127,7 @@
           },
           {
             "nid": -201260320,
+            "flags": 1048576,
             "strtype": "OBJECT/Layout",
             "InheritedType": 1
           },
@@ -9324,7 +9352,6 @@
               },
               {
                 "nid": 71890393,
-                "flags": 1048576,
                 "strtype": "_event/action",
                 "strval": "CHANGE SCREEN",
                 "childs": [
@@ -9401,7 +9428,6 @@
               },
               {
                 "nid": 425704663,
-                "flags": 1048576,
                 "strtype": "_event/action",
                 "strval": "CHANGE SCREEN",
                 "childs": [
@@ -9445,6 +9471,44 @@
                     "nid": -1946970264,
                     "strtype": "CHANGE SCREEN/Delay",
                     "InheritedType": 6
+                  }
+                ],
+                "InheritedType": 10
+              },
+              {
+                "nid": -490283361,
+                "strtype": "_custom/action",
+                "strval": "CALL FUNCTION",
+                "childs": [
+                  {
+                    "nid": -494002643,
+                    "strtype": "CALL FUNCTION/Name",
+                    "strval": "CALL FUNCTION",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": 37674596,
+                    "strtype": "CALL FUNCTION/Call",
+                    "strval": "<{Function_name}>( event_struct )",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": 608220786,
+                    "strtype": "CALL FUNCTION/CallC",
+                    "strval": "<{Function_name}>( e );",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": -1825676814,
+                    "strtype": "CALL FUNCTION/Function_name",
+                    "strval": "mainPreviousPage",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": -971388422,
+                    "strtype": "CALL FUNCTION/Dont_export_function",
+                    "strval": "False",
+                    "InheritedType": 2
                   }
                 ],
                 "InheritedType": 10
@@ -11014,7 +11078,6 @@
           {
             "disabled": false,
             "nid": 188152657,
-            "flags": 1048576,
             "strtype": "_event/EventHandler",
             "strval": "GESTURE_LEFT(GESTURE)",
             "childs": [
@@ -11091,7 +11154,6 @@
           {
             "disabled": false,
             "nid": 410811488,
-            "flags": 1048576,
             "strtype": "_event/EventHandler",
             "strval": "GESTURE_RIGHT(GESTURE)",
             "childs": [
@@ -16190,6 +16252,33 @@
         "strtype": "STARTEVENTS/Name",
         "strval": "___initial_actions0",
         "InheritedType": 10
+      },
+      {
+        "disabled": false,
+        "nid": 1416122855,
+        "strtype": "STARTEVENTS/EventHandler",
+        "strval": "SCREEN_LOAD_START",
+        "childs": [
+          {
+            "nid": 1569690936,
+            "strtype": "_custom/name",
+            "strval": "Event2",
+            "InheritedType": 10
+          },
+          {
+            "nid": -1403686168,
+            "strtype": "_custom/condition_C",
+            "strval": "",
+            "InheritedType": 10
+          },
+          {
+            "nid": -417483324,
+            "strtype": "_custom/condition_P",
+            "strval": "",
+            "InheritedType": 10
+          }
+        ],
+        "InheritedType": 4
       }
     ],
     "saved_objtypeKey": "STARTEVENTS"
@@ -16218,8 +16307,8 @@
     "theme_color1": 5,
     "theme_color2": 0,
     "exportFolderPath": "/Users/mah/Ballon/src/BalloonWare/arduino3-playground/altimeter-ui/export",
-    "projectExportFolderPath": "/Users/mah/Ballon/src/BalloonWare/arduino3-playground/altimeter-ui/project",
-    "backup_cnt": 30,
+    "projectExportFolderPath": "/Users/mah/Ballon/src/BalloonWare/arduino3-playground/altimeter-ui/template-project/first-test",
+    "backup_cnt": 38,
     "autosave_cnt": 0,
     "lvgl_version": "8.3.6",
     "callfuncsexport": "C_FILE",

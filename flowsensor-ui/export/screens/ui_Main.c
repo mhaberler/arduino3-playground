@@ -103,5 +103,6 @@ lv_obj_set_align( ui_Battery, LV_ALIGN_CENTER );
 lv_obj_add_state( ui_Battery, LV_STATE_USER_1 | LV_STATE_USER_2 | LV_STATE_USER_3 );     /// States
 
 lv_obj_add_event_cb(ui_ClearCount, ui_event_ClearCount, LV_EVENT_ALL, NULL);
+lv_obj_add_event_cb(ui_Main, ui_event_Main, LV_EVENT_ALL, NULL);
 
 }

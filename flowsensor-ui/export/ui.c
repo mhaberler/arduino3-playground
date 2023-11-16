@@ -11,6 +11,7 @@
 
 // SCREEN: ui_Main
 void ui_Main_screen_init(void);
+void ui_event_Main( lv_event_t * e);
 lv_obj_t *ui_Main;
 lv_obj_t *ui_Top;
 lv_obj_t *ui_Values;
@@ -25,6 +26,15 @@ lv_obj_t *ui_ClearCountLabel;
 lv_obj_t *ui_Bottom;
 lv_obj_t *ui_FlowRate;
 lv_obj_t *ui_Battery;
+
+
+// SCREEN: ui_second
+void ui_second_screen_init(void);
+void ui_event_second( lv_event_t * e);
+lv_obj_t *ui_second;
+lv_obj_t *ui_Button1;
+lv_obj_t *ui_Label1;
+lv_obj_t *ui_Switch1;
 lv_obj_t *ui____initial_actions0;
 
 ///////////////////// TEST LVGL SETTINGS ////////////////////
@@ -38,10 +48,32 @@ lv_obj_t *ui____initial_actions0;
 ///////////////////// ANIMATIONS ////////////////////
 
 ///////////////////// FUNCTIONS ////////////////////
+void ui_event_Main( lv_event_t * e) {
+    lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
+if ( event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_RIGHT  ) {
+lv_indev_wait_release(lv_indev_get_act());
+      _ui_screen_change( &ui_second, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_second_screen_init);
+}
+if ( event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_LEFT  ) {
+lv_indev_wait_release(lv_indev_get_act());
+      _ui_screen_change( &ui_second, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_second_screen_init);
+}
+}
 void ui_event_ClearCount( lv_event_t * e) {
     lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
 if ( event_code == LV_EVENT_PRESSED) {
       clearCountPressed( e );
+}
+}
+void ui_event_second( lv_event_t * e) {
+    lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
+if ( event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_LEFT  ) {
+lv_indev_wait_release(lv_indev_get_act());
+      _ui_screen_change( &ui_Main, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Main_screen_init);
+}
+if ( event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_RIGHT  ) {
+lv_indev_wait_release(lv_indev_get_act());
+      _ui_screen_change( &ui_Main, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Main_screen_init);
 }
 }
 
@@ -53,6 +85,7 @@ lv_disp_t *dispp = lv_disp_get_default();
 lv_theme_t *theme = lv_theme_default_init(dispp, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED), true, LV_FONT_DEFAULT);
 lv_disp_set_theme(dispp, theme);
 ui_Main_screen_init();
+ui_second_screen_init();
 ui____initial_actions0 = lv_obj_create(NULL);
 lv_disp_load_scr( ui_Main);
 }
