@@ -1,5 +1,5 @@
 
-#ifdef LVGL_UI
+#ifdef LVGL_M5UNIFIED
 #include <M5Unified.h>
 
 #include <lvgl.h>
@@ -97,4 +97,7 @@ void lv_handler()
     uint32_t interval = lv_timer_handler(); // Update the UI
   }
 }
+#else
+void lv_begin(void) {}
+void lv_handler(void) {}
 #endif
