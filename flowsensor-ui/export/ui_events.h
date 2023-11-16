@@ -10,6 +10,9 @@
 extern "C" {
 #endif
 
+void initiaFunc(lv_event_t * e);
+void mainLoaded(lv_event_t * e);
+void mainUnloadStart(lv_event_t * e);
 void clearCountPressed(lv_event_t * e);
 
 #ifdef __cplusplus
