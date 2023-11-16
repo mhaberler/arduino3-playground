@@ -18,7 +18,11 @@ static void m5gfx_lvgl_flush(lv_disp_drv_t *disp, const lv_area_t *area,
 
   M5.Display.startWrite();
   M5.Display.setAddrWindow(area->x1, area->y1, w, h);
+#ifdef USE_DMA
+  M5.Display.pushPixelsDMA((uint16_t *)&color_p->full, w * h, true);
+#else
   M5.Display.pushPixels((uint16_t *)&color_p->full, w * h, true);
+#endif
   M5.Display.endWrite();
   lv_disp_flush_ready(disp);
 }
