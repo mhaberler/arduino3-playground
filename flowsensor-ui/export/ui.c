@@ -33,8 +33,9 @@ void ui_second_screen_init(void);
 void ui_event_second( lv_event_t * e);
 lv_obj_t *ui_second;
 lv_obj_t *ui_Button1;
-lv_obj_t *ui_Label1;
+lv_obj_t *ui_freeHeap;
 lv_obj_t *ui_Switch1;
+lv_obj_t *ui_psRam;
 void ui_event____initial_actions0( lv_event_t * e);
 lv_obj_t *ui____initial_actions0;
 

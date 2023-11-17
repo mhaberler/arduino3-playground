@@ -6,12 +6,8 @@
 #include "ui.h"
 extern "C"
 {
-    void mainPreviousPage(lv_event_t *e)
+    void clearCountPressed(lv_event_t *e)
     {
-        Serial.printf("--->  mainPreviousPage \n");
-    }
-    void back2main(lv_event_t *e)
-    {
-        Serial.printf("--->  back2main \n");
+        Serial.printf("--->  clearCountPressed \n");
     }
 }

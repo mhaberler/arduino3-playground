@@ -19,12 +19,12 @@ lv_obj_set_align( ui_Button1, LV_ALIGN_CENTER );
 lv_obj_add_flag( ui_Button1, LV_OBJ_FLAG_SCROLL_ON_FOCUS );   /// Flags
 lv_obj_clear_flag( ui_Button1, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
-ui_Label1 = lv_label_create(ui_second);
-lv_obj_set_width( ui_Label1, LV_SIZE_CONTENT);  /// 1
-lv_obj_set_height( ui_Label1, LV_SIZE_CONTENT);   /// 1
-lv_obj_set_x( ui_Label1, -71 );
-lv_obj_set_y( ui_Label1, 40 );
-lv_obj_set_align( ui_Label1, LV_ALIGN_CENTER );
+ui_freeHeap = lv_label_create(ui_second);
+lv_obj_set_width( ui_freeHeap, LV_SIZE_CONTENT);  /// 1
+lv_obj_set_height( ui_freeHeap, LV_SIZE_CONTENT);   /// 1
+lv_obj_set_x( ui_freeHeap, -94 );
+lv_obj_set_y( ui_freeHeap, 8 );
+lv_obj_set_align( ui_freeHeap, LV_ALIGN_CENTER );
 
 ui_Switch1 = lv_switch_create(ui_second);
 lv_obj_set_width( ui_Switch1, 50);
@@ -33,6 +33,13 @@ lv_obj_set_x( ui_Switch1, 102 );
 lv_obj_set_y( ui_Switch1, -70 );
 lv_obj_set_align( ui_Switch1, LV_ALIGN_CENTER );
 
+
+ui_psRam = lv_label_create(ui_second);
+lv_obj_set_width( ui_psRam, LV_SIZE_CONTENT);  /// 1
+lv_obj_set_height( ui_psRam, LV_SIZE_CONTENT);   /// 1
+lv_obj_set_x( ui_psRam, -91 );
+lv_obj_set_y( ui_psRam, 50 );
+lv_obj_set_align( ui_psRam, LV_ALIGN_CENTER );
 
 lv_obj_add_event_cb(ui_second, ui_event_second, LV_EVENT_ALL, NULL);
 

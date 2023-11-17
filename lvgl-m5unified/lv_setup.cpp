@@ -89,7 +89,7 @@ void lv_begin()
 void lv_handler()
 {
   static uint32_t previousUpdate = 0;
-  static uint32_t interval = 0;
+  static uint32_t interval = 50;
 
   if (millis() - previousUpdate > interval)
   {
