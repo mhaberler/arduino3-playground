@@ -27,6 +27,11 @@
 #define LV_COLOR_DEPTH 16
 
 /*Swap the 2 bytes of RGB565 color. Useful if the display has an 8-bit interface (e.g. SPI)*/
+// #if defined(LOVYANGFX)
+// #define LV_COLOR_16_SWAP 1
+// #else
+// #define LV_COLOR_16_SWAP 0
+// #endif
 #define LV_COLOR_16_SWAP 0
 
 /*Enable features to draw on transparent background.
@@ -49,14 +54,19 @@
 #define LV_MEM_CUSTOM 0
 #if LV_MEM_CUSTOM == 0
     /*Size of the memory available for `lv_mem_alloc()` in bytes (>= 2kB)*/
-    #define LV_MEM_SIZE (48U * 1024U)          /*[bytes]*/
 
     /*Set an address for the memory pool instead of allocating it as a normal array. Can be in external SRAM too.*/
     #define LV_MEM_ADR 0     /*0: unused*/
     /*Instead of an address give a memory allocator that will be called to get a memory pool for LVGL. E.g. my_malloc*/
     #if LV_MEM_ADR == 0
+    #ifdef BOARD_HAS_PSRAM
+        #define LV_MEM_SIZE (256U * 1024U)          /*[bytes]*/
+        #define LV_MEM_POOL_ALLOC ps_malloc
+    #else
+        #define LV_MEM_SIZE (48U * 1024U)          /*[bytes]*/
         #undef LV_MEM_POOL_INCLUDE
         #undef LV_MEM_POOL_ALLOC
+    #endif
     #endif
 
 #else       /*LV_MEM_CUSTOM*/
@@ -219,7 +229,7 @@
  *-----------*/
 
 /*Enable the log module*/
-#define LV_USE_LOG 0
+#define LV_USE_LOG 1
 #if LV_USE_LOG
 
     /*How important log should be added:
@@ -229,7 +239,7 @@
     *LV_LOG_LEVEL_ERROR       Only critical issue, when the system may fail
     *LV_LOG_LEVEL_USER        Only logs added by the user
     *LV_LOG_LEVEL_NONE        Do not log anything*/
-    #define LV_LOG_LEVEL LV_LOG_LEVEL_WARN
+    #define LV_LOG_LEVEL LV_LOG_LEVEL_INFO
 
     /*1: Print the log with 'printf';
     *0: User need to register a callback with `lv_log_register_print_cb()`*/
