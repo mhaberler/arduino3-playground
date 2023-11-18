@@ -36,5 +36,8 @@ void update_screen(void)
 
         sprintf(buf, "free psram: %lu", ESP.getFreePsram());
         lv_label_set_text(ui_psRam, buf);
+
+        sprintf(buf, "used psram: %lu", ESP.getPsramSize() - ESP.getFreePsram());
+        lv_label_set_text(ui_usedPSRam, buf);
     }
 }
