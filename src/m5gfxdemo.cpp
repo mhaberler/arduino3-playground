@@ -1,7 +1,53 @@
 #ifdef M5GFX_DEMO
+
+#ifdef M5UNIFIED
 #include <M5Unified.h>
+#include <lvgl.h>
 
 M5GFX display;
+#endif
+
+#ifdef LOVYANGFX
+
+#ifdef LILYGO_S3CAP
+#include "lgfx_lilygo_t_display_s3_cap.h"
+#define SCREEN_WIDTH 320
+#define SCREEN_HEIGHT 170
+#endif
+
+#ifdef SUNTON7IN
+#include "lgfx_user/LGFX_Sunton_ESP32-8048S070.h"
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 480
+#endif
+
+#ifdef ELECROW_DLC35020S
+#include "elecrow_DLC35020S.h"
+#endif
+
+#ifdef CORES3
+#define LGFX_AUTODETECT
+#include <LGFX_AUTODETECT.hpp>
+#define SCREEN_WIDTH 320
+#define SCREEN_HEIGHT 240
+#endif
+
+#ifdef CORE2
+#define LGFX_USE_V1
+#define LGFX_AUTODETECT
+#include <M5Core2.h>
+#include <LovyanGFX.hpp>
+#include <LGFX_AUTODETECT.hpp> // クラス"LGFX"を準備
+#define SCREEN_WIDTH 320
+#define SCREEN_HEIGHT 240
+#endif
+
+#ifdef ATOMS3
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 128
+#endif
+LGFX display;
+#endif
 
 static constexpr size_t BAR_COUNT = 64;
 static int max_y[BAR_COUNT];
