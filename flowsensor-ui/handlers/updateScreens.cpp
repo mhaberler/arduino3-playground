@@ -1,4 +1,9 @@
+#if defined(M5UNIFIED)
 #include "M5Unified.h"
+#else
+#include <Arduino.h>
+#endif
+
 #include "ui.h"
 #include "Esp.h"
 
@@ -9,7 +14,7 @@ void update_screen(void)
     if (lv_scr_act() == ui_Main)
     {
         // Serial.printf("--->  update ui_Main\n");
-
+#if defined(M5UNIFIED)
         lv_bar_set_value(ui_Battery, M5.Power.getBatteryLevel(), LV_ANIM_OFF);
 
         switch (M5.Power.isCharging())
@@ -27,6 +32,7 @@ void update_screen(void)
                                       LV_PART_INDICATOR);
             break;
         }
+#endif
     }
     if (lv_scr_act() == ui_second)
     {

@@ -1,5 +1,11 @@
 #ifdef LVGL_DEMO
+
+#if defined(M5UNIFIED)
 #include "M5Unified.h"
+#else
+#include <Arduino.h>
+#endif
+
 #include "lv_setup.h"
 #include "ui.h"
 

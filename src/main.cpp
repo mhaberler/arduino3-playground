@@ -6,10 +6,12 @@
 
 void startBLEscan(void);
 void test_spdlog(void);
-void m5gfxdemo_setup(void);
-void m5gfxdemo_loop(void);
+void gfxdemo_setup(void);
+void gfxdemo_loop(void);
 void lvgl_setup(void);
 void lvgl_loop(void);
+void webserver_setup(void);
+void webserver_loop(void);
 
 void setup(void)
 {
@@ -24,14 +26,16 @@ void setup(void)
   Serial.begin(115200);
 #endif
   test_spdlog();
-  startBLEscan();
   lvgl_setup();
-  m5gfxdemo_setup();
+  gfxdemo_setup();
+  webserver_setup();
+  startBLEscan();
 }
 
 void loop(void)
 {
   lvgl_loop();
-  m5gfxdemo_loop();
+  gfxdemo_loop();
+  webserver_loop();
   delay(1);
 }

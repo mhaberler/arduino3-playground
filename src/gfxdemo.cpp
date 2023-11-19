@@ -1,10 +1,15 @@
-#ifdef M5GFX_DEMO
+#ifdef GFXDEMO
 
 #ifdef M5UNIFIED
 #include <M5Unified.h>
+
+#if defined(LVGL_DEMO)
 #include <lvgl.h>
+#endif
 
 M5GFX display;
+#else
+#include <Arduino.h>
 #endif
 
 #ifdef LOVYANGFX
@@ -34,10 +39,9 @@ M5GFX display;
 
 #ifdef CORE2
 #define LGFX_USE_V1
+#define ARDUINO_M5STACK_CORE2
 #define LGFX_AUTODETECT
-#include <M5Core2.h>
-#include <LovyanGFX.hpp>
-#include <LGFX_AUTODETECT.hpp> // クラス"LGFX"を準備
+#include <LGFX_AUTODETECT.hpp>
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 240
 #endif
@@ -45,6 +49,9 @@ M5GFX display;
 #ifdef ATOMS3
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 128
+#define LGFX_M5ATOMS3
+#include <LovyanGFX.hpp>
+#include <LGFX_AUTODETECT.hpp>
 #endif
 LGFX display;
 #endif
@@ -55,13 +62,18 @@ static int prev_y[BAR_COUNT];
 static uint32_t colors[BAR_COUNT];
 static size_t bar_count = BAR_COUNT;
 
-
-void m5gfxdemo_setup(void)
+void gfxdemo_setup(void)
 {
+
     display.init();
+    display.setBrightness(255);
+
     display.startWrite();
     display.fillScreen(TFT_BLACK);
-    if (display.width() == 128) {
+    Serial.printf("width %d height %d\n", display.width(), display.height());
+
+    if (display.width() == 128) // AtomS3
+    {
         bar_count = 8;
     }
     if (display.isEPD())
@@ -100,7 +112,7 @@ void m5gfxdemo_setup(void)
         colors[x] = display.color888(r, g, b);
     }
 }
-void m5gfxdemo_loop(void)
+void gfxdemo_loop(void)
 {
     int h = display.height();
 
@@ -139,8 +151,19 @@ void m5gfxdemo_loop(void)
         prev_y[x] = y;
     }
     display.display();
+
+    uint16_t touchX, touchY;
+#ifdef M5UNIFIED
+    bool touched = M5.Display.getTouch(&touchX, &touchY);
+#else
+    bool touched = display.getTouchRaw(&touchX, &touchY);
+#endif
+    if (touched)
+    {
+        Serial.printf("touch %d %d\n", touchX, touchY);
+    }
 }
 #else
-void m5gfxdemo_setup(void) {}
-void m5gfxdemo_loop(void) {}
+void gfxdemo_setup(void) {}
+void gfxdemo_loop(void) {}
 #endif

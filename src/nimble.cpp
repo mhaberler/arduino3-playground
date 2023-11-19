@@ -6,14 +6,15 @@ BLEScan *pBLEScan;
 bool active = false;
 
 #include "NimBLEDevice.h"
-class scanCallbacks : public NimBLEScanCallbacks
+
+class scanCallbacks : public BLEAdvertisedDeviceCallbacks
 {
 
-    void onDiscovered(NimBLEAdvertisedDevice *advertisedDevice)
-    {
-        Serial.printf("Discovered Advertised Device: %s \n",
-                      advertisedDevice->toString().c_str());
-    }
+    // void onDiscovered(NimBLEAdvertisedDevice *advertisedDevice)
+    // {
+    //     Serial.printf("Discovered Advertised Device: %s \n",
+    //                   advertisedDevice->toString().c_str());
+    // }
 
     void onResult(NimBLEAdvertisedDevice *advertisedDevice)
     {
@@ -38,7 +39,11 @@ void startBLEscan(void)
 
     NimBLEDevice::init("");
     pBLEScan = NimBLEDevice::getScan();
+#ifdef NIMBLE_OLDAPI
+    pBLEScan->setAdvertisedDeviceCallbacks(new scanCallbacks());
+#else
     pBLEScan->setScanCallbacks(new scanCallbacks());
+#endif
     pBLEScan->setActiveScan(active);
     pBLEScan->setInterval(100);
     pBLEScan->setWindow(99);
