@@ -6,7 +6,6 @@
 M5GFX display;
 static lv_disp_draw_buf_t draw_buf;
 static lv_color_t *buf;
-
 #endif
 
 #ifdef LOVYANGFX
@@ -53,7 +52,6 @@ LGFX display;
 
 static lv_disp_draw_buf_t draw_buf;
 static lv_color_t buf[2][SCREEN_WIDTH * 10];
-
 #endif
 
 const char *boardName(void);
@@ -68,11 +66,7 @@ static void m5gfx_lvgl_flush(lv_disp_drv_t *disp, const lv_area_t *area,
 
   M5.Display.startWrite();
   M5.Display.setAddrWindow(area->x1, area->y1, w, h);
-  // #ifdef SUNTON7IN
-  //   M5.Display.pushPixels((uint16_t *)&color_p->full, w * h, false);
-  // #else
   M5.Display.pushPixels((uint16_t *)&color_p->full, w * h, true);
-  // #endif
   M5.Display.endWrite();
 #endif
 #ifdef LOVYANGFX
@@ -88,10 +82,9 @@ static void m5gfx_lvgl_flush(lv_disp_drv_t *disp, const lv_area_t *area,
 #else
   display.pushPixels((uint16_t *)&color_p->full, w * h, true);
 #endif
-  // display.pushImage(area->x1, area->y1, area->x2 - area->x1 + 1, area->y2 - area->y1 + 1, (lgfx::swap565_t *)&color_p->full);
-  // display.pushImageDMA(area->x1, area->y1, area->x2 - area->x1 + 1, area->y2 - area->y1 + 1, (lgfx::swap565_t *)&color_p->full);
-  lv_disp_flush_ready(disp);
 #endif
+
+  lv_disp_flush_ready(disp);
 }
 
 static void m5gfx_lvgl_read(lv_indev_drv_t *indev_driver,
