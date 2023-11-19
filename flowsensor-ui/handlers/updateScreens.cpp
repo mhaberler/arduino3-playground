@@ -8,7 +8,7 @@ void update_screen(void)
 
     if (lv_scr_act() == ui_Main)
     {
-        Serial.printf("--->  update ui_Main\n");
+        // Serial.printf("--->  update ui_Main\n");
 
         lv_bar_set_value(ui_Battery, M5.Power.getBatteryLevel(), LV_ANIM_OFF);
 
@@ -30,7 +30,7 @@ void update_screen(void)
     }
     if (lv_scr_act() == ui_second)
     {
-        Serial.printf("---> update ui_second \n");
+        // Serial.printf("---> update ui_second \n");
         sprintf(buf, "free heap: %lu", ESP.getFreeHeap());
         lv_label_set_text(ui_freeHeap, buf);
 

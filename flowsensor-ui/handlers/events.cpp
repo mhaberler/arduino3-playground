@@ -10,4 +10,18 @@ extern "C"
     {
         Serial.printf("--->  clearCountPressed \n");
     }
+    void mainLoaded(lv_event_t *e)
+    {
+        Serial.printf("--->  mainLoaded \n");
+    }
+
+    void mainUnloadStart(lv_event_t *e)
+    {
+        Serial.printf("--->  mainUnloadStart \n");
+    }
+
+    void initiaFunc(lv_event_t *e)
+    {
+        Serial.printf("--->  initiaFunc \n");
+    }
 }

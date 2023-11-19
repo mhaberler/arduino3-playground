@@ -5,17 +5,17 @@
 
 #include "ui.h"
 
-void mainLoaded(lv_event_t * e)
-{
-	// Your code here
-}
+// void mainLoaded(lv_event_t * e)
+// {
+// 	// Your code here
+// }
 
-void mainUnloadStart(lv_event_t * e)
-{
-	// Your code here
-}
+// void mainUnloadStart(lv_event_t * e)
+// {
+// 	// Your code here
+// }
 
-void initiaFunc(lv_event_t * e)
-{
-	// Your code here
-}
+// void initiaFunc(lv_event_t * e)
+// {
+// 	// Your code here
+// }

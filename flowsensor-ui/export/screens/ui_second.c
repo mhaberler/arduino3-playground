@@ -32,6 +32,7 @@ lv_obj_set_height( ui_Switch1, 25);
 lv_obj_set_x( ui_Switch1, 102 );
 lv_obj_set_y( ui_Switch1, -70 );
 lv_obj_set_align( ui_Switch1, LV_ALIGN_CENTER );
+lv_obj_add_flag( ui_Switch1, LV_OBJ_FLAG_FLOATING );   /// Flags
 
 
 ui_psRam = lv_label_create(ui_second);
