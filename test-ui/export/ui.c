@@ -19,6 +19,16 @@ lv_obj_t *ui_BatteryStatus;
 lv_obj_t *ui_BLEStatus;
 lv_obj_t *ui_WifiStatus;
 lv_obj_t *ui_mainArea;
+lv_obj_t *ui_descriptions;
+lv_obj_t *ui_envTempLabel;
+lv_obj_t *ui_envelopeHumLabel;
+lv_obj_t *ui_outsideTempLabel;
+lv_obj_t *ui_outsideHumLabel;
+lv_obj_t *ui_values;
+lv_obj_t *ui_envTemp;
+lv_obj_t *ui_envHum;
+lv_obj_t *ui_outsideTemp;
+lv_obj_t *ui_outsideHum;
 
 
 // SCREEN: ui_Status

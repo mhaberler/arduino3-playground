@@ -34,6 +34,16 @@ extern lv_obj_t *ui_BatteryStatus;
 extern lv_obj_t *ui_BLEStatus;
 extern lv_obj_t *ui_WifiStatus;
 extern lv_obj_t *ui_mainArea;
+extern lv_obj_t *ui_descriptions;
+extern lv_obj_t *ui_envTempLabel;
+extern lv_obj_t *ui_envelopeHumLabel;
+extern lv_obj_t *ui_outsideTempLabel;
+extern lv_obj_t *ui_outsideHumLabel;
+extern lv_obj_t *ui_values;
+extern lv_obj_t *ui_envTemp;
+extern lv_obj_t *ui_envHum;
+extern lv_obj_t *ui_outsideTemp;
+extern lv_obj_t *ui_outsideHum;
 // SCREEN: ui_Status
 void ui_Status_screen_init(void);
 void ui_event_Status( lv_event_t * e);

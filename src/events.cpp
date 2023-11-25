@@ -5,6 +5,7 @@
 #include <lvgl.h>
 
 #include "events.hpp"
+#include "messages.hpp"
 #include "ui.h"
 #include "esp_log.h"
 
@@ -37,10 +38,10 @@ static void view_change_cb(void *s, lv_msg_t *m)
 static void model_change_cb(void *s, lv_msg_t *m)
 {
     unsigned int msg_id = lv_msg_get_id(m);
-    const char *msg_payload = (const char *)lv_msg_get_payload(m);
-    const char *msg_data = (const char *)lv_msg_get_user_data(m);
+    const void *msg_payload = (const char *)lv_msg_get_payload(m);
+    lv_obj_t *target = (lv_obj_t *)lv_msg_get_user_data(m);
 
-    Serial.printf("model_change_cb %u\n", msg_id);
+    // Serial.printf("model_change_cb %u\n", msg_id);
 
     switch (msg_id)
     {
@@ -58,10 +59,30 @@ static void model_change_cb(void *s, lv_msg_t *m)
         break;
     case MSG_POSITION_UPDATE:
         break;
-    case MSG_ENV_UPDATE:
-        break;
-    case MSG_OAT_UPDATE:
-        break;
+    case MSG_ENV_TEMP_UPDATE:
+    {
+        const ruuviAd_t *rp = (const ruuviAd_t *)msg_payload;
+        lv_label_set_text_fmt(target, "%.1f°", rp->temperature);
+    }
+    break;
+    case MSG_ENV_HUM_UPDATE:
+    {
+        const ruuviAd_t *rp = (const ruuviAd_t *)msg_payload;
+        lv_label_set_text_fmt(target, "%.1f %%", rp->humidity);
+    }
+    break;
+    case MSG_OAT_TEMP_UPDATE:
+    {
+        const ruuviAd_t *rp = (const ruuviAd_t *)msg_payload;
+        lv_label_set_text_fmt(target, "%.1f°", rp->temperature);
+    }
+    break;
+    case MSG_OAT_HUM_UPDATE:
+    {
+        const ruuviAd_t *rp = (const ruuviAd_t *)msg_payload;
+        lv_label_set_text_fmt(target, "%.1f %%", rp->humidity);
+    }
+    break;
     case MSG_ALTITUDE_UPDATE:
         break;
     case MSG_PRESSURE_UPDATE:
@@ -118,14 +139,19 @@ void lv_events_init(void)
     lv_msg_subsribe(MSG_PAGE_STATUS, view_change_cb, NULL);
     lv_msg_subsribe(MSG_COUNT_RESET, view_change_cb, NULL);
 
-    lv_msg_subsribe(MSG_BATTERY_STATUS, model_change_cb, NULL);
+    lv_msg_subsribe(MSG_BATTERY_STATUS, model_change_cb, ui_BatteryStatus);
     lv_msg_subsribe(MSG_TIME_CHANGED, model_change_cb, NULL);
     lv_msg_subsribe(MSG_SCARD_STATUS, model_change_cb, NULL);
 
     lv_msg_subsribe(MSG_GPS_FIX, model_change_cb, NULL);
     lv_msg_subsribe(MSG_POSITION_UPDATE, model_change_cb, NULL);
-    lv_msg_subsribe(MSG_ENV_UPDATE, model_change_cb, NULL);
-    lv_msg_subsribe(MSG_OAT_UPDATE, model_change_cb, NULL);
+
+    lv_msg_subsribe(MSG_ENV_TEMP_UPDATE, model_change_cb, ui_envTemp);
+    lv_msg_subsribe(MSG_ENV_HUM_UPDATE, model_change_cb, ui_envHum);
+
+    lv_msg_subsribe(MSG_OAT_TEMP_UPDATE, model_change_cb, ui_outsideTemp);
+    lv_msg_subsribe(MSG_OAT_HUM_UPDATE, model_change_cb, ui_outsideHum);
+
     lv_msg_subsribe(MSG_ALTITUDE_UPDATE, model_change_cb, NULL);
     lv_msg_subsribe(MSG_PRESSURE_UPDATE, model_change_cb, NULL);
     lv_msg_subsribe(MSG_HEADING_UPDATE, model_change_cb, NULL);
