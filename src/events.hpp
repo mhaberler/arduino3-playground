@@ -1,10 +1,11 @@
 #pragma once
 
-#include <core/lv_event.h>
+#include <lvgl.h>
+// #include <core/lv_event.h>
 
 typedef enum
 {
-    MSG_PAGE_HOME = _LV_EVENT_LAST +1,
+    MSG_PAGE_HOME = _LV_EVENT_LAST + 1,
     MSG_PAGE_PARAMS,
     MSG_PAGE_STATUS,
     MSG_COUNT_RESET,
@@ -22,9 +23,10 @@ typedef enum
     MSG_HEADING_UPDATE,
     MSG_SPEED_UPDATE,
 
-    MSG_WIFI_UNCONFIGURED,
-    MSG_WIFI_SEARCHING,
-    MSG_WIFI_CONNECTED,
+    MSG_WIFI_UNCONFIGURED, //61
+    MSG_WIFI_STARTED,
+    MSG_WIFI_SCAN_COMPLETE,
+    MSG_WIFI_CONNECTED,  //64
     MSG_WIFI_DISCONNECTED,
 
     MSG_COUNT_CHANGED

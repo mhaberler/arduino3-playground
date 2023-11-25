@@ -71,12 +71,16 @@ static void model_change_cb(void *s, lv_msg_t *m)
     case MSG_SPEED_UPDATE:
         break;
     case MSG_WIFI_UNCONFIGURED:
+        lv_obj_set_style_text_color(ui_WifiStatus, lv_palette_main(LV_PALETTE_AMBER), LV_PART_MAIN | LV_STATE_DEFAULT);
         break;
-    case MSG_WIFI_SEARCHING:
+    case MSG_WIFI_SCAN_COMPLETE:
+        lv_obj_set_style_text_color(ui_WifiStatus, lv_palette_main(LV_PALETTE_GREEN), LV_PART_MAIN | LV_STATE_DEFAULT);
         break;
     case MSG_WIFI_CONNECTED:
+        lv_obj_set_style_text_color(ui_WifiStatus, lv_palette_main(LV_PALETTE_CYAN), LV_PART_MAIN | LV_STATE_DEFAULT);
         break;
     case MSG_WIFI_DISCONNECTED:
+        lv_obj_set_style_text_color(ui_WifiStatus, lv_palette_main(LV_PALETTE_YELLOW), LV_PART_MAIN | LV_STATE_DEFAULT);
         break;
     case MSG_COUNT_CHANGED:
         break;
@@ -95,20 +99,14 @@ static void timer_battery_callback(lv_timer_t *timer)
     if (battery_value > 100)
         battery_value = 0;
     battery_value += 10;
+    // from a non-lvgl thread, use lvgl_msg_send_prot()
     lv_msg_send(MSG_BATTERY_STATUS, &battery_value);
 }
 
 void lv_updates_init(void)
 {
-    // lv_style_init(&style_battery);
-    // lv_style_set_text_font(&style_battery, font_symbol);
-    // lv_style_set_align(&style_battery, LV_ALIGN_RIGHT_MID);
-    // lv_style_set_text_color(&style_battery, lv_palette_main(LV_PALETTE_RED));
-
     // BATTERY
-
     lv_label_set_text(ui_BatteryStatus, LV_SYMBOL_BATTERY_EMPTY);
-
     timer_battery = lv_timer_create(timer_battery_callback, 1000, NULL);
 }
 
@@ -134,7 +132,8 @@ void lv_events_init(void)
     lv_msg_subsribe(MSG_SPEED_UPDATE, model_change_cb, NULL);
 
     lv_msg_subsribe(MSG_WIFI_UNCONFIGURED, model_change_cb, NULL);
-    lv_msg_subsribe(MSG_WIFI_SEARCHING, model_change_cb, NULL);
+    lv_msg_subsribe(MSG_WIFI_STARTED, model_change_cb, NULL);
+    lv_msg_subsribe(MSG_WIFI_SCAN_COMPLETE, model_change_cb, NULL);
     lv_msg_subsribe(MSG_WIFI_CONNECTED, model_change_cb, NULL);
     lv_msg_subsribe(MSG_WIFI_DISCONNECTED, model_change_cb, NULL);
 
@@ -145,7 +144,6 @@ static void lv_update_battery(uint batval)
 {
     if (batval < 20)
     {
-
         lv_obj_set_style_text_color(ui_BatteryStatus, lv_palette_main(LV_PALETTE_RED), LV_PART_MAIN | LV_STATE_DEFAULT);
         lv_label_set_text(ui_BatteryStatus, LV_SYMBOL_BATTERY_EMPTY);
     }

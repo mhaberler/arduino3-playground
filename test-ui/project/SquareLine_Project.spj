@@ -1159,7 +1159,27 @@
                   },
                   {
                     "part": "lv.PART.MAIN",
-                    "childs": [],
+                    "childs": [
+                      {
+                        "nid": -1601352625,
+                        "strtype": "_style/StyleState",
+                        "strval": "DEFAULT",
+                        "childs": [
+                          {
+                            "nid": 1165791523,
+                            "strtype": "_style/Text_Color",
+                            "intarray": [
+                              128,
+                              128,
+                              128,
+                              255
+                            ],
+                            "InheritedType": 7
+                          }
+                        ],
+                        "InheritedType": 1
+                      }
+                    ],
                     "nid": 1647973596,
                     "strtype": "LABEL/Style_main",
                     "strval": "lv.PART.MAIN, Text, Rectangle, Pad",
@@ -4695,7 +4715,7 @@
     "theme_color2": 0,
     "exportFolderPath": "/Users/mah/Ballon/src/BalloonWare/arduino3-playground/test-ui/export",
     "projectExportFolderPath": "/Users/mah/Ballon/src/BalloonWare/arduino3-playground/test-ui/project",
-    "backup_cnt": 20,
+    "backup_cnt": 39,
     "autosave_cnt": 0,
     "lvgl_version": "8.3.6",
     "callfuncsexport": "C_FILE",

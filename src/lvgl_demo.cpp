@@ -6,7 +6,7 @@
 #include <Arduino.h>
 #endif
 
-#include "lv_setup.h"
+#include "lv_setup.hpp"
 #include "ui.h"
 
 #define UPDATE_EVERY 500

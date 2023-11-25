@@ -2,61 +2,86 @@
 
 #include <ESPmDNS.h>
 #include <WebServer.h>
+#include <WiFiMulti.h>
 #include <WiFi.h>
-#include <WiFiClient.h>
 
-WebServer server(80);
-static bool webserver_running;
+#include "lv_setup.hpp"
+#include "events.hpp"
 
-void drawGraph(void);
-void handleRoot(void);
-void handleNotFound(void);
+// from a non-lvgl thread, use lvgl_msg_send_prot()
+// lv_msg_send(MSG_BATTERY_STATUS, &battery_value);
+
+static WiFiMulti wifiMulti;
+static WebServer *http_server; // (80);
+// static bool webserver_running;
+
+static void wifi_event_cb(WiFiEvent_t event, WiFiEventInfo_t info);
+static void drawGraph(void);
+static void handleRoot(void);
+static void handleNotFound(void);
 
 void webserver_loop(void)
 {
-  if (webserver_running)
-    server.handleClient();
+  if (http_server)
+    http_server->handleClient();
 }
 
 void webserver_setup(void)
 {
+  lvgl_msg_send_prot(MSG_WIFI_UNCONFIGURED, NULL);
 
   WiFi.mode(WIFI_STA);
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-  // WiFi.onEvent();
+  WiFi.enableProv(true);
+  WiFi.onEvent(wifi_event_cb);
+
+  wifiMulti.addAP(WIFI_SSID, WIFI_PASSWORD);
+#if defined(WIFI_SSID11)
+  wifiMulti.addAP(WIFI_SSID1, WIFI_PASSWORD1);
+#endif
+#if defined(WIFI_SSID2)
+  wifiMulti.addAP(WIFI_SSID2, WIFI_PASSWORD2);
+#endif
+#if defined(WIFI_SSID3)
+  wifiMulti.addAP(WIFI_SSID3, WIFI_PASSWORD3);
+#endif
+#if defined(WIFI_SSID4)
+  wifiMulti.addAP(WIFI_SSID4, WIFI_PASSWORD4);
+#endif
+
+  wifiMulti.run();
 
   //     wifi_event_id_t onEvent(WiFiEventCb cbEvent, arduino_event_id_t event = ARDUINO_EVENT_MAX);
   //   wifi_event_id_t onEvent(WiFiEventFuncCb cbEvent, arduino_event_id_t event = ARDUINO_EVENT_MAX);
   //   wifi_event_id_t onEvent(WiFiEventSysCb cbEvent, arduino_event_id_t event = ARDUINO_EVENT_MAX);
   // Wait for connection
-  uint32_t now = millis();
+  // uint32_t now = millis();
 
-  while (WiFi.status() != WL_CONNECTED)
-  {
-    if (millis() - now > 5000)
-    {
-      Serial.printf("failed to connect to %s with %s\n", WIFI_SSID, WIFI_PASSWORD);
-      return;
-    }
-    delay(500);
-  }
-  Serial.printf("Connected to %s, IP=%s\n", WIFI_SSID, WiFi.localIP().toString().c_str());
-  if (MDNS.begin("esp32"))
-  {
-    Serial.printf("MDNS responder started\n");
-  }
-  server.on("/", handleRoot);
-  server.on("/test.svg", drawGraph);
-  server.on("/inline",
-            []()
-            { server.send(200, "text/plain", "this works as well"); });
-  server.onNotFound(handleNotFound);
-  server.begin();
-  Serial.printf("HTTP server started\n");
-  webserver_running = true;
+  // while (WiFi.status() != WL_CONNECTED)
+  // {
+  //   if (millis() - now > 5000)
+  //   {
+  //     Serial.printf("failed to connect to %s with %s\n", WIFI_SSID, WIFI_PASSWORD);
+  //     return;
+  //   }
+  //   delay(500);
+  // }
+  // Serial.printf("Connected to %s, IP=%s\n", WIFI_SSID, WiFi.localIP().toString().c_str());
+  // if (MDNS.begin("esp32"))
+  // {
+  //   Serial.printf("MDNS responder started\n");
+  // }
+  // http_server->on("/", handleRoot);
+  // http_server->on("/test.svg", drawGraph);
+  // http_server->on("/inline",
+  //           []()
+  //           { http_server->send(200, "text/plain", "this works as well"); });
+  // http_server->onNotFound(handleNotFound);
+  // http_server->begin();
+  // Serial.printf("HTTP server started\n");
+  // webserver_running = true;
 }
 
-void drawGraph(void)
+static void drawGraph(void)
 {
   String out = "";
   char temp[100];
@@ -78,10 +103,10 @@ void drawGraph(void)
   }
   out += "</g>\n</svg>\n";
 
-  server.send(200, "image/svg+xml", out);
+  http_server->send(200, "image/svg+xml", out);
 }
 
-void handleRoot(void)
+static void handleRoot(void)
 {
 
   char temp[400];
@@ -106,26 +131,126 @@ void handleRoot(void)
 </html>",
 
            hr, min % 60, sec % 60);
-  server.send(200, "text/html", temp);
+  http_server->send(200, "text/html", temp);
 }
 
-void handleNotFound(void)
+static void handleNotFound(void)
 {
   String message = "File Not Found\n\n";
   message += "URI: ";
-  message += server.uri();
+  message += http_server->uri();
   message += "\nMethod: ";
-  message += (server.method() == HTTP_GET) ? "GET" : "POST";
+  message += (http_server->method() == HTTP_GET) ? "GET" : "POST";
   message += "\nArguments: ";
-  message += server.args();
+  message += http_server->args();
   message += "\n";
 
-  for (uint8_t i = 0; i < server.args(); i++)
+  for (uint8_t i = 0; i < http_server->args(); i++)
   {
-    message += " " + server.argName(i) + ": " + server.arg(i) + "\n";
+    message += " " + http_server->argName(i) + ": " + http_server->arg(i) + "\n";
   }
 
-  server.send(404, "text/plain", message);
+  http_server->send(404, "text/plain", message);
+}
+
+static void wifi_event_cb(WiFiEvent_t event, WiFiEventInfo_t info)
+
+{
+  Serial.printf("[WiFi-event] event: %d\n", event);
+
+  switch (event)
+  {
+  case ARDUINO_EVENT_WIFI_READY:
+    Serial.println("WiFi interface ready");
+
+    break;
+  case ARDUINO_EVENT_WIFI_SCAN_DONE:
+    Serial.println("Completed scan for access points");
+    lvgl_msg_send_prot(MSG_WIFI_SCAN_COMPLETE, NULL);
+
+    break;
+  case ARDUINO_EVENT_WIFI_STA_START:
+    Serial.println("WiFi client started");
+        lvgl_msg_send_prot(MSG_WIFI_STARTED, NULL);
+    break;
+  case ARDUINO_EVENT_WIFI_STA_STOP:
+    Serial.println("WiFi clients stopped");
+    break;
+  case ARDUINO_EVENT_WIFI_STA_CONNECTED:
+    Serial.println("Connected to access point");
+    break;
+  case ARDUINO_EVENT_WIFI_STA_DISCONNECTED:
+    Serial.println("Disconnected from WiFi access point");
+    break;
+  case ARDUINO_EVENT_WIFI_STA_AUTHMODE_CHANGE:
+    Serial.println("Authentication mode of access point has changed");
+    break;
+  case ARDUINO_EVENT_WIFI_STA_GOT_IP:
+    Serial.print("Obtained IP address: ");
+    Serial.println(WiFi.localIP());
+    lvgl_msg_send_prot(MSG_WIFI_CONNECTED, NULL);
+    break;
+  case ARDUINO_EVENT_WIFI_STA_LOST_IP:
+    Serial.println("Lost IP address and IP address is reset to 0");
+    lvgl_msg_send_prot(MSG_WIFI_DISCONNECTED, NULL);
+    break;
+  case ARDUINO_EVENT_WPS_ER_SUCCESS:
+    Serial.println("WiFi Protected Setup (WPS): succeeded in enrollee mode");
+    break;
+  case ARDUINO_EVENT_WPS_ER_FAILED:
+    Serial.println("WiFi Protected Setup (WPS): failed in enrollee mode");
+    break;
+  case ARDUINO_EVENT_WPS_ER_TIMEOUT:
+    Serial.println("WiFi Protected Setup (WPS): timeout in enrollee mode");
+    break;
+  case ARDUINO_EVENT_WPS_ER_PIN:
+    Serial.println("WiFi Protected Setup (WPS): pin code in enrollee mode");
+    break;
+  case ARDUINO_EVENT_WIFI_AP_START:
+    Serial.println("WiFi access point started");
+    break;
+  case ARDUINO_EVENT_WIFI_AP_STOP:
+    Serial.println("WiFi access point  stopped");
+    break;
+  case ARDUINO_EVENT_WIFI_AP_STACONNECTED:
+    Serial.println("Client connected");
+    break;
+  case ARDUINO_EVENT_WIFI_AP_STADISCONNECTED:
+    Serial.println("Client disconnected");
+    break;
+  case ARDUINO_EVENT_WIFI_AP_STAIPASSIGNED:
+    Serial.println("Assigned IP address to client");
+    break;
+  case ARDUINO_EVENT_WIFI_AP_PROBEREQRECVED:
+    Serial.println("Received probe request");
+    break;
+  case ARDUINO_EVENT_WIFI_AP_GOT_IP6:
+    Serial.println("AP IPv6 is preferred");
+    break;
+  case ARDUINO_EVENT_WIFI_STA_GOT_IP6:
+    Serial.println("STA IPv6 is preferred");
+    break;
+  case ARDUINO_EVENT_ETH_GOT_IP6:
+    Serial.println("Ethernet IPv6 is preferred");
+    break;
+  case ARDUINO_EVENT_ETH_START:
+    Serial.println("Ethernet started");
+    break;
+  case ARDUINO_EVENT_ETH_STOP:
+    Serial.println("Ethernet stopped");
+    break;
+  case ARDUINO_EVENT_ETH_CONNECTED:
+    Serial.println("Ethernet connected");
+    break;
+  case ARDUINO_EVENT_ETH_DISCONNECTED:
+    Serial.println("Ethernet disconnected");
+    break;
+  case ARDUINO_EVENT_ETH_GOT_IP:
+    Serial.println("Obtained IP address");
+    break;
+  default:
+    break;
+  }
 }
 
 #else

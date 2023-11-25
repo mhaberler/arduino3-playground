@@ -1,4 +1,6 @@
 
+#include "lv_setup.hpp"
+
 #define LV_TICK_PERIOD_MS 1
 #define TAG __FILE__
 
@@ -227,43 +229,53 @@ void lv_begin()
                 lv_version_minor(), lv_version_patch(), boardName());
 }
 
-
 /* Setting up tick task for lvgl */
 static void lv_tick_task(void *arg)
 {
-    (void)arg;
-    lv_tick_inc(LV_TICK_PERIOD_MS);
+  (void)arg;
+  lv_tick_inc(LV_TICK_PERIOD_MS);
 }
 
 static void gui_task(void *args)
 {
-    ESP_LOGI(TAG, "Start to run LVGL");
-    while (1) {
-        vTaskDelay(pdMS_TO_TICKS(10));
+  ESP_LOGI(TAG, "Start to run LVGL");
+  while (1)
+  {
+    vTaskDelay(pdMS_TO_TICKS(10));
 
-        /* Try to take the semaphore, call lvgl related function on success */
-        if (pdTRUE == xSemaphoreTake(xGuiSemaphore, portMAX_DELAY)) {
-            lv_task_handler();
-            //lv_timer_handler_run_in_period(5); /* run lv_timer_handler() every 5ms */
-            xSemaphoreGive(xGuiSemaphore);
-        }
+    /* Try to take the semaphore, call lvgl related function on success */
+    if (pdTRUE == xSemaphoreTake(xGuiSemaphore, portMAX_DELAY))
+    {
+      lv_task_handler();
+      // lv_timer_handler_run_in_period(5); /* run lv_timer_handler() every 5ms */
+      xSemaphoreGive(xGuiSemaphore);
     }
+  }
 }
 
 void lvgl_acquire(void)
 {
-    TaskHandle_t task = xTaskGetCurrentTaskHandle();
-    if (g_lvgl_task_handle != task) {
-        xSemaphoreTake(xGuiSemaphore, portMAX_DELAY);
-    }
+  TaskHandle_t task = xTaskGetCurrentTaskHandle();
+  if (g_lvgl_task_handle != task)
+  {
+    xSemaphoreTake(xGuiSemaphore, portMAX_DELAY);
+  }
 }
 
 void lvgl_release(void)
 {
-    TaskHandle_t task = xTaskGetCurrentTaskHandle();
-    if (g_lvgl_task_handle != task) {
-        xSemaphoreGive(xGuiSemaphore);
-    }
+  TaskHandle_t task = xTaskGetCurrentTaskHandle();
+  if (g_lvgl_task_handle != task)
+  {
+    xSemaphoreGive(xGuiSemaphore);
+  }
+}
+
+void lvgl_msg_send_prot(uint32_t msg_id, const void *payload)
+{
+  lvgl_acquire();
+  lv_msg_send(msg_id, payload);
+  lvgl_release();
 }
 
 #if !defined(LOVYANGFX) && !defined(M5UNIFIED)

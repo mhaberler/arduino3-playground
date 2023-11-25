@@ -55,6 +55,8 @@ lv_obj_set_x( ui_WifiStatus, -220 );
 lv_obj_set_y( ui_WifiStatus, 90 );
 lv_obj_set_align( ui_WifiStatus, LV_ALIGN_TOP_RIGHT );
 lv_label_set_text(ui_WifiStatus,"");
+lv_obj_set_style_text_color(ui_WifiStatus, lv_color_hex(0x808080), LV_PART_MAIN | LV_STATE_DEFAULT );
+lv_obj_set_style_text_opa(ui_WifiStatus, 255, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 ui_mainArea = lv_obj_create(ui_Main);
 lv_obj_set_width( ui_mainArea, lv_pct(100));
