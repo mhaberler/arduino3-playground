@@ -2,6 +2,7 @@
 #define _LVGL_SETUP_H
 
 void lv_begin();
-void lv_handler();
+void lvgl_acquire(void);
+void lvgl_release(void);
 
 #endif

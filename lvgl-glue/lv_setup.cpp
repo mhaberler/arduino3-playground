@@ -1,4 +1,7 @@
 
+#define LV_TICK_PERIOD_MS 1
+#define TAG __FILE__
+
 #ifdef M5UNIFIED
 #include <M5Unified.h>
 #include <lvgl.h>
@@ -48,16 +51,26 @@ static lv_color_t *buf;
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 128
 #endif
+
 LGFX display;
 
 static lv_disp_draw_buf_t draw_buf;
 static lv_color_t buf[2][SCREEN_WIDTH * 10];
 #endif
 
+/* Creates a semaphore to handle concurrent call to lvgl stuff
+ * If you wish to call *any* lvgl function from other threads/tasks
+ * you should lock on the very same semaphore! */
+static SemaphoreHandle_t xGuiSemaphore = NULL;
+static TaskHandle_t g_lvgl_task_handle;
+
+static void gui_task(void *args);
+static void lv_tick_task(void *arg);
+
 const char *boardName(void);
 
 static void lvgl_flush(lv_disp_drv_t *disp, const lv_area_t *area,
-                             lv_color_t *color_p)
+                       lv_color_t *color_p)
 {
 
 #ifdef M5UNIFIED
@@ -88,7 +101,7 @@ static void lvgl_flush(lv_disp_drv_t *disp, const lv_area_t *area,
 }
 
 static void lvgl_read(lv_indev_drv_t *indev_driver,
-                            lv_indev_data_t *data)
+                      lv_indev_data_t *data)
 {
   uint16_t touchX, touchY;
   data->state = LV_INDEV_STATE_REL;
@@ -177,24 +190,82 @@ void lv_begin()
   indev_drv.read_cb = lvgl_read;
   lv_indev_drv_register(&indev_drv);
 
+  /* Create and start a periodic timer interrupt to call lv_tick_inc */
+  const esp_timer_create_args_t lv_periodic_timer_args = {
+      .callback = &lv_tick_task,
+      .arg = NULL,
+      .dispatch_method = ESP_TIMER_TASK,
+      .name = "periodic_gui",
+      .skip_unhandled_events = true};
+  esp_timer_handle_t lv_periodic_timer;
+  ESP_ERROR_CHECK(esp_timer_create(&lv_periodic_timer_args, &lv_periodic_timer));
+  ESP_ERROR_CHECK(esp_timer_start_periodic(lv_periodic_timer, LV_TICK_PERIOD_MS * 1000));
+
+  xGuiSemaphore = xSemaphoreCreateMutex();
+  if (!xGuiSemaphore)
+  {
+    ESP_LOGE(TAG, "Create mutex for LVGL failed");
+    if (lv_periodic_timer)
+      esp_timer_delete(lv_periodic_timer);
+    //   return ESP_FAIL;
+  }
+#if CONFIG_FREERTOS_UNICORE == 0
+  int err = xTaskCreatePinnedToCore(gui_task, "lv gui", 1024 * 8, NULL, 3, &g_lvgl_task_handle, 1);
+#else
+  int err = xTaskCreatePinnedToCore(gui_task, "lv gui", 1024 * 8, NULL, 3, &g_lvgl_task_handle, 0);
+#endif
+  if (!err)
+  {
+    ESP_LOGE(TAG, "Create task for LVGL failed");
+    if (lv_periodic_timer)
+      esp_timer_delete(lv_periodic_timer);
+    // return ESP_FAIL;
+  }
+
+  // return ESP_OK;
   Serial.printf("LVGL v%d.%d.%d initialized, board=%s\n", lv_version_major(),
                 lv_version_minor(), lv_version_patch(), boardName());
 }
 
-/* Handles updating the display and touch events */
-void lv_handler()
-{
-  static uint32_t previousUpdate = 0;
-  static uint32_t interval = 50;
 
-  if (millis() - previousUpdate > interval)
-  {
-    previousUpdate = millis();
-    interval = lv_timer_handler(); // Update the UI
-  }
+/* Setting up tick task for lvgl */
+static void lv_tick_task(void *arg)
+{
+    (void)arg;
+    lv_tick_inc(LV_TICK_PERIOD_MS);
+}
+
+static void gui_task(void *args)
+{
+    ESP_LOGI(TAG, "Start to run LVGL");
+    while (1) {
+        vTaskDelay(pdMS_TO_TICKS(10));
+
+        /* Try to take the semaphore, call lvgl related function on success */
+        if (pdTRUE == xSemaphoreTake(xGuiSemaphore, portMAX_DELAY)) {
+            lv_task_handler();
+            //lv_timer_handler_run_in_period(5); /* run lv_timer_handler() every 5ms */
+            xSemaphoreGive(xGuiSemaphore);
+        }
+    }
+}
+
+void lvgl_acquire(void)
+{
+    TaskHandle_t task = xTaskGetCurrentTaskHandle();
+    if (g_lvgl_task_handle != task) {
+        xSemaphoreTake(xGuiSemaphore, portMAX_DELAY);
+    }
+}
+
+void lvgl_release(void)
+{
+    TaskHandle_t task = xTaskGetCurrentTaskHandle();
+    if (g_lvgl_task_handle != task) {
+        xSemaphoreGive(xGuiSemaphore);
+    }
 }
 
 #if !defined(LOVYANGFX) && !defined(M5UNIFIED)
 void lv_begin(void) {}
-void lv_handler(void) {}
 #endif
