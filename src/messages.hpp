@@ -15,7 +15,7 @@ typedef struct
     uint16_t sequence;
     uint8_t moveCount;
     int ruuvi_format;
-    uint8_t rssi;
+    int16_t rssi;
     char name[30];
     char address[20];
     uint32_t last_sequence;

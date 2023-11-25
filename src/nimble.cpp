@@ -5,11 +5,12 @@
 #include "lv_setup.hpp"
 #include "events.hpp"
 
-int scanTime = 5 * 1000; // In milliseconds, 0 = scan forever
+int scanTime = 60 * 1000; // In milliseconds, 0 = scan forever
 BLEScan *pBLEScan;
 bool active = false;
 
 static ruuviAd_t ruuvi_report;
+static double oat_tmp, oat_hum, env_tmp, env_hum;
 
 #include "NimBLEDevice.h"
 
@@ -81,7 +82,7 @@ class scanCallbacks : public BLEAdvertisedDeviceCallbacks
             case 0x0499:
             {
                 ruuviAd_t *ruuvi_ad = &ruuvi_report;
-
+                // https://mybeacons.info/packetFormats.html
                 if (data[2] == 0x3 && len > 15)
                 {
                     DecodeV3(data, ruuvi_ad);
@@ -106,26 +107,28 @@ class scanCallbacks : public BLEAdvertisedDeviceCallbacks
                             sizeof(ruuvi_ad->name));
                 }
 
-                Serial.printf("ruuvi addr=%s temp=%3.2f rssi=%d "
+                Serial.printf("ruuvi addr=%s temp=%3.2f hum=%.2f rssi=%d "
                               "volt=%1.3f sequence=%d \n",
                               ruuvi_ad->address,
-                              ruuvi_ad->temperature, ruuvi_ad->rssi,
+                              ruuvi_ad->temperature, ruuvi_ad->humidity, ruuvi_ad->rssi,
                               ruuvi_ad->voltage / 1000.0, ruuvi_ad->sequence);
 
                 // from a non-lvgl thread, use lvgl_msg_send_prot()
-
                 // dd:79:c6:8f:bd:a2 oat hum
                 // e6:91:df:7b:e5:4d env
-                if (strcasecmp(ruuvi_ad->address, "e6:91:df:7b:e5:4d") ==  0)
+                if (strcasecmp(ruuvi_ad->address, RUUVI_ENV) == 0)
                 {
-                    lvgl_msg_send_prot(MSG_ENV_TEMP_UPDATE, &ruuvi_ad);
-                    lvgl_msg_send_prot(MSG_ENV_HUM_UPDATE, &ruuvi_ad);
-                    
+                    env_tmp = ruuvi_ad->temperature;
+                    env_hum = ruuvi_ad->humidity;
+                    lvgl_msg_send_prot(MSG_ENV_TEMP_UPDATE, &env_tmp);
+                    lvgl_msg_send_prot(MSG_ENV_HUM_UPDATE, &env_hum);
                 }
-                if (strcasecmp(ruuvi_ad->address, "dd:79:c6:8f:bd:a2") ==  0)
+                if (strcasecmp(ruuvi_ad->address, RUUVI_OAT) == 0)
                 {
-                    lvgl_msg_send_prot(MSG_OAT_TEMP_UPDATE, &ruuvi_ad);
-                    lvgl_msg_send_prot(MSG_OAT_HUM_UPDATE, &ruuvi_ad);
+                    oat_tmp = ruuvi_ad->temperature;
+                    oat_hum = ruuvi_ad->humidity;
+                    lvgl_msg_send_prot(MSG_OAT_TEMP_UPDATE, &oat_tmp);
+                    lvgl_msg_send_prot(MSG_OAT_HUM_UPDATE, &oat_hum);
                 }
             }
             break;

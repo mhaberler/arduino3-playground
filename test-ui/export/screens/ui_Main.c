@@ -47,6 +47,8 @@ lv_obj_set_x( ui_BLEStatus, 21 );
 lv_obj_set_y( ui_BLEStatus, -106 );
 lv_obj_set_align( ui_BLEStatus, LV_ALIGN_CENTER );
 lv_label_set_text(ui_BLEStatus,"");
+lv_obj_set_style_text_color(ui_BLEStatus, lv_color_hex(0x1B7BDB), LV_PART_MAIN | LV_STATE_DEFAULT );
+lv_obj_set_style_text_opa(ui_BLEStatus, 255, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 ui_WifiStatus = lv_label_create(ui_mainHeader);
 lv_obj_set_width( ui_WifiStatus, LV_SIZE_CONTENT);  /// 1

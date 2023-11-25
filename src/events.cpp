@@ -38,7 +38,6 @@ static void view_change_cb(void *s, lv_msg_t *m)
 static void model_change_cb(void *s, lv_msg_t *m)
 {
     unsigned int msg_id = lv_msg_get_id(m);
-    const void *msg_payload = (const char *)lv_msg_get_payload(m);
     lv_obj_t *target = (lv_obj_t *)lv_msg_get_user_data(m);
 
     // Serial.printf("model_change_cb %u\n", msg_id);
@@ -60,27 +59,18 @@ static void model_change_cb(void *s, lv_msg_t *m)
     case MSG_POSITION_UPDATE:
         break;
     case MSG_ENV_TEMP_UPDATE:
-    {
-        const ruuviAd_t *rp = (const ruuviAd_t *)msg_payload;
-        lv_label_set_text_fmt(target, "%.1f°", rp->temperature);
-    }
-    break;
-    case MSG_ENV_HUM_UPDATE:
-    {
-        const ruuviAd_t *rp = (const ruuviAd_t *)msg_payload;
-        lv_label_set_text_fmt(target, "%.1f %%", rp->humidity);
-    }
-    break;
     case MSG_OAT_TEMP_UPDATE:
     {
-        const ruuviAd_t *rp = (const ruuviAd_t *)msg_payload;
-        lv_label_set_text_fmt(target, "%.1f°", rp->temperature);
+        const double v = *(const double *)lv_msg_get_payload(m);
+        lv_label_set_text_fmt(target, "%.1f°", v);
     }
     break;
+
+    case MSG_ENV_HUM_UPDATE:
     case MSG_OAT_HUM_UPDATE:
     {
-        const ruuviAd_t *rp = (const ruuviAd_t *)msg_payload;
-        lv_label_set_text_fmt(target, "%.1f %%", rp->humidity);
+        const double v = *(const double *)lv_msg_get_payload(m);
+        lv_label_set_text_fmt(target, "%.1f %%", v);
     }
     break;
     case MSG_ALTITUDE_UPDATE:
