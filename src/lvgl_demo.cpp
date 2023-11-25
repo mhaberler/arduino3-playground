@@ -19,6 +19,8 @@ void lvgl_setup(void)
 {
     lv_begin();
     ui_init();
+    lv_updates_init();
+    lv_events_init();
 }
 
 void lvgl_loop(void)
@@ -26,7 +28,7 @@ void lvgl_loop(void)
     if (millis() - last_ui_upd > UPDATE_EVERY)
     {
         lvgl_acquire();
-        update_ui_values();
+        // update_ui_values();
         lvgl_release();
         last_ui_upd = millis();
     }

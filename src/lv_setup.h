@@ -4,5 +4,7 @@
 void lv_begin();
 void lvgl_acquire(void);
 void lvgl_release(void);
+void lv_events_init(void);
+void lv_updates_init(void);
 
 #endif

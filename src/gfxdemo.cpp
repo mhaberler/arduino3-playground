@@ -1,16 +1,6 @@
 #ifdef GFXDEMO
 
-#ifdef M5UNIFIED
-#include <M5Unified.h>
-
-#if defined(LVGL_DEMO)
-#include <lvgl.h>
-#endif
-
-M5GFX display;
-#else
-#include <Arduino.h>
-#endif
+#include "defs.hpp"
 
 #ifdef LOVYANGFX
 
@@ -53,8 +43,15 @@ M5GFX display;
 #include <LovyanGFX.hpp>
 #include <LGFX_AUTODETECT.hpp>
 #endif
+
+#endif
+
+#ifdef M5UNIFIED
+M5GFX display;
+#else
 LGFX display;
 #endif
+
 
 static constexpr size_t BAR_COUNT = 64;
 static int max_y[BAR_COUNT];

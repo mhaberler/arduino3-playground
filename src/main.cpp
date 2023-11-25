@@ -15,8 +15,8 @@ void webserver_loop(void);
 
 void setup(void)
 {
+  delay(3000);
 #ifdef M5UNIFIED
-
   auto cfg = M5.config();
   cfg.serial_baudrate = 115200;
   cfg.led_brightness = 128;
