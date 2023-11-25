@@ -48,6 +48,7 @@ static void model_change_cb(void *s, lv_msg_t *m)
     {
         int battery_val = *(int *)lv_msg_get_payload(m);
         lv_update_battery(battery_val);
+        lv_obj_clear_state(ui_BLEStatus, LV_STATE_CHECKED);  // reset BLE "LED"
     }
     break;
     case MSG_TIME_CHANGED:
@@ -63,14 +64,15 @@ static void model_change_cb(void *s, lv_msg_t *m)
     {
         const double v = *(const double *)lv_msg_get_payload(m);
         lv_label_set_text_fmt(target, "%.1f°", v);
+        lv_obj_add_state(ui_BLEStatus, LV_STATE_CHECKED); // set BLE "LED"
     }
     break;
-
     case MSG_ENV_HUM_UPDATE:
     case MSG_OAT_HUM_UPDATE:
     {
         const double v = *(const double *)lv_msg_get_payload(m);
         lv_label_set_text_fmt(target, "%.1f %%", v);
+        lv_obj_add_state(ui_BLEStatus, LV_STATE_CHECKED); // set BLE "LED"
     }
     break;
     case MSG_ALTITUDE_UPDATE:
@@ -118,7 +120,7 @@ void lv_updates_init(void)
 {
     // BATTERY
     lv_label_set_text(ui_BatteryStatus, LV_SYMBOL_BATTERY_EMPTY);
-    timer_battery = lv_timer_create(timer_battery_callback, 1000, NULL);
+    timer_battery = lv_timer_create(timer_battery_callback, 2000, NULL);
 }
 
 void lv_events_init(void)

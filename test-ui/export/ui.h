@@ -24,7 +24,6 @@ extern "C" {
 
 #include "ui_helpers.h"
 #include "ui_events.h"
-void bleLed_Animation( lv_obj_t *TargetObject, int delay);
 // SCREEN: ui_Main
 void ui_Main_screen_init(void);
 void ui_event_Main( lv_event_t * e);
