@@ -11,7 +11,7 @@
 
 #define UPDATE_EVERY 500
 
-void update_screen(void);
+void update_ui_values(void);
 
 unsigned long last_ui_upd = 0;
 
@@ -23,10 +23,11 @@ void lvgl_setup(void)
 
 void lvgl_loop(void)
 {
-    lv_handler(); // Update UI
     if (millis() - last_ui_upd > UPDATE_EVERY)
     {
-        update_screen();
+        lvgl_acquire();
+        update_ui_values();
+        lvgl_release();
         last_ui_upd = millis();
     }
 }

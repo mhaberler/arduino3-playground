@@ -7,7 +7,7 @@
 #include "ui.h"
 #include "Esp.h"
 
-void update_screen(void)
+void update_ui_values(void)
 {
     // char buf[128];
 
