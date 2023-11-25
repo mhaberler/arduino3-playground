@@ -56,7 +56,7 @@ static lv_color_t buf[2][SCREEN_WIDTH * 10];
 
 const char *boardName(void);
 
-static void m5gfx_lvgl_flush(lv_disp_drv_t *disp, const lv_area_t *area,
+static void lvgl_flush(lv_disp_drv_t *disp, const lv_area_t *area,
                              lv_color_t *color_p)
 {
 
@@ -87,7 +87,7 @@ static void m5gfx_lvgl_flush(lv_disp_drv_t *disp, const lv_area_t *area,
   lv_disp_flush_ready(disp);
 }
 
-static void m5gfx_lvgl_read(lv_indev_drv_t *indev_driver,
+static void lvgl_read(lv_indev_drv_t *indev_driver,
                             lv_indev_data_t *data)
 {
   uint16_t touchX, touchY;
@@ -166,7 +166,7 @@ void lv_begin()
 
   disp_drv.hor_res = display.width();
   disp_drv.ver_res = display.height();
-  disp_drv.flush_cb = m5gfx_lvgl_flush;
+  disp_drv.flush_cb = lvgl_flush;
   disp_drv.draw_buf = &draw_buf;
   lv_disp_drv_register(&disp_drv);
 
@@ -174,7 +174,7 @@ void lv_begin()
   static lv_indev_drv_t indev_drv;
   lv_indev_drv_init(&indev_drv);
   indev_drv.type = LV_INDEV_TYPE_POINTER;
-  indev_drv.read_cb = m5gfx_lvgl_read;
+  indev_drv.read_cb = lvgl_read;
   lv_indev_drv_register(&indev_drv);
 
   Serial.printf("LVGL v%d.%d.%d initialized, board=%s\n", lv_version_major(),
