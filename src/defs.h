@@ -1,11 +1,10 @@
 #pragma once
-
-#ifdef M5UNIFIED
-#include <M5Unified.h>
-
 #if defined(LVGL_DEMO)
 #include <lvgl.h>
 #endif
+
+#ifdef M5UNIFIED
+#include <M5Unified.h>
 #else
 #include <Arduino.h>
 #endif
@@ -18,7 +17,10 @@
 
 typedef struct
 {
+    lv_subject_t *subject;
     const char *available;
     const char *unavailable;
-    void  *user_data;
-} fmt_spec_t;
+    uint32_t ttl_ms = 5000;
+    const void *user_data = NULL;
+    uint32_t last_heard_ms = 0;
+} transient_subject_t;

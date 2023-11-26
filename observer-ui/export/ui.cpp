@@ -4,19 +4,21 @@
 #include "subjects.h"
 #include "defs.h"
 
-#define USE_INVALID_VALUE
+static lv_timer_t *na_timer;
 
 lv_subject_t oat_tmp, oat_hum, env_tmp, env_hum;
 
-static fmt_spec_t oat_temp_fmt = {"OAT temp: %.1f°", "OAT temp: n/a", NULL};
-static fmt_spec_t oat_hum_fmt = {"OAT hum: %.1f%%", "OAT hum: n/a", NULL};
-static fmt_spec_t env_temp_fmt = {"env temp: %.1f°", "env temp: n/a", NULL};
-static fmt_spec_t env_hum_fmt = {"env hum: %.1f%%", "env hum: n/a", NULL};
+// ruuvi interval 60s
+
+static transient_subject_t oat_temp_fmt = {&oat_tmp, "OAT temp: %.1f°", "OAT temp: n/a", 65 * 1000, "foobar"};
+static transient_subject_t oat_hum_fmt = {&oat_hum, "OAT hum: %.1f%%", "OAT hum: n/a", 65 * 1000};
+static transient_subject_t env_temp_fmt = {&env_tmp, "env temp: %.1f°", "env temp: n/a", 65 * 1000};
+static transient_subject_t env_hum_fmt = {&env_hum, "env hum: %.1f%%", "env hum: n/a", 65 * 1000};
 
 static void value_available_cb(lv_subject_t *subject, lv_observer_t *observer)
 {
-    fmt_spec_t *tf = observer->user_data;
-
+    transient_subject_t *tf = (transient_subject_t *)observer->user_data;
+    tf->last_heard_ms = millis();
     int32_t current_value = lv_subject_get_int(subject);
     int32_t previous_value = lv_subject_get_previous_int(subject);
     bool current_value_valid = VALID_INT_VALUE(current_value);
@@ -41,6 +43,29 @@ static void value_available_cb(lv_subject_t *subject, lv_observer_t *observer)
     {
         LV_LOG_USER("missing format");
     }
+}
+
+static void expire_fmt(uint32_t now, transient_subject_t *fmt)
+{
+    if (now > (fmt->last_heard_ms + fmt->ttl_ms))
+    {
+        // LV_LOG_USER("expire subject %p ", fmt->subject);
+        lv_subject_set_int(fmt->subject, INT32_MAX);
+    }
+}
+
+static void expire_values(lv_timer_t *timer)
+{
+    uint32_t now = millis();
+    expire_fmt(now, &oat_temp_fmt);
+    expire_fmt(now, &oat_hum_fmt);
+    expire_fmt(now, &env_temp_fmt);
+    expire_fmt(now, &env_hum_fmt);
+}
+
+void init_timer(void)
+{
+    lv_timer_create(expire_values, 1000, NULL);
 }
 
 void register_observers(void)
@@ -83,14 +108,17 @@ void lv_example_label_1(void)
     lv_label_set_text(label2, "It is a circularly scrolling text. ");
     lv_obj_align(label2, LV_ALIGN_CENTER, 0, 40);
 }
-
-void ui_init(void)
+extern "C"
 {
-    subjects_init();
+    void ui_init(void)
+    {
+        subjects_init();
 
-    lv_disp_t *dispp = lv_disp_get_default();
-    lv_theme_t *theme = lv_theme_default_init(dispp, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED), true, LV_FONT_DEFAULT);
-    lv_disp_set_theme(dispp, theme);
-    lv_example_label_1();
-    register_observers();
+        lv_disp_t *dispp = lv_disp_get_default();
+        lv_theme_t *theme = lv_theme_default_init(dispp, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED), true, LV_FONT_DEFAULT);
+        lv_disp_set_theme(dispp, theme);
+        lv_example_label_1();
+        register_observers();
+        init_timer();
+    }
 }

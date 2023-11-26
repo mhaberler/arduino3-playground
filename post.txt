@@ -1,0 +1,17 @@
+
+played with observers - super elegant and useful!
+
+I tried to deal with transient values which might become unavailable (e.g. BLE beacon out of reach)
+
+In my example I dealt with invalidation by setting a magic value (INT_MAX) in a timeout and detecting this in the observer callback
+so a label or color can be set accordingly
+
+maybe there's a more general way to convey "not available" to an observer?
+
+
+what about a user_data member in lv_subject_t which observers can inspect?
+
+
+
+
+
