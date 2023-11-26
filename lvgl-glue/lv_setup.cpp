@@ -4,6 +4,9 @@
 #define LV_TICK_PERIOD_MS 1
 #define TAG __FILE__
 
+
+#undef LVGL_DOUBLE_BUFFER
+
 #ifdef M5UNIFIED
 #include <M5Unified.h>
 #include <lvgl.h>
@@ -57,7 +60,7 @@ static lv_color_t *buf;
 LGFX display;
 
 static lv_disp_draw_buf_t draw_buf;
-static lv_color_t buf[2][SCREEN_WIDTH * 10];
+// static lv_color_t buf[2][SCREEN_WIDTH * 10];
 #endif
 
 /* Creates a semaphore to handle concurrent call to lvgl stuff
@@ -156,25 +159,42 @@ static void lvgl_read(lv_indev_drv_t *indev_driver,
 #endif
 }
 
+static void my_log_cb(const char *msg)
+{
+  Serial.print(msg);
+}
+
 /* Setup lvgl with display and touch pad */
 void lv_begin()
 {
   lv_init(); // call this before any other lvgl function
+  lv_log_register_print_cb(my_log_cb);
 
   display.init();
 #if defined(LILYGO_S3CAP) || defined(ELECROW_DLC35020S)
   display.setRotation(3);
 #endif
+  const size_t buf_size = display.width() * 10;
+  // static lv_color_t buf[2][SCREEN_WIDTH * 10];
 
-#ifdef M5UNIFIED
-  size_t buf_size = display.width() * display.height() / 10;
-  buf = (lv_color_t *)malloc(buf_size);
-  lv_disp_draw_buf_init(&draw_buf, buf, NULL,
-                        buf_size); // initialize the display buffer
+#if defined(LVGL_DOUBLE_BUFFER)
+  lv_color_t *buf1 = (lv_color_t *)heap_caps_malloc(buf_size * sizeof(lv_color_t), MALLOC_CAP_DMA);
+  lv_color_t *buf2 = (lv_color_t *)heap_caps_malloc(buf_size  * sizeof(lv_color_t), MALLOC_CAP_DMA);
+
+  lv_disp_draw_buf_init(&draw_buf, buf1, buf2, buf_size);
+#else
+  lv_color_t *buf1 = (lv_color_t *)heap_caps_malloc(buf_size* sizeof(lv_color_t), MALLOC_CAP_DMA);
+  lv_disp_draw_buf_init(&draw_buf, buf1, NULL, buf_size);
 #endif
-#ifdef LOVYANGFX
-  lv_disp_draw_buf_init(&draw_buf, buf[0], buf[1], SCREEN_WIDTH * 10);
-#endif
+
+  // #ifdef M5UNIFIED
+  //   buf = (lv_color_t *)malloc(buf_size);
+  //   lv_disp_draw_buf_init(&draw_buf, buf, NULL,
+  //                         buf_size); // initialize the display buffer
+  // #endif
+  // #ifdef LOVYANGFX
+  //   lv_disp_draw_buf_init(&draw_buf, buf[0], buf[1], SCREEN_WIDTH * 10);
+  // #endif
   /*Initialize the display*/
   static lv_disp_drv_t disp_drv;
   lv_disp_drv_init(&disp_drv);
@@ -269,13 +289,6 @@ void lvgl_release(void)
   {
     xSemaphoreGive(xGuiSemaphore);
   }
-}
-
-void lvgl_msg_send_prot(uint32_t msg_id, const void *payload)
-{
-  lvgl_acquire();
-  lv_msg_send(msg_id, payload);
-  lvgl_release();
 }
 
 #if !defined(LOVYANGFX) && !defined(M5UNIFIED)

@@ -114,22 +114,21 @@ class scanCallbacks : public BLEAdvertisedDeviceCallbacks
                               ruuvi_ad->temperature, ruuvi_ad->humidity, ruuvi_ad->rssi,
                               ruuvi_ad->voltage / 1000.0, ruuvi_ad->sequence);
 
-                // from a non-lvgl thread, use lvgl_msg_send_prot()
                 // dd:79:c6:8f:bd:a2 oat hum
                 // e6:91:df:7b:e5:4d env
                 if (strcasecmp(ruuvi_ad->address, RUUVI_ENV) == 0)
                 {
-                    lvgl_acquire();
+                    // lvgl_acquire();
                     lv_subject_set_int(&env_tmp, F2I100(ruuvi_ad->temperature));
                     lv_subject_set_int(&env_hum, F2I100(ruuvi_ad->humidity));
-                    lvgl_release();
+                    // lvgl_release();
                 }
                 if (strcasecmp(ruuvi_ad->address, RUUVI_OAT) == 0)
                 {
-                    lvgl_acquire();
+                    // lvgl_acquire();
                     lv_subject_set_int(&oat_tmp, F2I100(ruuvi_ad->temperature));
                     lv_subject_set_int(&oat_hum, F2I100(ruuvi_ad->humidity));
-                    lvgl_release();
+                    // lvgl_release();
                 }
             }
             break;

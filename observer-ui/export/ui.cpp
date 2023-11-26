@@ -94,7 +94,7 @@ void subjects_init(void)
 
 void lv_example_label_1(void)
 {
-    lv_obj_t *scr = lv_screen_active();
+    lv_obj_t *scr = lv_scr_act();
     lv_obj_t *label1 = lv_label_create(scr);
     lv_label_set_long_mode(label1, LV_LABEL_LONG_WRAP); /*Break the long lines*/
     lv_label_set_text(label1, "Recolor is not supported for v9 now.");
@@ -102,7 +102,7 @@ void lv_example_label_1(void)
     lv_obj_set_style_text_align(label1, LV_TEXT_ALIGN_CENTER, 0);
     lv_obj_align(label1, LV_ALIGN_CENTER, 0, -40);
 
-    lv_obj_t *label2 = lv_label_create(lv_screen_active());
+    lv_obj_t *label2 = lv_label_create(lv_scr_act());
     lv_label_set_long_mode(label2, LV_LABEL_LONG_SCROLL_CIRCULAR); /*Circular scroll*/
     lv_obj_set_width(label2, 150);
     lv_label_set_text(label2, "It is a circularly scrolling text. ");
@@ -114,9 +114,9 @@ extern "C"
     {
         subjects_init();
 
-        lv_disp_t *dispp = lv_disp_get_default();
-        lv_theme_t *theme = lv_theme_default_init(dispp, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED), true, LV_FONT_DEFAULT);
-        lv_disp_set_theme(dispp, theme);
+        // lv_disp_t *dispp = lv_disp_get_default();
+        // lv_theme_t *theme = lv_theme_default_init(dispp, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED), true, LV_FONT_DEFAULT);
+        // lv_disp_set_theme(dispp, theme);
         lv_example_label_1();
         register_observers();
         init_timer();

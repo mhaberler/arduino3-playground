@@ -1,6 +1,10 @@
 #pragma once
 #if defined(LVGL_DEMO)
+
+#include "lv_conf.h"
 #include <lvgl.h>
+#include "lv_observer.h"
+
 #endif
 
 #ifdef M5UNIFIED

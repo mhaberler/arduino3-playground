@@ -18,6 +18,7 @@
 #define LV_CONF_H
 
 #define LV_USE_DEV_VERSION // silence 
+#define LV_USE_OBSERVER 1
 
 #include <stdint.h>
 
