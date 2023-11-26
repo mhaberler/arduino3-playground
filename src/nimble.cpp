@@ -1,11 +1,11 @@
 
 #ifdef TEST_NIMBLE
-#include "defs.h"
+#include "defs.hpp"
 #include "NimBLEDevice.h"
 #include "messages.hpp"
 #include "lv_setup.hpp"
 #include "events.hpp"
-#include "subjects.h"
+#include "subjects.hpp"
 
 int scanTime = 60 * 1000; // In milliseconds, 0 = scan forever
 BLEScan *pBLEScan;

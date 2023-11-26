@@ -19,6 +19,8 @@ void lvgl_setup(void)
 {
     lv_begin();
     ui_init();
+
+    observer_init();
     // lv_updates_init();
     // lv_events_init();
 }

@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 void lv_begin();
+void observer_init();
 void lvgl_acquire(void);
 void lvgl_release(void);
 

@@ -1,7 +1,7 @@
 
 #if defined(LVGL_DEMO)
 
-#include "defs.h"
+#include "defs.hpp"
 #include <lvgl.h>
 
 #include "events.hpp"
