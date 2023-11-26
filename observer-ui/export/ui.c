@@ -1,54 +1,70 @@
 
 
 #include <lvgl.h>
-// #include "lv_conf.h"
-// #include "lv_setup.hpp"
-// #include "esp_err.h"
 #include "subjects.h"
 #include "defs.h"
 
+#define USE_INVALID_VALUE
+
 lv_subject_t oat_tmp, oat_hum, env_tmp, env_hum;
+
+static fmt_spec_t oat_temp_fmt = {"OAT temp: %.1f°", "OAT temp: n/a", NULL};
+static fmt_spec_t oat_hum_fmt = {"OAT hum: %.1f%%", "OAT hum: n/a", NULL};
+static fmt_spec_t env_temp_fmt = {"env temp: %.1f°", "env temp: n/a", NULL};
+static fmt_spec_t env_hum_fmt = {"env hum: %.1f%%", "env hum: n/a", NULL};
+
+static void value_available_cb(lv_subject_t *subject, lv_observer_t *observer)
+{
+    fmt_spec_t *tf = observer->user_data;
+
+    int32_t current_value = lv_subject_get_int(subject);
+    int32_t previous_value = lv_subject_get_previous_int(subject);
+    bool current_value_valid = VALID_INT_VALUE(current_value);
+    bool previous_value_valid = VALID_INT_VALUE(previous_value);
+    if (previous_value_valid ^ current_value_valid)
+    {
+        // availability changed
+        if (current_value_valid)
+        {
+            LV_LOG_USER("value became available");
+        }
+        if (previous_value_valid)
+        {
+            LV_LOG_USER("value became unavailable");
+        }
+    }
+    if (tf)
+    {
+        LV_LOG_USER(current_value_valid ? tf->available : tf->unavailable, ITOD100(current_value));
+    }
+    else
+    {
+        LV_LOG_USER("missing format");
+    }
+}
+
+void register_observers(void)
+{
+    lv_subject_add_observer(&oat_tmp, value_available_cb, &oat_temp_fmt);
+    lv_subject_add_observer(&oat_hum, value_available_cb, &oat_hum_fmt);
+    lv_subject_add_observer(&env_tmp, value_available_cb, &env_temp_fmt);
+    lv_subject_add_observer(&env_hum, value_available_cb, &env_hum_fmt);
+}
 
 void subjects_init(void)
 {
     // use INT32_MAX as "not available"
     lv_subject_init_int(&oat_tmp, INT32_MAX);
+    oat_tmp.prev_value.num = INT32_MAX; // invalidate the previous value
+
     lv_subject_init_int(&oat_hum, INT32_MAX);
+    oat_hum.prev_value.num = INT32_MAX;
+
     lv_subject_init_int(&env_tmp, INT32_MAX);
+    env_tmp.prev_value.num = INT32_MAX;
+
     lv_subject_init_int(&env_hum, INT32_MAX);
-}
-
-typedef struct
-{
-    const char *available;
-    const char *unavailable;
-} fmt_spec_t;
-
-#define INVALID_INT_VALUE(x) ((x) == INT32_MAX)
-#define SET_INVALID_INT(x) \
-    {                      \
-        x = INT32_MAX;     \
-    }
-
-static void timed_value_cb(lv_subject_t *subject, lv_observer_t *observer)
-{
-    int32_t v = lv_subject_get_int(subject);
-    fmt_spec_t *fmt_spec = observer->user_data;
-    const char *fmt = INVALID_INT_VALUE(v) ? fmt_spec->unavailable : fmt_spec->available;
-    LV_LOG_USER(fmt, ITOD100(v));
-}
-
-static fmt_spec_t oat_temp_fmt = {"OAT temp: %.1f°", "OAT temp: n/a"};
-static fmt_spec_t env_temp_fmt = {"env temp: %.1f°", "env temp: n/a"};
-static fmt_spec_t oat_hum_fmt = {"OAT hum: %.1f%%", "OAT hum: n/a"};
-static fmt_spec_t env_hum_fmt = {"env hum: %.1f%%", "env hum: n/a"};
-
-void register_observers(void)
-{
-    lv_subject_add_observer(&oat_tmp, timed_value_cb, &oat_temp_fmt);
-    lv_subject_add_observer(&oat_hum, timed_value_cb, &oat_hum_fmt);
-    lv_subject_add_observer(&env_tmp, timed_value_cb, &env_temp_fmt);
-    lv_subject_add_observer(&env_hum, timed_value_cb, &env_hum_fmt);
+    env_hum.prev_value.num = INT32_MAX;
 }
 
 void lv_example_label_1(void)

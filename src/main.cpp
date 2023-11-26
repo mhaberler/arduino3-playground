@@ -28,7 +28,7 @@ void setup(void)
   test_spdlog();
   lvgl_setup();
   gfxdemo_setup();
-  // startBLEscan();
+  startBLEscan();
   webserver_setup();
 }
 

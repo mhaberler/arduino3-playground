@@ -1,16 +1,18 @@
 
 #ifdef TEST_NIMBLE
+#include "defs.h"
 #include "NimBLEDevice.h"
 #include "messages.hpp"
 #include "lv_setup.hpp"
 #include "events.hpp"
+#include "subjects.h"
+
 
 int scanTime = 60 * 1000; // In milliseconds, 0 = scan forever
 BLEScan *pBLEScan;
 bool active = false;
 
 static ruuviAd_t ruuvi_report;
-static double oat_tmp, oat_hum, env_tmp, env_hum;
 
 #include "NimBLEDevice.h"
 
@@ -118,17 +120,13 @@ class scanCallbacks : public BLEAdvertisedDeviceCallbacks
                 // e6:91:df:7b:e5:4d env
                 if (strcasecmp(ruuvi_ad->address, RUUVI_ENV) == 0)
                 {
-                    env_tmp = ruuvi_ad->temperature;
-                    env_hum = ruuvi_ad->humidity;
-                    lvgl_msg_send_prot(MSG_ENV_TEMP_UPDATE, &env_tmp);
-                    lvgl_msg_send_prot(MSG_ENV_HUM_UPDATE, &env_hum);
+                    lv_subject_set_int(&env_tmp, F2I100(ruuvi_ad->temperature));
+                    lv_subject_set_int(&env_hum, F2I100(ruuvi_ad->humidity));
                 }
                 if (strcasecmp(ruuvi_ad->address, RUUVI_OAT) == 0)
                 {
-                    oat_tmp = ruuvi_ad->temperature;
-                    oat_hum = ruuvi_ad->humidity;
-                    lvgl_msg_send_prot(MSG_OAT_TEMP_UPDATE, &oat_tmp);
-                    lvgl_msg_send_prot(MSG_OAT_HUM_UPDATE, &oat_hum);
+                    lv_subject_set_int(&oat_tmp, F2I100(ruuvi_ad->temperature));
+                    lv_subject_set_int(&oat_hum, F2I100(ruuvi_ad->humidity));
                 }
             }
             break;

@@ -26,7 +26,7 @@ void webserver_loop(void)
 
 void webserver_setup(void)
 {
-  lvgl_msg_send_prot(MSG_WIFI_UNCONFIGURED, NULL);
+  // lvgl_msg_send_prot(MSG_WIFI_UNCONFIGURED, NULL);
 
   WiFi.mode(WIFI_STA);
   WiFi.enableProv(true);
@@ -170,12 +170,12 @@ static void wifi_event_cb(WiFiEvent_t event, WiFiEventInfo_t info)
     break;
   case ARDUINO_EVENT_WIFI_SCAN_DONE:
     Serial.println("Completed scan for access points");
-    lvgl_msg_send_prot(MSG_WIFI_SCAN_COMPLETE, NULL);
+    // lvgl_msg_send_prot(MSG_WIFI_SCAN_COMPLETE, NULL);
 
     break;
   case ARDUINO_EVENT_WIFI_STA_START:
     Serial.println("WiFi client started");
-    lvgl_msg_send_prot(MSG_WIFI_STARTED, NULL);
+    // lvgl_msg_send_prot(MSG_WIFI_STARTED, NULL);
     break;
   case ARDUINO_EVENT_WIFI_STA_STOP:
     Serial.println("WiFi clients stopped");
@@ -192,13 +192,13 @@ static void wifi_event_cb(WiFiEvent_t event, WiFiEventInfo_t info)
   case ARDUINO_EVENT_WIFI_STA_GOT_IP:
     Serial.print("Obtained IP address: ");
     Serial.println(WiFi.localIP());
-    lvgl_msg_send_prot(MSG_WIFI_CONNECTED, NULL);
+    // lvgl_msg_send_prot(MSG_WIFI_CONNECTED, NULL);
     start_net_services();
     break;
 
   case ARDUINO_EVENT_WIFI_STA_LOST_IP:
     Serial.println("Lost IP address and IP address is reset to 0");
-    lvgl_msg_send_prot(MSG_WIFI_DISCONNECTED, NULL);
+    // lvgl_msg_send_prot(MSG_WIFI_DISCONNECTED, NULL);
     stop_net_services();
 
     break;
