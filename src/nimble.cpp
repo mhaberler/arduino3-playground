@@ -118,17 +118,17 @@ class scanCallbacks : public BLEAdvertisedDeviceCallbacks
                 // e6:91:df:7b:e5:4d env
                 if (strcasecmp(ruuvi_ad->address, RUUVI_ENV) == 0)
                 {
-                    // lvgl_acquire();
+                    lvgl_acquire();
                     lv_subject_set_int(&env_tmp, F2I100(ruuvi_ad->temperature));
                     lv_subject_set_int(&env_hum, F2I100(ruuvi_ad->humidity));
-                    // lvgl_release();
+                    lvgl_release();
                 }
                 if (strcasecmp(ruuvi_ad->address, RUUVI_OAT) == 0)
                 {
-                    // lvgl_acquire();
+                    lvgl_acquire();
                     lv_subject_set_int(&oat_tmp, F2I100(ruuvi_ad->temperature));
                     lv_subject_set_int(&oat_hum, F2I100(ruuvi_ad->humidity));
-                    // lvgl_release();
+                    lvgl_release();
                 }
             }
             break;

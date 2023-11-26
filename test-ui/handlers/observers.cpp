@@ -3,10 +3,11 @@
 #include <lvgl.h>
 #include "subjects.hpp"
 #include "defs.hpp"
+#include "ui_setters.hpp"
 
 static lv_timer_t *na_timer;
 
-lv_subject_t oat_tmp, oat_hum, env_tmp, env_hum;
+lv_subject_t oat_tmp, oat_hum, env_tmp, env_hum, wifi_status, battery_status, sdcard_status;
 
 // ruuvi interval 60s
 
@@ -90,6 +91,11 @@ void subjects_init(void)
 
     lv_subject_init_int(&env_hum, INT32_MAX);
     env_hum.prev_value.num = INT32_MAX;
+
+    lv_subject_init_int(&wifi_status, STATUS_WIFI_UNCONFIGURED);
+    lv_subject_init_int(&battery_status, STATUS_BATTERY_DISCONNECTED);
+    lv_subject_init_int(&sdcard_status, STATUS_SDCARD_MISSING);
+
 }
 
 void observer_init(void)
