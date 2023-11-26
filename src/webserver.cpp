@@ -8,12 +8,10 @@
 #include "lv_setup.hpp"
 #include "events.hpp"
 
-// from a non-lvgl thread, use lvgl_msg_send_prot()
-// lv_msg_send(MSG_BATTERY_STATUS, &battery_value);
 
 static WiFiMulti wifiMulti;
-static WebServer *http_server; // (80);
-// static bool webserver_running;
+static WebServer *http_server;
+static MDNSResponder *mdns_responder;
 
 static void wifi_event_cb(WiFiEvent_t event, WiFiEventInfo_t info);
 static void drawGraph(void);
@@ -47,38 +45,44 @@ void webserver_setup(void)
 #if defined(WIFI_SSID4)
   wifiMulti.addAP(WIFI_SSID4, WIFI_PASSWORD4);
 #endif
-
   wifiMulti.run();
+}
 
-  //     wifi_event_id_t onEvent(WiFiEventCb cbEvent, arduino_event_id_t event = ARDUINO_EVENT_MAX);
-  //   wifi_event_id_t onEvent(WiFiEventFuncCb cbEvent, arduino_event_id_t event = ARDUINO_EVENT_MAX);
-  //   wifi_event_id_t onEvent(WiFiEventSysCb cbEvent, arduino_event_id_t event = ARDUINO_EVENT_MAX);
-  // Wait for connection
-  // uint32_t now = millis();
+static void start_net_services(void)
+{
 
-  // while (WiFi.status() != WL_CONNECTED)
-  // {
-  //   if (millis() - now > 5000)
-  //   {
-  //     Serial.printf("failed to connect to %s with %s\n", WIFI_SSID, WIFI_PASSWORD);
-  //     return;
-  //   }
-  //   delay(500);
-  // }
-  // Serial.printf("Connected to %s, IP=%s\n", WIFI_SSID, WiFi.localIP().toString().c_str());
-  // if (MDNS.begin("esp32"))
-  // {
-  //   Serial.printf("MDNS responder started\n");
-  // }
-  // http_server->on("/", handleRoot);
-  // http_server->on("/test.svg", drawGraph);
-  // http_server->on("/inline",
-  //           []()
-  //           { http_server->send(200, "text/plain", "this works as well"); });
-  // http_server->onNotFound(handleNotFound);
-  // http_server->begin();
-  // Serial.printf("HTTP server started\n");
-  // webserver_running = true;
+  if (!mdns_responder)
+  {
+    mdns_responder = new MDNSResponder();
+  }
+  if (mdns_responder->begin("esp32"))
+  {
+    Serial.printf("MDNS responder started\n");
+  }
+  if (!http_server)
+  {
+    http_server = new WebServer(80);
+    http_server->on("/", handleRoot);
+    http_server->on("/test.svg", drawGraph);
+    http_server->on("/inline",
+                    []()
+                    { http_server->send(200, "text/plain", "this works as well"); });
+    http_server->onNotFound(handleNotFound);
+    http_server->begin();
+    Serial.printf("HTTP server started\n");
+  }
+}
+
+static void stop_net_services(void)
+{
+  if (http_server)
+  {
+    delete http_server;
+  }
+  if (mdns_responder)
+  {
+    delete mdns_responder;
+  }
 }
 
 static void drawGraph(void)
@@ -171,7 +175,7 @@ static void wifi_event_cb(WiFiEvent_t event, WiFiEventInfo_t info)
     break;
   case ARDUINO_EVENT_WIFI_STA_START:
     Serial.println("WiFi client started");
-        lvgl_msg_send_prot(MSG_WIFI_STARTED, NULL);
+    lvgl_msg_send_prot(MSG_WIFI_STARTED, NULL);
     break;
   case ARDUINO_EVENT_WIFI_STA_STOP:
     Serial.println("WiFi clients stopped");
@@ -189,10 +193,14 @@ static void wifi_event_cb(WiFiEvent_t event, WiFiEventInfo_t info)
     Serial.print("Obtained IP address: ");
     Serial.println(WiFi.localIP());
     lvgl_msg_send_prot(MSG_WIFI_CONNECTED, NULL);
+    start_net_services();
     break;
+
   case ARDUINO_EVENT_WIFI_STA_LOST_IP:
     Serial.println("Lost IP address and IP address is reset to 0");
     lvgl_msg_send_prot(MSG_WIFI_DISCONNECTED, NULL);
+    stop_net_services();
+
     break;
   case ARDUINO_EVENT_WPS_ER_SUCCESS:
     Serial.println("WiFi Protected Setup (WPS): succeeded in enrollee mode");
@@ -229,24 +237,6 @@ static void wifi_event_cb(WiFiEvent_t event, WiFiEventInfo_t info)
     break;
   case ARDUINO_EVENT_WIFI_STA_GOT_IP6:
     Serial.println("STA IPv6 is preferred");
-    break;
-  case ARDUINO_EVENT_ETH_GOT_IP6:
-    Serial.println("Ethernet IPv6 is preferred");
-    break;
-  case ARDUINO_EVENT_ETH_START:
-    Serial.println("Ethernet started");
-    break;
-  case ARDUINO_EVENT_ETH_STOP:
-    Serial.println("Ethernet stopped");
-    break;
-  case ARDUINO_EVENT_ETH_CONNECTED:
-    Serial.println("Ethernet connected");
-    break;
-  case ARDUINO_EVENT_ETH_DISCONNECTED:
-    Serial.println("Ethernet disconnected");
-    break;
-  case ARDUINO_EVENT_ETH_GOT_IP:
-    Serial.println("Obtained IP address");
     break;
   default:
     break;

@@ -28,8 +28,8 @@ void setup(void)
   test_spdlog();
   lvgl_setup();
   gfxdemo_setup();
+  // startBLEscan();
   webserver_setup();
-  startBLEscan();
 }
 
 void loop(void)
