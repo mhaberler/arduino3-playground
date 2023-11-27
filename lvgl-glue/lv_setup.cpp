@@ -186,14 +186,6 @@ void lv_begin()
   lv_disp_draw_buf_init(&draw_buf, buf1, NULL, buf_size);
 #endif
 
-  // #ifdef M5UNIFIED
-  //   buf = (lv_color_t *)malloc(buf_size);
-  //   lv_disp_draw_buf_init(&draw_buf, buf, NULL,
-  //                         buf_size); // initialize the display buffer
-  // #endif
-  // #ifdef LOVYANGFX
-  //   lv_disp_draw_buf_init(&draw_buf, buf[0], buf[1], SCREEN_WIDTH * 10);
-  // #endif
   /*Initialize the display*/
   static lv_disp_drv_t disp_drv;
   lv_disp_drv_init(&disp_drv);
@@ -258,19 +250,19 @@ static void lv_tick_task(void *arg)
 static void gui_task(void *args)
 {
   ESP_LOGI(TAG, "Start to run LVGL");
+  uint32_t time_till_next = 10;
   while (1)
-  {
-    vTaskDelay(pdMS_TO_TICKS(10));
-
+  { 
+    vTaskDelay(pdMS_TO_TICKS(time_till_next));
     /* Try to take the semaphore, call lvgl related function on success */
-    if (pdTRUE == xSemaphoreTake(xGuiSemaphore, portMAX_DELAY))
+    if (pdTRUE == xSemaphoreTake(xGuiSemaphore, portMAX_DELAY))  // block indefinitely
     {
-      lv_task_handler();
-      // lv_timer_handler_run_in_period(5); /* run lv_timer_handler() every 5ms */
+      time_till_next = lv_task_handler();
       xSemaphoreGive(xGuiSemaphore);
-    }
+    } 
   }
 }
+
 extern "C"
 {
   void lvgl_acquire(void)
