@@ -40,29 +40,73 @@ static void value_available_cb(lv_subject_t *subject, lv_observer_t *observer)
 
 static void wifi_status_cb(lv_subject_t *subject, lv_observer_t *observer)
 {
-    LV_LOG_USER("status %ld", lv_subject_get_int(subject));
+    int32_t v = lv_subject_get_int(subject);
+    if (v == lv_subject_get_previous_int(subject))
+        return;
+    LV_LOG_USER("status %ld", v);
+    lv_obj_t *target = (lv_obj_t *)lv_observer_get_target(observer);
+
+    switch (v)
+    {
+    case STATUS_WIFI_UNCONFIGURED:
+        lv_obj_set_style_text_color(target, lv_palette_main(LV_PALETTE_AMBER), LV_PART_MAIN | LV_STATE_DEFAULT);
+        break;
+    case STATUS_WIFI_SCAN_COMPLETE:
+        lv_obj_set_style_text_color(target, lv_palette_main(LV_PALETTE_GREEN), LV_PART_MAIN | LV_STATE_DEFAULT);
+        break;
+    case STATUS_WIFI_GOT_IP:
+        lv_obj_set_style_text_color(target, lv_palette_main(LV_PALETTE_CYAN), LV_PART_MAIN | LV_STATE_DEFAULT);
+        break;
+    case STATUS_WIFI_DISCONNECTED:
+        lv_obj_set_style_text_color(target, lv_palette_main(LV_PALETTE_YELLOW), LV_PART_MAIN | LV_STATE_DEFAULT);
+    default:;
+    }
 }
 
 static void http_status_cb(lv_subject_t *subject, lv_observer_t *observer)
 {
-    LV_LOG_USER("status %ld", lv_subject_get_int(subject));
+    int32_t v = lv_subject_get_int(subject);
+    if (v == lv_subject_get_previous_int(subject))
+        return;
+    LV_LOG_USER("status %ld", v);
 }
 
 static void sdcard_status_cb(lv_subject_t *subject, lv_observer_t *observer)
 {
+    int32_t v = lv_subject_get_int(subject);
+    if (v == lv_subject_get_previous_int(subject))
+        return;
     LV_LOG_USER("status %ld", lv_subject_get_int(subject));
 }
 
 static void ble_status_cb(lv_subject_t *subject, lv_observer_t *observer)
 {
+    int32_t v = lv_subject_get_int(subject);
+    if (v == lv_subject_get_previous_int(subject))
+        return;
+    LV_LOG_USER("status %ld", v);
+    lv_obj_t *target = (lv_obj_t *)lv_observer_get_target(observer);
 
-    LV_LOG_USER("status %ld", lv_subject_get_int(subject));
-    // lv_obj_clear_state(ui_BLEStatus, LV_STATE_CHECKED);
+    switch (v)
+    {
+    case STATUS_BLE_IDLE:
+        lv_obj_clear_state(target, LV_STATE_CHECKED);
+        break;
+    case STATUS_BLE_TRAFFIC:
+        break;
+    case STATUS_BLE_TRAFFIC_FOR_US:
+        lv_obj_add_state(target, LV_STATE_CHECKED);
+
+        break;
+    default:;
+    }
 }
 
 static void battery_status_cb(lv_subject_t *subject, lv_observer_t *observer)
 {
     int32_t batval = lv_subject_get_int(subject);
+    if (batval == lv_subject_get_previous_int(subject))
+        return;
     // LV_LOG_USER("status %ld", batval);
     lv_obj_t *target = (lv_obj_t *)lv_observer_get_target(observer);
 

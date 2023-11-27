@@ -66,9 +66,9 @@ class scanCallbacks : public BLEAdvertisedDeviceCallbacks
     {
         // Serial.printf("Advertised Device Result: %s \n",
         //               advertisedDevice->toString().c_str());
-        lvgl_acquire();
-        lv_subject_set_int(&ble_status, STATUS_BLE_TRAFFIC);
-        lvgl_release();
+        // lvgl_acquire();
+        // lv_subject_set_int(&ble_status, STATUS_BLE_TRAFFIC);
+        // lvgl_release();
         if (advertisedDevice->haveManufacturerData())
         {
             const uint8_t *data =
