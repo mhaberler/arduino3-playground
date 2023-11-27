@@ -110,17 +110,8 @@ void subjects_init(void)
 
 void observer_init(void)
 {
-    LV_LOG_USER("---->");
-
     subjects_init();
     register_observers();
     init_timer();
 }
 
-extern bool main_screen_loaded;
-
-void mainScreenLoaded(lv_event_t *e)
-{
-    LV_LOG_USER("xxx");
-    main_screen_loaded = true;
-}

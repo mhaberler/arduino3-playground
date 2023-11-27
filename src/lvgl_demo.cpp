@@ -9,11 +9,6 @@
 #include "lv_setup.hpp"
 #include "ui.h"
 
-#define UPDATE_EVERY 500
-
-void update_ui_values(void);
-
-unsigned long last_ui_upd = 0;
 
 void lvgl_assert_fail(void)
 {
@@ -23,32 +18,12 @@ void lvgl_assert_fail(void)
 void lvgl_setup(void)
 {
     lv_begin();
-    ui_init();
-
-    // lv_updates_init();
-    // lv_events_init();
+    ui_init(); // Squareline UI
+    observer_init();
 }
 
-bool main_screen_loaded;
-bool observer_inited = false;
 void lvgl_loop(void)
 {
-    if (main_screen_loaded)
-    {
-        if (!observer_inited)
-        {
-            observer_init();
-            observer_inited = true;
-        }
-        main_screen_loaded = false;
-    }
-    // if (millis() - last_ui_upd > UPDATE_EVERY)
-    // {
-    //     lvgl_acquire();
-    //     // update_ui_values();
-    //     lvgl_release();
-    //     last_ui_upd = millis();
-    // }
 }
 
 #else
