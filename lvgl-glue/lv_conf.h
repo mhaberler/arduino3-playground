@@ -262,7 +262,20 @@
 /*-------------
  * Asserts
  *-----------*/
+#if LV_PARANOIA
+/*Enable asserts if an operation is failed or an invalid data is found.
+ *If LV_USE_LOG is enabled an error message will be printed on failure*/
+#define LV_USE_ASSERT_NULL          1   /*Check if the parameter is NULL. (Very fast, recommended)*/
+#define LV_USE_ASSERT_MALLOC        1   /*Checks is the memory is successfully allocated or no. (Very fast, recommended)*/
+#define LV_USE_ASSERT_STYLE         1   /*Check if the styles are properly initialized. (Very fast, recommended)*/
+#define LV_USE_ASSERT_MEM_INTEGRITY 1   /*Check the integrity of `lv_mem` after critical operations. (Slow)*/
+#define LV_USE_ASSERT_OBJ           1   /*Check the object's type and existence (e.g. not deleted). (Slow)*/
 
+/*Add a custom handler when assert happens e.g. to restart the MCU*/
+void lvgl_assert_fail(void);
+#define LV_ASSERT_HANDLER lvgl_assert_fail(); // while(1);   /*Halt by default*/
+
+#else
 /*Enable asserts if an operation is failed or an invalid data is found.
  *If LV_USE_LOG is enabled an error message will be printed on failure*/
 #define LV_USE_ASSERT_NULL          1   /*Check if the parameter is NULL. (Very fast, recommended)*/
@@ -274,7 +287,7 @@
 /*Add a custom handler when assert happens e.g. to restart the MCU*/
 #define LV_ASSERT_HANDLER_INCLUDE <stdint.h>
 #define LV_ASSERT_HANDLER while(1);   /*Halt by default*/
-
+#endif
 /*-------------
  * Others
  *-----------*/

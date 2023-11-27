@@ -15,25 +15,40 @@ void update_ui_values(void);
 
 unsigned long last_ui_upd = 0;
 
+void lvgl_assert_fail(void)
+{
+    LV_LOG_USER("-------> ASSERT FAIL");
+}
+
 void lvgl_setup(void)
 {
     lv_begin();
     ui_init();
 
-    observer_init();
     // lv_updates_init();
     // lv_events_init();
 }
 
+bool main_screen_loaded;
+bool observer_inited = false;
 void lvgl_loop(void)
 {
-    if (millis() - last_ui_upd > UPDATE_EVERY)
+    if (main_screen_loaded)
     {
-        lvgl_acquire();
-        // update_ui_values();
-        lvgl_release();
-        last_ui_upd = millis();
+        if (!observer_inited)
+        {
+            observer_init();
+            observer_inited = true;
+        }
+        main_screen_loaded = false;
     }
+    // if (millis() - last_ui_upd > UPDATE_EVERY)
+    // {
+    //     lvgl_acquire();
+    //     // update_ui_values();
+    //     lvgl_release();
+    //     last_ui_upd = millis();
+    // }
 }
 
 #else

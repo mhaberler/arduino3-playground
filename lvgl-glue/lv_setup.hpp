@@ -5,10 +5,14 @@
 
 void lv_begin();
 void observer_init();
-void lvgl_acquire(void);
-void lvgl_release(void);
 
 void lv_events_init(void);
 void lv_updates_init(void);
+
+extern "C"
+{
+    void lvgl_acquire(void);
+    void lvgl_release(void);
+}
 
 #endif

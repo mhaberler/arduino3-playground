@@ -2,10 +2,9 @@
 #ifdef TEST_NIMBLE
 #include "defs.hpp"
 #include "NimBLEDevice.h"
-#include "messages.hpp"
 #include "lv_setup.hpp"
-#include "events.hpp"
 #include "subjects.hpp"
+#include "messages.hpp"
 
 int scanTime = 60 * 1000; // In milliseconds, 0 = scan forever
 BLEScan *pBLEScan;
@@ -118,17 +117,14 @@ class scanCallbacks : public BLEAdvertisedDeviceCallbacks
                 // e6:91:df:7b:e5:4d env
                 if (strcasecmp(ruuvi_ad->address, RUUVI_ENV) == 0)
                 {
-                    lvgl_acquire();
-                    lv_subject_set_int(&env_tmp, F2I100(ruuvi_ad->temperature));
-                    lv_subject_set_int(&env_hum, F2I100(ruuvi_ad->humidity));
-                    lvgl_release();
+                    lv_subject_force_int_prot(&env_tmp, F2I100(ruuvi_ad->temperature));
+                    lv_subject_force_int_prot(&env_hum, F2I100(ruuvi_ad->humidity));
+ 
                 }
                 if (strcasecmp(ruuvi_ad->address, RUUVI_OAT) == 0)
                 {
-                    lvgl_acquire();
-                    lv_subject_set_int(&oat_tmp, F2I100(ruuvi_ad->temperature));
-                    lv_subject_set_int(&oat_hum, F2I100(ruuvi_ad->humidity));
-                    lvgl_release();
+                    lv_subject_force_int_prot(&oat_tmp, F2I100(ruuvi_ad->temperature));
+                    lv_subject_force_int_prot(&oat_hum, F2I100(ruuvi_ad->humidity));
                 }
             }
             break;

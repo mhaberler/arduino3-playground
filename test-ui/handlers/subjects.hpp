@@ -26,3 +26,6 @@ typedef enum
 } sdcard_status_t;
 
 extern lv_subject_t oat_tmp, oat_hum, env_tmp, env_hum, wifi_status, battery_status, sdcard_status;
+
+void lv_subject_force_int(lv_subject_t *subject, int32_t value);
+void lv_subject_set_invalid(lv_subject_t *subject, int32_t value);

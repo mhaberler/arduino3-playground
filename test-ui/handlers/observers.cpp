@@ -1,9 +1,17 @@
 
 
 #include <lvgl.h>
+#include "lv_setup.hpp"
 #include "subjects.hpp"
 #include "defs.hpp"
 #include "ui_setters.hpp"
+#include "ui_events.h"
+#include "ui.h"
+
+extern lv_obj_t *ui_SdCardStatus;
+extern lv_obj_t *ui_BatteryStatus;
+extern lv_obj_t *ui_BLEStatus;
+extern lv_obj_t *ui_WifiStatus;
 
 static lv_timer_t *na_timer;
 
@@ -11,14 +19,16 @@ lv_subject_t oat_tmp, oat_hum, env_tmp, env_hum, wifi_status, battery_status, sd
 
 // ruuvi interval 60s
 
-static transient_subject_t oat_temp_fmt = {&oat_tmp, "OAT temp: %.1f°", "OAT temp: n/a", 65 * 1000, "foobar"};
-static transient_subject_t oat_hum_fmt = {&oat_hum, "OAT hum: %.1f%%", "OAT hum: n/a", 65 * 1000};
-static transient_subject_t env_temp_fmt = {&env_tmp, "env temp: %.1f°", "env temp: n/a", 65 * 1000};
-static transient_subject_t env_hum_fmt = {&env_hum, "env hum: %.1f%%", "env hum: n/a", 65 * 1000};
+static transient_subject_t oat_temp_fmt = {&oat_tmp, "%.1f°", "n/a", 65 * 1000, &ui_outsideTemp, 0};
+static transient_subject_t oat_hum_fmt = {&oat_hum, "%.1f%%", "n/a", 65 * 1000, &ui_outsideHum, 0};
+static transient_subject_t env_temp_fmt = {&env_tmp, "%.1f°", "n/a", 65 * 1000, &ui_envTemp, 0};
+static transient_subject_t env_hum_fmt = {&env_hum, "%.1f%%", "n/a", 65 * 1000, &ui_envHum, 0};
 
 static void value_available_cb(lv_subject_t *subject, lv_observer_t *observer)
 {
     transient_subject_t *tf = (transient_subject_t *)observer->user_data;
+    lv_obj_t **target = (lv_obj_t **)tf->user_data;
+
     tf->last_heard_ms = millis();
     int32_t current_value = lv_subject_get_int(subject);
     int32_t previous_value = lv_subject_get_previous_int(subject);
@@ -38,7 +48,15 @@ static void value_available_cb(lv_subject_t *subject, lv_observer_t *observer)
     }
     if (tf)
     {
-        LV_LOG_USER(current_value_valid ? tf->available : tf->unavailable, ITOD100(current_value));
+        const char *fmt = current_value_valid ? tf->available : tf->unavailable;
+        // LV_LOG_USER(fmt, ITOD100(current_value));
+        if (target == NULL)
+        {
+            return;
+        }
+        // lv_label_set_text_fmt(target, "%f", ITOD100(current_value));
+        lv_label_set_text_fmt(*target, fmt, ITOD100(current_value));
+        // lv_label_set_text(*target,"BLAH");
     }
     else
     {
@@ -67,6 +85,7 @@ static void expire_values(lv_timer_t *timer)
 void init_timer(void)
 {
     lv_timer_create(expire_values, 1000, NULL);
+    lv_obj_clear_state(ui_BLEStatus, LV_STATE_CHECKED);
 }
 
 void register_observers(void)
@@ -95,12 +114,21 @@ void subjects_init(void)
     lv_subject_init_int(&wifi_status, STATUS_WIFI_UNCONFIGURED);
     lv_subject_init_int(&battery_status, STATUS_BATTERY_DISCONNECTED);
     lv_subject_init_int(&sdcard_status, STATUS_SDCARD_MISSING);
-
 }
 
 void observer_init(void)
 {
+    LV_LOG_USER("---->");
+
     subjects_init();
     register_observers();
     init_timer();
+}
+
+extern bool main_screen_loaded;
+
+void mainScreenLoaded(lv_event_t *e)
+{
+    LV_LOG_USER("xxx");
+    main_screen_loaded = true;
 }

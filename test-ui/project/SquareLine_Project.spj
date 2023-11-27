@@ -1233,7 +1233,7 @@
                   {
                     "disabled": false,
                     "nid": -423828409,
-                    "strtype": "LABEL/EventHandler",
+                    "strtype": "_event/EventHandler",
                     "strval": "CLICKED",
                     "childs": [
                       {
@@ -4881,7 +4881,7 @@
           {
             "disabled": false,
             "nid": -460435358,
-            "strtype": "SCREEN/EventHandler",
+            "strtype": "_event/EventHandler",
             "strval": "GESTURE_RIGHT(GESTURE)",
             "childs": [
               {
@@ -4904,7 +4904,7 @@
               },
               {
                 "nid": 762387717,
-                "strtype": "_custom/action",
+                "strtype": "_event/action",
                 "strval": "CHANGE SCREEN",
                 "childs": [
                   {
@@ -4957,7 +4957,7 @@
           {
             "disabled": false,
             "nid": 684584629,
-            "strtype": "SCREEN/EventHandler",
+            "strtype": "_event/EventHandler",
             "strval": "GESTURE_LEFT(GESTURE)",
             "childs": [
               {
@@ -4980,7 +4980,7 @@
               },
               {
                 "nid": 436584240,
-                "strtype": "_custom/action",
+                "strtype": "_event/action",
                 "strval": "CHANGE SCREEN",
                 "childs": [
                   {
@@ -5032,26 +5032,64 @@
           },
           {
             "disabled": false,
-            "nid": -1191711709,
+            "nid": 1727257553,
             "strtype": "SCREEN/EventHandler",
             "strval": "SCREEN_LOADED",
             "childs": [
               {
-                "nid": 1733454331,
+                "nid": 1379394048,
                 "strtype": "_custom/name",
-                "strval": "mainLoaded",
+                "strval": "mainLoadedEv",
                 "InheritedType": 10
               },
               {
-                "nid": 1171175467,
+                "nid": 563272270,
                 "strtype": "_custom/condition_C",
                 "strval": "",
                 "InheritedType": 10
               },
               {
-                "nid": 1900396616,
+                "nid": -1256080559,
                 "strtype": "_custom/condition_P",
                 "strval": "",
+                "InheritedType": 10
+              },
+              {
+                "nid": 452290382,
+                "strtype": "_custom/action",
+                "strval": "CALL FUNCTION",
+                "childs": [
+                  {
+                    "nid": -886349315,
+                    "strtype": "CALL FUNCTION/Name",
+                    "strval": "CALL FUNCTION",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": -40612812,
+                    "strtype": "CALL FUNCTION/Call",
+                    "strval": "<{Function_name}>( event_struct )",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": 1188596717,
+                    "strtype": "CALL FUNCTION/CallC",
+                    "strval": "<{Function_name}>( e );",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": 1454951588,
+                    "strtype": "CALL FUNCTION/Function_name",
+                    "strval": "mainScreenLoaded",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": 678681825,
+                    "strtype": "CALL FUNCTION/Dont_export_function",
+                    "strval": "True",
+                    "InheritedType": 2
+                  }
+                ],
                 "InheritedType": 10
               }
             ],
@@ -6297,7 +6335,7 @@
           {
             "disabled": false,
             "nid": 1851812084,
-            "strtype": "SCREEN/EventHandler",
+            "strtype": "_event/EventHandler",
             "strval": "GESTURE_LEFT(GESTURE)",
             "childs": [
               {
@@ -6320,7 +6358,7 @@
               },
               {
                 "nid": 74328788,
-                "strtype": "_custom/action",
+                "strtype": "_event/action",
                 "strval": "CHANGE SCREEN",
                 "childs": [
                   {
@@ -6373,7 +6411,7 @@
           {
             "disabled": false,
             "nid": 1067293496,
-            "strtype": "SCREEN/EventHandler",
+            "strtype": "_event/EventHandler",
             "strval": "GESTURE_RIGHT(GESTURE)",
             "childs": [
               {
@@ -6396,7 +6434,7 @@
               },
               {
                 "nid": -360493412,
-                "strtype": "_custom/action",
+                "strtype": "_event/action",
                 "strval": "CHANGE SCREEN",
                 "childs": [
                   {
@@ -6449,7 +6487,7 @@
           {
             "disabled": false,
             "nid": 1085073630,
-            "strtype": "SCREEN/EventHandler",
+            "strtype": "_event/EventHandler",
             "strval": "CLICKED",
             "childs": [
               {
@@ -6472,7 +6510,7 @@
               },
               {
                 "nid": -2038170674,
-                "strtype": "_custom/action",
+                "strtype": "_event/action",
                 "strval": "CHANGE SCREEN",
                 "childs": [
                   {
@@ -6756,7 +6794,7 @@
               {
                 "disabled": false,
                 "nid": -790952242,
-                "strtype": "CHECKBOX/EventHandler",
+                "strtype": "_event/EventHandler",
                 "strval": "VALUE_CHANGED",
                 "childs": [
                   {
@@ -6779,7 +6817,7 @@
                   },
                   {
                     "nid": -326372633,
-                    "strtype": "_custom/action",
+                    "strtype": "_event/action",
                     "strval": "CALL FUNCTION",
                     "childs": [
                       {
@@ -7059,7 +7097,7 @@
               {
                 "disabled": false,
                 "nid": 1427341431,
-                "strtype": "SWITCH/EventHandler",
+                "strtype": "_event/EventHandler",
                 "strval": "VALUE_CHANGED",
                 "childs": [
                   {
@@ -7082,7 +7120,7 @@
                   },
                   {
                     "nid": 888223852,
-                    "strtype": "_custom/action",
+                    "strtype": "_event/action",
                     "strval": "CALL FUNCTION",
                     "childs": [
                       {
@@ -7355,7 +7393,7 @@
           {
             "disabled": false,
             "nid": 1722678855,
-            "strtype": "SCREEN/EventHandler",
+            "strtype": "_event/EventHandler",
             "strval": "GESTURE_LEFT(GESTURE)",
             "childs": [
               {
@@ -7378,7 +7416,7 @@
               },
               {
                 "nid": -1927093579,
-                "strtype": "_custom/action",
+                "strtype": "_event/action",
                 "strval": "CHANGE SCREEN",
                 "childs": [
                   {
@@ -7431,7 +7469,7 @@
           {
             "disabled": false,
             "nid": -585735461,
-            "strtype": "SCREEN/EventHandler",
+            "strtype": "_event/EventHandler",
             "strval": "GESTURE_RIGHT(GESTURE)",
             "childs": [
               {
@@ -7454,7 +7492,7 @@
               },
               {
                 "nid": -773167307,
-                "strtype": "_custom/action",
+                "strtype": "_event/action",
                 "strval": "CHANGE SCREEN",
                 "childs": [
                   {
@@ -7507,7 +7545,7 @@
           {
             "disabled": false,
             "nid": 1723852378,
-            "strtype": "SCREEN/EventHandler",
+            "strtype": "_event/EventHandler",
             "strval": "CLICKED",
             "childs": [
               {
@@ -7530,7 +7568,7 @@
               },
               {
                 "nid": 1342676822,
-                "strtype": "_custom/action",
+                "strtype": "_event/action",
                 "strval": "CHANGE SCREEN",
                 "childs": [
                   {
@@ -7620,7 +7658,7 @@
     "theme_color2": 0,
     "exportFolderPath": "/Users/mah/Ballon/src/BalloonWare/arduino3-playground/test-ui/export",
     "projectExportFolderPath": "/Users/mah/Ballon/src/BalloonWare/arduino3-playground/test-ui/project",
-    "backup_cnt": 78,
+    "backup_cnt": 83,
     "autosave_cnt": 0,
     "lvgl_version": "8.3.6",
     "callfuncsexport": "C_FILE",
