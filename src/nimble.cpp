@@ -66,6 +66,9 @@ class scanCallbacks : public BLEAdvertisedDeviceCallbacks
     {
         // Serial.printf("Advertised Device Result: %s \n",
         //               advertisedDevice->toString().c_str());
+        lvgl_acquire();
+        lv_subject_set_int(&ble_status, STATUS_BLE_TRAFFIC);
+        lvgl_release();
         if (advertisedDevice->haveManufacturerData())
         {
             const uint8_t *data =
@@ -119,6 +122,8 @@ class scanCallbacks : public BLEAdvertisedDeviceCallbacks
                     lv_subject_set_int(&env_tmp, F2I100(ruuvi_ad->temperature));
                     lv_subject_set_type(&env_hum, LV_SUBJECT_TYPE_INT);
                     lv_subject_set_int(&env_hum, F2I100(ruuvi_ad->humidity));
+                    lv_subject_set_int(&ble_status, STATUS_BLE_TRAFFIC_FOR_US);
+
                     lvgl_release();
                 }
                 if (strcasecmp(ruuvi_ad->address, RUUVI_OAT) == 0)
@@ -128,6 +133,8 @@ class scanCallbacks : public BLEAdvertisedDeviceCallbacks
                     lv_subject_set_int(&oat_tmp, F2I100(ruuvi_ad->temperature));
                     lv_subject_set_type(&oat_hum, LV_SUBJECT_TYPE_INT);
                     lv_subject_set_int(&oat_hum, F2I100(ruuvi_ad->humidity));
+                    lv_subject_set_int(&ble_status, STATUS_BLE_TRAFFIC_FOR_US);
+
                     lvgl_release();
                 }
                 if (strcasecmp(ruuvi_ad->address, "d4:15:5c:77:56:68") == 0)
@@ -137,6 +144,8 @@ class scanCallbacks : public BLEAdvertisedDeviceCallbacks
                     lv_subject_set_int(&oat_tmp, F2I100(ruuvi_ad->temperature));
                     lv_subject_set_type(&oat_hum, LV_SUBJECT_TYPE_INT);
                     lv_subject_set_int(&oat_hum, F2I100(ruuvi_ad->humidity));
+                    lv_subject_set_int(&ble_status, STATUS_BLE_TRAFFIC_FOR_US);
+
                     lvgl_release();
                 }
             }

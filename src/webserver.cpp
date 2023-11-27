@@ -6,8 +6,8 @@
 #include <WiFi.h>
 
 #include "lv_setup.hpp"
-#include "events.hpp"
-
+#include "subjects.hpp"
+#include "lv_util.h"
 
 static WiFiMulti wifiMulti;
 static WebServer *http_server;
@@ -166,25 +166,33 @@ static void wifi_event_cb(WiFiEvent_t event, WiFiEventInfo_t info)
   {
   case ARDUINO_EVENT_WIFI_READY:
     Serial.println("WiFi interface ready");
-
     break;
   case ARDUINO_EVENT_WIFI_SCAN_DONE:
     Serial.println("Completed scan for access points");
-    // lvgl_msg_send_prot(MSG_WIFI_SCAN_COMPLETE, NULL);
-
+    lvgl_acquire();
+    lv_subject_set_int(&wifi_status, STATUS_WIFI_SCAN_COMPLETE);
+    lvgl_release();
     break;
   case ARDUINO_EVENT_WIFI_STA_START:
     Serial.println("WiFi client started");
-    // lvgl_msg_send_prot(MSG_WIFI_STARTED, NULL);
+    lvgl_acquire();
+    lv_subject_set_int(&wifi_status, STATUS_WIFI_STARTED);
+    lvgl_release();
     break;
   case ARDUINO_EVENT_WIFI_STA_STOP:
     Serial.println("WiFi clients stopped");
     break;
   case ARDUINO_EVENT_WIFI_STA_CONNECTED:
     Serial.println("Connected to access point");
+    lvgl_acquire();
+    lv_subject_set_int(&wifi_status, STATUS_WIFI_CONNECTED);
+    lvgl_release();
     break;
   case ARDUINO_EVENT_WIFI_STA_DISCONNECTED:
     Serial.println("Disconnected from WiFi access point");
+    lvgl_acquire();
+    lv_subject_set_int(&wifi_status, STATUS_WIFI_DISCONNECTED);
+    lvgl_release();
     break;
   case ARDUINO_EVENT_WIFI_STA_AUTHMODE_CHANGE:
     Serial.println("Authentication mode of access point has changed");
@@ -192,15 +200,17 @@ static void wifi_event_cb(WiFiEvent_t event, WiFiEventInfo_t info)
   case ARDUINO_EVENT_WIFI_STA_GOT_IP:
     Serial.print("Obtained IP address: ");
     Serial.println(WiFi.localIP());
-    // lvgl_msg_send_prot(MSG_WIFI_CONNECTED, NULL);
+    lvgl_acquire();
+    lv_subject_set_int(&wifi_status, STATUS_WIFI_GOT_IP);
+    lvgl_release();
     start_net_services();
     break;
-
   case ARDUINO_EVENT_WIFI_STA_LOST_IP:
     Serial.println("Lost IP address and IP address is reset to 0");
-    // lvgl_msg_send_prot(MSG_WIFI_DISCONNECTED, NULL);
+    lvgl_acquire();
+    lv_subject_set_int(&wifi_status, STATUS_WIFI_LOST_IP);
+    lvgl_release();
     stop_net_services();
-
     break;
   case ARDUINO_EVENT_WPS_ER_SUCCESS:
     Serial.println("WiFi Protected Setup (WPS): succeeded in enrollee mode");

@@ -29,6 +29,7 @@ void ui_Main_screen_init(void);
 void ui_event_Main( lv_event_t * e);
 extern lv_obj_t *ui_Main;
 extern lv_obj_t *ui_mainHeader;
+extern lv_obj_t *ui_HTTPStatus;
 extern lv_obj_t *ui_SdCardStatus;
 extern lv_obj_t *ui_BatteryStatus;
 extern lv_obj_t *ui_BLEStatus;

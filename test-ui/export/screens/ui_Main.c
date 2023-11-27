@@ -22,6 +22,12 @@ lv_obj_set_flex_flow(ui_mainHeader,LV_FLEX_FLOW_ROW);
 lv_obj_set_flex_align(ui_mainHeader, LV_FLEX_ALIGN_END, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER);
 lv_obj_clear_flag( ui_mainHeader, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
+ui_HTTPStatus = lv_label_create(ui_mainHeader);
+lv_obj_set_width( ui_HTTPStatus, LV_SIZE_CONTENT);  /// 1
+lv_obj_set_height( ui_HTTPStatus, LV_SIZE_CONTENT);   /// 1
+lv_obj_set_align( ui_HTTPStatus, LV_ALIGN_CENTER );
+lv_label_set_text(ui_HTTPStatus,"?");
+
 ui_SdCardStatus = lv_label_create(ui_mainHeader);
 lv_obj_set_width( ui_SdCardStatus, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_SdCardStatus, LV_SIZE_CONTENT);   /// 1

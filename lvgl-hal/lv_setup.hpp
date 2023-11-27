@@ -2,7 +2,6 @@
 #define _LVGL_SETUP_H
 
 #include <lvgl.h>
-#include "lv_conf.h"
 
 void lv_begin(void);
 #ifdef __cplusplus
