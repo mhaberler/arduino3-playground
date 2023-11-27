@@ -25,9 +25,3 @@ typedef struct
     void *user_data;
     uint32_t last_heard_ms;
 } transient_subject_t;
-
-extern "C"
-{
-    void lv_subject_force_int_prot(lv_subject_t *subject, int32_t value);
-    void lv_subject_force_int(lv_subject_t *subject, int32_t value);
-}

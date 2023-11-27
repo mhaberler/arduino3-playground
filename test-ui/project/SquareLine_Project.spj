@@ -4881,6 +4881,7 @@
           {
             "disabled": false,
             "nid": -460435358,
+            "flags": 1048576,
             "strtype": "_event/EventHandler",
             "strval": "GESTURE_RIGHT(GESTURE)",
             "childs": [
@@ -4957,6 +4958,7 @@
           {
             "disabled": false,
             "nid": 684584629,
+            "flags": 1048576,
             "strtype": "_event/EventHandler",
             "strval": "GESTURE_LEFT(GESTURE)",
             "childs": [
@@ -5033,7 +5035,7 @@
           {
             "disabled": false,
             "nid": 1727257553,
-            "strtype": "SCREEN/EventHandler",
+            "strtype": "_event/EventHandler",
             "strval": "SCREEN_LOADED",
             "childs": [
               {
@@ -5056,7 +5058,7 @@
               },
               {
                 "nid": 452290382,
-                "strtype": "_custom/action",
+                "strtype": "_event/action",
                 "strval": "CALL FUNCTION",
                 "childs": [
                   {

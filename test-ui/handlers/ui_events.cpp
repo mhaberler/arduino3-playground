@@ -2,6 +2,7 @@
 #include "defs.hpp"
 #include "Esp.h"
 #include "ui.h"
+#include "lv_setup.hpp"
 
 extern "C"
 {
@@ -14,6 +15,9 @@ extern "C"
 
     void mainScreenLoaded(lv_event_t *e)
     {
+        extern bool main_loaded;
+
         LV_LOG_USER("xxx");
+        main_loaded = true;
     }
 }
