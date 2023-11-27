@@ -43,7 +43,7 @@ static void wifi_status_cb(lv_subject_t *subject, lv_observer_t *observer)
     LV_LOG_USER("status %ld", lv_subject_get_int(subject));
 }
 
-static void battery_status_cb(lv_subject_t *subject, lv_observer_t *observer)
+static void http_status_cb(lv_subject_t *subject, lv_observer_t *observer)
 {
     LV_LOG_USER("status %ld", lv_subject_get_int(subject));
 }
@@ -55,13 +55,42 @@ static void sdcard_status_cb(lv_subject_t *subject, lv_observer_t *observer)
 
 static void ble_status_cb(lv_subject_t *subject, lv_observer_t *observer)
 {
+
     LV_LOG_USER("status %ld", lv_subject_get_int(subject));
     // lv_obj_clear_state(ui_BLEStatus, LV_STATE_CHECKED);
 }
 
-static void http_status_cb(lv_subject_t *subject, lv_observer_t *observer)
+static void battery_status_cb(lv_subject_t *subject, lv_observer_t *observer)
 {
-    LV_LOG_USER("status %ld", lv_subject_get_int(subject));
+    int32_t batval = lv_subject_get_int(subject);
+    LV_LOG_USER("status %ld", batval);
+    lv_obj_t *target = (lv_obj_t *)lv_observer_get_target(observer);
+
+    if (batval < 20)
+    {
+        lv_obj_set_style_text_color(target, lv_palette_main(LV_PALETTE_RED), LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_label_set_text(target, LV_SYMBOL_BATTERY_EMPTY);
+    }
+    else if (batval < 50)
+    {
+        lv_obj_set_style_text_color(target, lv_palette_main(LV_PALETTE_RED), LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_label_set_text(target, LV_SYMBOL_BATTERY_1);
+    }
+    else if (batval < 70)
+    {
+        lv_obj_set_style_text_color(target, lv_palette_main(LV_PALETTE_DEEP_ORANGE), LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_label_set_text(target, LV_SYMBOL_BATTERY_2);
+    }
+    else if (batval < 90)
+    {
+        lv_obj_set_style_text_color(target, lv_palette_main(LV_PALETTE_GREEN), LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_label_set_text(target, LV_SYMBOL_BATTERY_3);
+    }
+    else
+    {
+        lv_obj_set_style_text_color(target, lv_palette_main(LV_PALETTE_GREEN), LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_label_set_text(target, LV_SYMBOL_BATTERY_FULL);
+    }
 }
 
 static void expire_fmt(uint32_t now, transient_subject_t *fmt)
@@ -83,6 +112,7 @@ static void expire_values(lv_timer_t *timer)
     expire_fmt(now, &env_temp_fmt);
     expire_fmt(now, &env_hum_fmt);
     lv_subject_set_int(&ble_status, STATUS_BLE_IDLE);
+    lv_subject_set_int(&wifi_status, STATUS_HTTP_IDLE);
 }
 
 static void init_value_expiry(void)
@@ -96,11 +126,11 @@ static void register_observers(void)
     lv_subject_add_observer(&oat_hum, value_available_cb, &oat_hum_fmt);
     lv_subject_add_observer(&env_tmp, value_available_cb, &env_temp_fmt);
     lv_subject_add_observer(&env_hum, value_available_cb, &env_hum_fmt);
-    lv_subject_add_observer(&wifi_status, wifi_status_cb, ui_WifiStatus);
-    lv_subject_add_observer(&battery_status, battery_status_cb, ui_BatteryStatus);
-    lv_subject_add_observer(&sdcard_status, sdcard_status_cb, ui_SdCardStatus);
-    lv_subject_add_observer(&ble_status, ble_status_cb, ui_BLEStatus);
-    lv_subject_add_observer(&http_status, http_status_cb, ui_HTTPStatus);
+    lv_subject_add_observer_with_target(&wifi_status, wifi_status_cb, ui_WifiStatus, NULL);
+    lv_subject_add_observer_with_target(&battery_status, battery_status_cb, ui_BatteryStatus, NULL);
+    lv_subject_add_observer_with_target(&sdcard_status, sdcard_status_cb, ui_SdCardStatus, NULL);
+    lv_subject_add_observer_with_target(&ble_status, ble_status_cb, ui_BLEStatus, NULL);
+    lv_subject_add_observer_with_target(&http_status, http_status_cb, ui_HTTPStatus, NULL);
 }
 
 static void subjects_init(void)

@@ -70,11 +70,15 @@ static void start_net_services(void)
     http_server->onNotFound(handleNotFound);
     http_server->begin();
     Serial.printf("HTTP server started\n");
+    lvgl_acquire();
+    lv_subject_set_int(&http_status, STATUS_HTTP_IDLE);
+    lvgl_release();
   }
 }
 
 static void stop_net_services(void)
 {
+
   if (http_server)
   {
     delete http_server;
@@ -83,10 +87,17 @@ static void stop_net_services(void)
   {
     delete mdns_responder;
   }
+  lvgl_acquire();
+  lv_subject_set_int(&http_status, STATUS_HTTP_STOPPED);
+  lvgl_release();
 }
 
 static void drawGraph(void)
 {
+  lvgl_acquire();
+  lv_subject_set_int(&http_status, STATUS_HTTP_ACTIVE);
+  lvgl_release();
+
   String out = "";
   char temp[100];
   out += "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" "
@@ -112,6 +123,9 @@ static void drawGraph(void)
 
 static void handleRoot(void)
 {
+  lvgl_acquire();
+  lv_subject_set_int(&http_status, STATUS_HTTP_ACTIVE);
+  lvgl_release();
 
   char temp[400];
   int sec = millis() / 1000;
@@ -140,6 +154,9 @@ static void handleRoot(void)
 
 static void handleNotFound(void)
 {
+  lvgl_acquire();
+  lv_subject_set_int(&http_status, STATUS_HTTP_ACTIVE);
+  lvgl_release();
   String message = "File Not Found\n\n";
   message += "URI: ";
   message += http_server->uri();
