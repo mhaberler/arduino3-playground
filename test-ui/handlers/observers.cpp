@@ -15,24 +15,25 @@ extern lv_obj_t *ui_WifiStatus;
 
 static lv_timer_t *na_timer;
 
-lv_subject_t oat_tmp, oat_hum, env_tmp, env_hum, wifi_color, http_status, sdcard_status, ble_color;
+lv_subject_t oat_temp, oat_hum, env_temp, env_hum, wifi_color, http_status, sdcard_status, ble_color;
 lv_subject_t battery_all, battery_color, battery_label;
 
-static transient_subject_t oat_temp_fmt = {&oat_tmp, "%.1f°", "n/a", RUUVI_PERIOD, 0};
-static transient_subject_t oat_hum_fmt = {&oat_hum, "%.1f%%", "n/a", RUUVI_PERIOD, 0};
-static transient_subject_t env_temp_fmt = {&env_tmp, "%.1f°", "n/a", RUUVI_PERIOD, 0};
-static transient_subject_t env_hum_fmt = {&env_hum, "%.1f%%", "n/a", RUUVI_PERIOD, 0};
-
-static void value_available_cb(lv_subject_t *subject, lv_observer_t *observer)
+static void ruuvi_report_cb(lv_subject_t *subject, lv_observer_t *observer)
 {
-    transient_subject_t *tf = (transient_subject_t *)observer->user_data;
-    lv_obj_t *target = (lv_obj_t *)lv_observer_get_target(observer);
-
-    tf->last_heard_ms = millis();
-    bool valid = lv_subject_get_type(subject) == LV_SUBJECT_TYPE_INT;
-
-    const char *fmt = valid ? tf->available : tf->unavailable;
+    const char *fmt = (const char *)observer->user_data;
+    uint32_t last_heard = (uint32_t)subject->user_data;
     int32_t value = lv_subject_get_int(subject);
+
+    if ((last_heard == 0) || (millis() - last_heard > RUUVI_PERIOD))
+    {
+        fmt = NOT_AVAILABLE;
+    }
+    else
+    {
+        if (lv_subject_get_previous_int(subject) == value) // no change
+            return;
+    }
+    lv_obj_t *target = (lv_obj_t *)lv_observer_get_target(observer);
     // LV_LOG_USER(fmt, ITOD100(value));
     lv_label_set_text_fmt(target, fmt, ITOD100(value));
 }
@@ -68,29 +69,14 @@ static void battery_group_cb(lv_subject_t *subject, lv_observer_t *observer)
 
     if (label != lv_subject_get_previous_pointer(subject_label))
         lv_label_set_text(target, label);
-
-}
-
-static void expire_fmt(uint32_t now, transient_subject_t *fmt)
-{
-    if (fmt->subject == NULL)
-        return;
-    if (now > (fmt->last_heard_ms + fmt->ttl_ms))
-    {
-        lv_subject_set_type(fmt->subject, LV_SUBJECT_TYPE_NONE);
-        lv_subject_notify(fmt->subject);
-    }
 }
 
 static void expire_values(lv_timer_t *timer)
 {
-    uint32_t now = millis();
-    expire_fmt(now, &oat_temp_fmt);
-    expire_fmt(now, &oat_hum_fmt);
-    expire_fmt(now, &env_temp_fmt);
-    expire_fmt(now, &env_hum_fmt);
-    // lv_subject_set_color(&ble_color, STATUS_BLE_IDLE);
-    // lv_subject_set_color(&wifi_color, lv_subject_get_previous_color(&wifi_color));
+    lv_subject_notify(&oat_temp);
+    lv_subject_notify(&oat_hum);
+    lv_subject_notify(&env_temp);
+    lv_subject_notify(&env_hum);
 }
 
 static void init_value_expiry(void)
@@ -100,10 +86,11 @@ static void init_value_expiry(void)
 
 static void register_observers(void)
 {
-    lv_subject_add_observer_with_target(&oat_tmp, value_available_cb, ui_outsideTemp, &oat_temp_fmt);
-    lv_subject_add_observer_with_target(&oat_hum, value_available_cb, ui_outsideHum, &oat_hum_fmt);
-    lv_subject_add_observer_with_target(&env_tmp, value_available_cb, ui_envTemp, &env_temp_fmt);
-    lv_subject_add_observer_with_target(&env_hum, value_available_cb, ui_envHum, &env_hum_fmt);
+    lv_subject_add_observer_with_target(&oat_temp, ruuvi_report_cb, ui_outsideTemp, "%.1f°");
+    lv_subject_add_observer_with_target(&oat_hum, ruuvi_report_cb, ui_outsideHum, "%.1f%%");
+    lv_subject_add_observer_with_target(&env_temp, ruuvi_report_cb, ui_envTemp, "%.1f°");
+    lv_subject_add_observer_with_target(&env_hum, ruuvi_report_cb, ui_envHum, "%.1f%%");
+
     lv_subject_add_observer_with_target(&wifi_color, set_color_cb, ui_WifiStatus, NULL);
 
     lv_subject_add_observer_with_target(&sdcard_status, sdcard_status_cb, ui_SdCardStatus, NULL);
@@ -114,10 +101,10 @@ static void register_observers(void)
 
 static void subjects_init(void)
 {
-    lv_subject_init_none(&oat_tmp);
-    lv_subject_init_none(&oat_hum);
-    lv_subject_init_none(&env_tmp);
-    lv_subject_init_none(&env_hum);
+    lv_subject_init_int(&oat_temp, 0);
+    lv_subject_init_int(&oat_hum, 0);
+    lv_subject_init_int(&env_temp, 0);
+    lv_subject_init_int(&env_hum, 0);
 
     lv_subject_init_color(&wifi_color, STATUS_WIFI_UNCONFIGURED);
     lv_subject_init_color(&ble_color, STATUS_BLE_IDLE);

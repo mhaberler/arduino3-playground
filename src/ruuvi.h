@@ -5,6 +5,7 @@
 // ruuvi reporting interval is 60s
 #define RUUVI_PERIOD ( 62 * 1000)
 
+
 typedef struct
 {
     double temperature;

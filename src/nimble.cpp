@@ -128,12 +128,14 @@ class scanCallbacks : public BLEAdvertisedDeviceCallbacks
                 // dd:79:c6:8f:bd:a2 oat hum
                 // e6:91:df:7b:e5:4d env
                 // d4:15:5c:77:56:68 test weiss
+                uint32_t now = millis();
+
                 if (strcasecmp(ruuvi_ad->address, RUUVI_ENV) == 0)
                 {
                     lvgl_acquire();
-                    lv_subject_set_type(&env_tmp, LV_SUBJECT_TYPE_INT);
-                    lv_subject_set_int(&env_tmp, F2I100(ruuvi_ad->temperature));
-                    lv_subject_set_type(&env_hum, LV_SUBJECT_TYPE_INT);
+                    lv_subject_set_user_data(&env_temp, (void *)now);
+                    lv_subject_set_int(&env_temp, F2I100(ruuvi_ad->temperature));
+                    lv_subject_set_user_data(&env_hum, (void *)now);
                     lv_subject_set_int(&env_hum, F2I100(ruuvi_ad->humidity));
                     lv_subject_set_color(&ble_color, STATUS_BLE_TRAFFIC_FOR_US);
 
@@ -143,10 +145,12 @@ class scanCallbacks : public BLEAdvertisedDeviceCallbacks
                 if (strcasecmp(ruuvi_ad->address, RUUVI_OAT) == 0)
                 {
                     lvgl_acquire();
-                    lv_subject_set_type(&oat_tmp, LV_SUBJECT_TYPE_INT);
-                    lv_subject_set_int(&oat_tmp, F2I100(ruuvi_ad->temperature));
-                    lv_subject_set_type(&oat_hum, LV_SUBJECT_TYPE_INT);
+                    lv_subject_set_user_data(&oat_temp, (void *)now);
+                    lv_subject_set_int(&oat_temp, F2I100(ruuvi_ad->temperature));
+
+                    lv_subject_set_user_data(&oat_hum, (void *)now);
                     lv_subject_set_int(&oat_hum, F2I100(ruuvi_ad->humidity));
+
                     lv_subject_set_color(&ble_color, STATUS_BLE_TRAFFIC_FOR_US);
 
                     lvgl_release();
@@ -155,10 +159,12 @@ class scanCallbacks : public BLEAdvertisedDeviceCallbacks
                 if (strcasecmp(ruuvi_ad->address, "d4:15:5c:77:56:68") == 0)
                 {
                     lvgl_acquire();
-                    lv_subject_set_type(&oat_tmp, LV_SUBJECT_TYPE_INT);
-                    lv_subject_set_int(&oat_tmp, F2I100(ruuvi_ad->temperature));
-                    lv_subject_set_type(&oat_hum, LV_SUBJECT_TYPE_INT);
+                    lv_subject_set_user_data(&oat_temp, (void *)now);
+                    lv_subject_set_int(&oat_temp, F2I100(ruuvi_ad->temperature));
+
+                    lv_subject_set_user_data(&oat_hum, (void *)now);
                     lv_subject_set_int(&oat_hum, F2I100(ruuvi_ad->humidity));
+
                     lv_subject_set_color(&ble_color, STATUS_BLE_TRAFFIC_FOR_US);
 
                     lvgl_release();

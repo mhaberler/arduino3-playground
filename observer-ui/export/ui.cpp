@@ -6,13 +6,13 @@
 
 static lv_timer_t *na_timer;
 
-lv_subject_t oat_tmp, oat_hum, env_tmp, env_hum;
+lv_subject_t oat_temp, oat_hum, env_temp, env_hum;
 
 // ruuvi interval 60s
 
-static transient_subject_t oat_temp_fmt = {&oat_tmp, "OAT temp: %.1f°", "OAT temp: n/a", 65 * 1000, "foobar"};
+static transient_subject_t oat_temp_fmt = {&oat_temp, "OAT temp: %.1f°", "OAT temp: n/a", 65 * 1000, "foobar"};
 static transient_subject_t oat_hum_fmt = {&oat_hum, "OAT hum: %.1f%%", "OAT hum: n/a", 65 * 1000};
-static transient_subject_t env_temp_fmt = {&env_tmp, "env temp: %.1f°", "env temp: n/a", 65 * 1000};
+static transient_subject_t env_temp_fmt = {&env_temp, "env temp: %.1f°", "env temp: n/a", 65 * 1000};
 static transient_subject_t env_hum_fmt = {&env_hum, "env hum: %.1f%%", "env hum: n/a", 65 * 1000};
 
 static void value_available_cb(lv_subject_t *subject, lv_observer_t *observer)
@@ -70,23 +70,23 @@ void init_timer(void)
 
 void register_observers(void)
 {
-    lv_subject_add_observer(&oat_tmp, value_available_cb, &oat_temp_fmt);
+    lv_subject_add_observer(&oat_temp, value_available_cb, &oat_temp_fmt);
     lv_subject_add_observer(&oat_hum, value_available_cb, &oat_hum_fmt);
-    lv_subject_add_observer(&env_tmp, value_available_cb, &env_temp_fmt);
+    lv_subject_add_observer(&env_temp, value_available_cb, &env_temp_fmt);
     lv_subject_add_observer(&env_hum, value_available_cb, &env_hum_fmt);
 }
 
 void subjects_init(void)
 {
     // use INT32_MAX as "not available"
-    lv_subject_init_int(&oat_tmp, INT32_MAX);
-    oat_tmp.prev_value.num = INT32_MAX; // invalidate the previous value
+    lv_subject_init_int(&oat_temp, INT32_MAX);
+    oat_temp.prev_value.num = INT32_MAX; // invalidate the previous value
 
     lv_subject_init_int(&oat_hum, INT32_MAX);
     oat_hum.prev_value.num = INT32_MAX;
 
-    lv_subject_init_int(&env_tmp, INT32_MAX);
-    env_tmp.prev_value.num = INT32_MAX;
+    lv_subject_init_int(&env_temp, INT32_MAX);
+    env_temp.prev_value.num = INT32_MAX;
 
     lv_subject_init_int(&env_hum, INT32_MAX);
     env_hum.prev_value.num = INT32_MAX;

@@ -30,5 +30,5 @@ typedef enum
 #define STATUS_BLE_TRAFFIC lv_palette_main(LV_PALETTE_BLUE_GREY)
 #define STATUS_BLE_TRAFFIC_FOR_US lv_palette_main(LV_PALETTE_CYAN)
 
-extern lv_subject_t oat_tmp, oat_hum, env_tmp, env_hum, wifi_color,  sdcard_status, ble_color;
+extern lv_subject_t oat_temp, oat_hum, env_temp, env_hum, wifi_color,  sdcard_status, ble_color;
 extern lv_subject_t battery_all, battery_color, battery_label;

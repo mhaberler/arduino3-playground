@@ -296,8 +296,8 @@ lv_observer_t * lv_subject_add_observer_obj(lv_subject_t * subject, lv_observer_
     return observer;
 }
 
-lv_observer_t * lv_subject_add_observer_with_target(lv_subject_t * subject, lv_observer_cb_t cb, void * target,
-                                                    void * user_data)
+lv_observer_t * lv_subject_add_observer_with_target(lv_subject_t * subject, lv_observer_cb_t cb, const void * target,
+                                                   const void * user_data)
 {
     lv_observer_t * observer = _lv_ll_ins_tail(&(subject->subs_ll));
     LV_ASSERT_MALLOC(observer);

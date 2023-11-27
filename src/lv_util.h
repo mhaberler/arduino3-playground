@@ -17,6 +17,17 @@ extern "C"
     void lvgl_acquire(void);
     void lvgl_release(void);
 
+#if LV_USE_USER_DATA
+    static inline void lv_subject_set_user_data(lv_subject_t *subject, void *user_data)
+    {
+        subject->user_data = user_data;
+    }
+    
+    static inline void *lv_subject_get_user_data(lv_subject_t *subject)
+    {
+        return subject->user_data;
+    }
+#endif
     void lv_subject_set_type(lv_subject_t *subject, lv_subject_type_t type);
     lv_subject_type_t lv_subject_get_type(lv_subject_t *subject);
     void lv_subject_init_none(lv_subject_t *subject);

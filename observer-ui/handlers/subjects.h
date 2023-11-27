@@ -2,4 +2,4 @@
 
 #include "defs.h"
 
-extern lv_subject_t oat_tmp, oat_hum, env_tmp, env_hum;
+extern lv_subject_t oat_temp, oat_hum, env_temp, env_hum;

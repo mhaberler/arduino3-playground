@@ -15,12 +15,4 @@
 
 #define F2I100(x) ((int)(((double)x) * 100.0))
 #define ITOD100(x) ((double)(x) / 100.0)
-
-typedef struct
-{
-    lv_subject_t *subject;
-    const char *available;
-    const char *unavailable;
-    uint32_t ttl_ms;
-    uint32_t last_heard_ms;
-} transient_subject_t;
+#define NOT_AVAILABLE "n/a"
