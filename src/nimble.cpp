@@ -3,12 +3,12 @@
 #include "defs.hpp"
 #include "NimBLEDevice.h"
 #include "subjects.hpp"
-#include "messages.hpp"
+#include "ruuvi.h"
 #include "lv_util.h"
 
-int scanTime = 60 * 1000; // In milliseconds, 0 = scan forever
-BLEScan *pBLEScan;
-bool active = false;
+static int scanTime = 60 * 1000; // In milliseconds, 0 = scan forever
+static BLEScan *pBLEScan;
+static bool active = false;
 
 static ruuviAd_t ruuvi_report;
 
@@ -73,16 +73,12 @@ class scanCallbacks : public BLEAdvertisedDeviceCallbacks
             size_t len = advertisedDevice->getManufacturerData().length();
 
             uint16_t mfid = data[1] << 8 | data[0];
-
-            // HexDump(Serial, (void *)data, len);
-
             switch (mfid)
             {
 
             case 0x0499:
             {
                 ruuviAd_t *ruuvi_ad = &ruuvi_report;
-                // https://mybeacons.info/packetFormats.html
                 if (data[2] == 0x3 && len > 15)
                 {
                     DecodeV3(data, ruuvi_ad);
@@ -121,7 +117,7 @@ class scanCallbacks : public BLEAdvertisedDeviceCallbacks
                     lvgl_acquire();
                     lv_subject_set_type(&env_tmp, LV_SUBJECT_TYPE_INT);
                     lv_subject_set_int(&env_tmp, F2I100(ruuvi_ad->temperature));
-                    lv_subject_set_type(&env_tmp, LV_SUBJECT_TYPE_INT);
+                    lv_subject_set_type(&env_hum, LV_SUBJECT_TYPE_INT);
                     lv_subject_set_int(&env_hum, F2I100(ruuvi_ad->humidity));
                     lvgl_release();
                 }
@@ -130,7 +126,7 @@ class scanCallbacks : public BLEAdvertisedDeviceCallbacks
                     lvgl_acquire();
                     lv_subject_set_type(&oat_tmp, LV_SUBJECT_TYPE_INT);
                     lv_subject_set_int(&oat_tmp, F2I100(ruuvi_ad->temperature));
-                    lv_subject_set_type(&oat_tmp, LV_SUBJECT_TYPE_INT);
+                    lv_subject_set_type(&oat_hum, LV_SUBJECT_TYPE_INT);
                     lv_subject_set_int(&oat_hum, F2I100(ruuvi_ad->humidity));
                     lvgl_release();
                 }

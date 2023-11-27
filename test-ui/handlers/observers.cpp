@@ -1,5 +1,3 @@
-
-
 #include <lvgl.h>
 #include "lv_setup.hpp"
 #include "subjects.hpp"
@@ -8,6 +6,7 @@
 #include "ui_events.h"
 #include "ui.h"
 #include "lv_util.h"
+#include "ruuvi.h"
 
 extern lv_obj_t *ui_SdCardStatus;
 extern lv_obj_t *ui_BatteryStatus;
@@ -18,12 +17,10 @@ static lv_timer_t *na_timer;
 
 lv_subject_t oat_tmp, oat_hum, env_tmp, env_hum, wifi_status, battery_status, sdcard_status, ble_status;
 
-// ruuvi interval 60s
-
-static transient_subject_t oat_temp_fmt = {&oat_tmp, "%.1f°", "n/a", 65 * 1000, &ui_outsideTemp, 0};
-static transient_subject_t oat_hum_fmt = {&oat_hum, "%.1f%%", "n/a", 65 * 1000, &ui_outsideHum, 0};
-static transient_subject_t env_temp_fmt = {&env_tmp, "%.1f°", "n/a", 65 * 1000, &ui_envTemp, 0};
-static transient_subject_t env_hum_fmt = {&env_hum, "%.1f%%", "n/a", 65 * 1000, &ui_envHum, 0};
+static transient_subject_t oat_temp_fmt = {&oat_tmp, "%.1f°", "n/a", RUUVI_PERIOD, &ui_outsideTemp, 0};
+static transient_subject_t oat_hum_fmt = {&oat_hum, "%.1f%%", "n/a", RUUVI_PERIOD, &ui_outsideHum, 0};
+static transient_subject_t env_temp_fmt = {&env_tmp, "%.1f°", "n/a", RUUVI_PERIOD, &ui_envTemp, 0};
+static transient_subject_t env_hum_fmt = {&env_hum, "%.1f%%", "n/a", RUUVI_PERIOD, &ui_envHum, 0};
 
 static void value_available_cb(lv_subject_t *subject, lv_observer_t *observer)
 {
@@ -90,41 +87,24 @@ static void expire_values(lv_timer_t *timer)
     expire_fmt(now, &env_hum_fmt);
 }
 
-void init_value_expiry(void)
+static void init_value_expiry(void)
 {
     lv_timer_create(expire_values, 1000, NULL);
 }
 
-void register_observers(void)
+static void register_observers(void)
 {
-    LV_ASSERT_MEM_INTEGRITY();
-
     lv_subject_add_observer(&oat_tmp, value_available_cb, &oat_temp_fmt);
-    LV_ASSERT_MEM_INTEGRITY();
-
     lv_subject_add_observer(&oat_hum, value_available_cb, &oat_hum_fmt);
-    LV_ASSERT_MEM_INTEGRITY();
-
     lv_subject_add_observer(&env_tmp, value_available_cb, &env_temp_fmt);
-    LV_ASSERT_MEM_INTEGRITY();
-
     lv_subject_add_observer(&env_hum, value_available_cb, &env_hum_fmt);
-    LV_ASSERT_MEM_INTEGRITY();
-
     lv_subject_add_observer(&wifi_status, wifi_status_cb, ui_WifiStatus);
-    LV_ASSERT_MEM_INTEGRITY();
-
     lv_subject_add_observer(&battery_status, battery_status_cb, ui_BatteryStatus);
-    LV_ASSERT_MEM_INTEGRITY();
-
     lv_subject_add_observer(&sdcard_status, sdcard_status_cb, ui_SdCardStatus);
-    LV_ASSERT_MEM_INTEGRITY();
-
     lv_subject_add_observer(&ble_status, ble_status_cb, ui_BLEStatus);
-    LV_ASSERT_MEM_INTEGRITY();
 }
 
-void subjects_init(void)
+static void subjects_init(void)
 {
     lv_subject_init_none(&oat_tmp);
     lv_subject_init_none(&oat_hum);
@@ -137,16 +117,6 @@ void subjects_init(void)
 }
 
 void lv_observer_init(void)
-{
-    lvgl_acquire();
-    subjects_init();
-
-    register_observers();
-    init_value_expiry();
-    lvgl_release();
-}
-
-void lv_observer_register(void)
 {
     lvgl_acquire();
     subjects_init();

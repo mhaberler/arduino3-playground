@@ -13,7 +13,7 @@
 #include <Arduino.h>
 #endif
 
-#define F2I100(x) ((int)((x) * 100.0))
+#define F2I100(x) ((int)(((double)x) * 100.0))
 #define ITOD100(x) ((double)(x) / 100.0)
 
 typedef struct

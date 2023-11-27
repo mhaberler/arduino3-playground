@@ -19,3 +19,8 @@ void lv_subject_init_none(lv_subject_t *subject)
     subject->prev_value.num = 0;
     _lv_ll_init(&(subject->subs_ll), sizeof(lv_observer_t));
 }
+
+void lvgl_assert_fail(void)
+{
+    LV_LOG_USER("-------> ASSERT FAIL");
+}

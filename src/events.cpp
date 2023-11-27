@@ -5,7 +5,6 @@
 #include <lvgl.h>
 
 #include "events.hpp"
-#include "messages.hpp"
 #include "ui.h"
 #include "esp_log.h"
 
