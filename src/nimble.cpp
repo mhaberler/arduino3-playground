@@ -115,13 +115,18 @@ class scanCallbacks : public BLEAdvertisedDeviceCallbacks
 
                 // dd:79:c6:8f:bd:a2 oat hum
                 // e6:91:df:7b:e5:4d env
+                // d4:15:5c:77:56:68 test weiss
                 if (strcasecmp(ruuvi_ad->address, RUUVI_ENV) == 0)
                 {
                     lv_subject_force_int_prot(&env_tmp, F2I100(ruuvi_ad->temperature));
                     lv_subject_force_int_prot(&env_hum, F2I100(ruuvi_ad->humidity));
- 
                 }
                 if (strcasecmp(ruuvi_ad->address, RUUVI_OAT) == 0)
+                {
+                    lv_subject_force_int_prot(&oat_tmp, F2I100(ruuvi_ad->temperature));
+                    lv_subject_force_int_prot(&oat_hum, F2I100(ruuvi_ad->humidity));
+                }
+                if (strcasecmp(ruuvi_ad->address, "d4:15:5c:77:56:68") == 0)
                 {
                     lv_subject_force_int_prot(&oat_tmp, F2I100(ruuvi_ad->temperature));
                     lv_subject_force_int_prot(&oat_hum, F2I100(ruuvi_ad->humidity));
