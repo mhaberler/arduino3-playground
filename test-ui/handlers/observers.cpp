@@ -27,7 +27,9 @@ static transient_subject_t env_hum_fmt = {&env_hum, "%.1f%%", "n/a", 65 * 1000, 
 static void value_available_cb(lv_subject_t *subject, lv_observer_t *observer)
 {
     transient_subject_t *tf = (transient_subject_t *)observer->user_data;
-    lv_obj_t **target = (lv_obj_t **)tf->user_data;
+    if (tf->user_data == NULL)
+        return; // object not initialized (yet)
+    lv_obj_t *target = *(lv_obj_t **)tf->user_data;
 
     tf->last_heard_ms = millis();
     int32_t current_value = lv_subject_get_int(subject);
@@ -49,18 +51,8 @@ static void value_available_cb(lv_subject_t *subject, lv_observer_t *observer)
     if (tf)
     {
         const char *fmt = current_value_valid ? tf->available : tf->unavailable;
-        // LV_LOG_USER(fmt, ITOD100(current_value));
-        if (target == NULL)
-        {
-            return;
-        }
-        // lv_label_set_text_fmt(target, "%f", ITOD100(current_value));
-        lv_label_set_text_fmt(*target, fmt, ITOD100(current_value));
-        // lv_label_set_text(*target,"BLAH");
-    }
-    else
-    {
-        LV_LOG_USER("missing format");
+        LV_LOG_USER(fmt, ITOD100(current_value));
+        lv_label_set_text_fmt(target, fmt, ITOD100(current_value));
     }
 }
 
