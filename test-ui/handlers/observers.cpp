@@ -15,7 +15,7 @@ extern lv_obj_t *ui_WifiStatus;
 
 static lv_timer_t *na_timer;
 
-lv_subject_t oat_tmp, oat_hum, env_tmp, env_hum, wifi_status, http_status, battery_status, sdcard_status, ble_status;
+lv_subject_t oat_tmp, oat_hum, env_tmp, env_hum, wifi_color, http_status, battery_status, sdcard_status, ble_color;
 
 static transient_subject_t oat_temp_fmt = {&oat_tmp, "%.1f°", "n/a", RUUVI_PERIOD, 0};
 static transient_subject_t oat_hum_fmt = {&oat_hum, "%.1f%%", "n/a", RUUVI_PERIOD, 0};
@@ -38,37 +38,14 @@ static void value_available_cb(lv_subject_t *subject, lv_observer_t *observer)
     lv_label_set_text_fmt(target, fmt, ITOD100(value));
 }
 
-static void wifi_status_cb(lv_subject_t *subject, lv_observer_t *observer)
+static void set_color_cb(lv_subject_t *subject, lv_observer_t *observer)
 {
-    int32_t v = lv_subject_get_int(subject);
-    if (v == lv_subject_get_previous_int(subject))
-        return;
-    LV_LOG_USER("status %ld", v);
+    lv_color_t c = lv_subject_get_color(subject);
+    // if (c == lv_subject_get_previous_color(subject))
+    //     return;
+
     lv_obj_t *target = (lv_obj_t *)lv_observer_get_target(observer);
-
-    switch (v)
-    {
-    case STATUS_WIFI_UNCONFIGURED:
-        lv_obj_set_style_text_color(target, lv_palette_main(LV_PALETTE_AMBER), LV_PART_MAIN | LV_STATE_DEFAULT);
-        break;
-    case STATUS_WIFI_SCAN_COMPLETE:
-        lv_obj_set_style_text_color(target, lv_palette_main(LV_PALETTE_GREEN), LV_PART_MAIN | LV_STATE_DEFAULT);
-        break;
-    case STATUS_WIFI_GOT_IP:
-        lv_obj_set_style_text_color(target, lv_palette_main(LV_PALETTE_CYAN), LV_PART_MAIN | LV_STATE_DEFAULT);
-        break;
-    case STATUS_WIFI_DISCONNECTED:
-        lv_obj_set_style_text_color(target, lv_palette_main(LV_PALETTE_YELLOW), LV_PART_MAIN | LV_STATE_DEFAULT);
-    default:;
-    }
-}
-
-static void http_status_cb(lv_subject_t *subject, lv_observer_t *observer)
-{
-    int32_t v = lv_subject_get_int(subject);
-    if (v == lv_subject_get_previous_int(subject))
-        return;
-    LV_LOG_USER("status %ld", v);
+    lv_obj_set_style_text_color(target, c, LV_PART_MAIN | LV_STATE_DEFAULT);
 }
 
 static void sdcard_status_cb(lv_subject_t *subject, lv_observer_t *observer)
@@ -77,29 +54,6 @@ static void sdcard_status_cb(lv_subject_t *subject, lv_observer_t *observer)
     if (v == lv_subject_get_previous_int(subject))
         return;
     LV_LOG_USER("status %ld", lv_subject_get_int(subject));
-}
-
-static void ble_status_cb(lv_subject_t *subject, lv_observer_t *observer)
-{
-    int32_t v = lv_subject_get_int(subject);
-    if (v == lv_subject_get_previous_int(subject))
-        return;
-    LV_LOG_USER("status %ld", v);
-    lv_obj_t *target = (lv_obj_t *)lv_observer_get_target(observer);
-
-    switch (v)
-    {
-    case STATUS_BLE_IDLE:
-        lv_obj_clear_state(target, LV_STATE_CHECKED);
-        break;
-    case STATUS_BLE_TRAFFIC:
-        break;
-    case STATUS_BLE_TRAFFIC_FOR_US:
-        lv_obj_add_state(target, LV_STATE_CHECKED);
-
-        break;
-    default:;
-    }
 }
 
 static void battery_status_cb(lv_subject_t *subject, lv_observer_t *observer)
@@ -155,8 +109,8 @@ static void expire_values(lv_timer_t *timer)
     expire_fmt(now, &oat_hum_fmt);
     expire_fmt(now, &env_temp_fmt);
     expire_fmt(now, &env_hum_fmt);
-    lv_subject_set_int(&ble_status, STATUS_BLE_IDLE);
-    lv_subject_set_int(&wifi_status, STATUS_HTTP_IDLE);
+    lv_subject_set_color(&ble_color, STATUS_BLE_IDLE);
+    lv_subject_set_color(&wifi_color, lv_subject_get_previous_color(&wifi_color));
 }
 
 static void init_value_expiry(void)
@@ -170,11 +124,10 @@ static void register_observers(void)
     lv_subject_add_observer_with_target(&oat_hum, value_available_cb, ui_outsideHum, &oat_hum_fmt);
     lv_subject_add_observer_with_target(&env_tmp, value_available_cb, ui_envTemp, &env_temp_fmt);
     lv_subject_add_observer_with_target(&env_hum, value_available_cb, ui_envHum, &env_hum_fmt);
-    lv_subject_add_observer_with_target(&wifi_status, wifi_status_cb, ui_WifiStatus, NULL);
+    lv_subject_add_observer_with_target(&wifi_color, set_color_cb, ui_WifiStatus, NULL);
     lv_subject_add_observer_with_target(&battery_status, battery_status_cb, ui_BatteryStatus, NULL);
     lv_subject_add_observer_with_target(&sdcard_status, sdcard_status_cb, ui_SdCardStatus, NULL);
-    lv_subject_add_observer_with_target(&ble_status, ble_status_cb, ui_BLEStatus, NULL);
-    lv_subject_add_observer_with_target(&http_status, http_status_cb, ui_HTTPStatus, NULL);
+    lv_subject_add_observer_with_target(&ble_color, set_color_cb, ui_BLEStatus, NULL);
 }
 
 static void subjects_init(void)
@@ -183,11 +136,10 @@ static void subjects_init(void)
     lv_subject_init_none(&oat_hum);
     lv_subject_init_none(&env_tmp);
     lv_subject_init_none(&env_hum);
-    lv_subject_init_int(&wifi_status, STATUS_WIFI_UNCONFIGURED);
+    lv_subject_init_color(&wifi_color, STATUS_WIFI_UNCONFIGURED);
+    lv_subject_init_color(&ble_color, STATUS_BLE_IDLE);
     lv_subject_init_int(&battery_status, STATUS_BATTERY_DISCONNECTED);
     lv_subject_init_int(&sdcard_status, STATUS_SDCARD_MISSING);
-    lv_subject_init_int(&ble_status, STATUS_BLE_IDLE);
-    lv_subject_init_int(&http_status, STATUS_HTTP_STOPPED);
 }
 
 void lv_observer_init(void)

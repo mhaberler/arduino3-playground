@@ -70,9 +70,6 @@ static void start_net_services(void)
     http_server->onNotFound(handleNotFound);
     http_server->begin();
     Serial.printf("HTTP server started\n");
-    lvgl_acquire();
-    lv_subject_set_int(&http_status, STATUS_HTTP_IDLE);
-    lvgl_release();
   }
 }
 
@@ -87,15 +84,12 @@ static void stop_net_services(void)
   {
     delete mdns_responder;
   }
-  lvgl_acquire();
-  lv_subject_set_int(&http_status, STATUS_HTTP_STOPPED);
-  lvgl_release();
 }
 
 static void drawGraph(void)
 {
   lvgl_acquire();
-  lv_subject_set_int(&http_status, STATUS_HTTP_ACTIVE);
+  lv_subject_set_color(&wifi_color, STATUS_WIFI_TRAFFIC);
   lvgl_release();
 
   String out = "";
@@ -124,7 +118,7 @@ static void drawGraph(void)
 static void handleRoot(void)
 {
   lvgl_acquire();
-  lv_subject_set_int(&http_status, STATUS_HTTP_ACTIVE);
+  lv_subject_set_color(&wifi_color, STATUS_WIFI_TRAFFIC);
   lvgl_release();
 
   char temp[400];
@@ -155,7 +149,7 @@ static void handleRoot(void)
 static void handleNotFound(void)
 {
   lvgl_acquire();
-  lv_subject_set_int(&http_status, STATUS_HTTP_ACTIVE);
+  lv_subject_set_color(&wifi_color, STATUS_WIFI_TRAFFIC);
   lvgl_release();
   String message = "File Not Found\n\n";
   message += "URI: ";
@@ -187,13 +181,14 @@ static void wifi_event_cb(WiFiEvent_t event, WiFiEventInfo_t info)
   case ARDUINO_EVENT_WIFI_SCAN_DONE:
     Serial.println("Completed scan for access points");
     lvgl_acquire();
-    lv_subject_set_int(&wifi_status, STATUS_WIFI_SCAN_COMPLETE);
+
+    lv_subject_set_color(&wifi_color, STATUS_WIFI_SCAN_COMPLETE);
     lvgl_release();
     break;
   case ARDUINO_EVENT_WIFI_STA_START:
     Serial.println("WiFi client started");
     lvgl_acquire();
-    lv_subject_set_int(&wifi_status, STATUS_WIFI_STARTED);
+    lv_subject_set_color(&wifi_color, STATUS_WIFI_STARTED);
     lvgl_release();
     break;
   case ARDUINO_EVENT_WIFI_STA_STOP:
@@ -202,13 +197,13 @@ static void wifi_event_cb(WiFiEvent_t event, WiFiEventInfo_t info)
   case ARDUINO_EVENT_WIFI_STA_CONNECTED:
     Serial.println("Connected to access point");
     lvgl_acquire();
-    lv_subject_set_int(&wifi_status, STATUS_WIFI_CONNECTED);
+    lv_subject_set_color(&wifi_color, STATUS_WIFI_CONNECTED);
     lvgl_release();
     break;
   case ARDUINO_EVENT_WIFI_STA_DISCONNECTED:
     Serial.println("Disconnected from WiFi access point");
     lvgl_acquire();
-    lv_subject_set_int(&wifi_status, STATUS_WIFI_DISCONNECTED);
+    lv_subject_set_color(&wifi_color, STATUS_WIFI_DISCONNECTED);
     lvgl_release();
     break;
   case ARDUINO_EVENT_WIFI_STA_AUTHMODE_CHANGE:
@@ -218,14 +213,14 @@ static void wifi_event_cb(WiFiEvent_t event, WiFiEventInfo_t info)
     Serial.print("Obtained IP address: ");
     Serial.println(WiFi.localIP());
     lvgl_acquire();
-    lv_subject_set_int(&wifi_status, STATUS_WIFI_GOT_IP);
+    lv_subject_set_color(&wifi_color, STATUS_WIFI_GOT_IP);
     lvgl_release();
     start_net_services();
     break;
   case ARDUINO_EVENT_WIFI_STA_LOST_IP:
     Serial.println("Lost IP address and IP address is reset to 0");
     lvgl_acquire();
-    lv_subject_set_int(&wifi_status, STATUS_WIFI_LOST_IP);
+    lv_subject_set_color(&wifi_color, STATUS_WIFI_LOST_IP);
     lvgl_release();
     stop_net_services();
     break;

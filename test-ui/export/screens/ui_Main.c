@@ -22,12 +22,6 @@ lv_obj_set_flex_flow(ui_mainHeader,LV_FLEX_FLOW_ROW);
 lv_obj_set_flex_align(ui_mainHeader, LV_FLEX_ALIGN_END, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER);
 lv_obj_clear_flag( ui_mainHeader, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
-ui_HTTPStatus = lv_label_create(ui_mainHeader);
-lv_obj_set_width( ui_HTTPStatus, LV_SIZE_CONTENT);  /// 1
-lv_obj_set_height( ui_HTTPStatus, LV_SIZE_CONTENT);   /// 1
-lv_obj_set_align( ui_HTTPStatus, LV_ALIGN_CENTER );
-lv_label_set_text(ui_HTTPStatus,"?");
-
 ui_SdCardStatus = lv_label_create(ui_mainHeader);
 lv_obj_set_width( ui_SdCardStatus, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_SdCardStatus, LV_SIZE_CONTENT);   /// 1
@@ -35,16 +29,6 @@ lv_obj_set_x( ui_SdCardStatus, -39 );
 lv_obj_set_y( ui_SdCardStatus, -105 );
 lv_obj_set_align( ui_SdCardStatus, LV_ALIGN_CENTER );
 lv_label_set_text(ui_SdCardStatus,"");
-
-ui_BatteryStatus = lv_label_create(ui_mainHeader);
-lv_obj_set_width( ui_BatteryStatus, LV_SIZE_CONTENT);  /// 1
-lv_obj_set_height( ui_BatteryStatus, LV_SIZE_CONTENT);   /// 1
-lv_obj_set_x( ui_BatteryStatus, 78 );
-lv_obj_set_y( ui_BatteryStatus, -106 );
-lv_obj_set_align( ui_BatteryStatus, LV_ALIGN_CENTER );
-lv_label_set_text(ui_BatteryStatus,"");
-lv_obj_set_style_text_color(ui_BatteryStatus, lv_color_hex(0x7B7777), LV_PART_MAIN | LV_STATE_DEFAULT );
-lv_obj_set_style_text_opa(ui_BatteryStatus, 255, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 ui_BLEStatus = lv_label_create(ui_mainHeader);
 lv_obj_set_width( ui_BLEStatus, LV_SIZE_CONTENT);  /// 1
@@ -69,6 +53,18 @@ lv_obj_set_align( ui_WifiStatus, LV_ALIGN_TOP_RIGHT );
 lv_label_set_text(ui_WifiStatus,"");
 lv_obj_set_style_text_color(ui_WifiStatus, lv_color_hex(0x808080), LV_PART_MAIN | LV_STATE_DEFAULT );
 lv_obj_set_style_text_opa(ui_WifiStatus, 255, LV_PART_MAIN| LV_STATE_DEFAULT);
+lv_obj_set_style_bg_color(ui_WifiStatus, lv_color_hex(0x07FA08), LV_PART_MAIN | LV_STATE_CHECKED );
+lv_obj_set_style_bg_opa(ui_WifiStatus, 255, LV_PART_MAIN| LV_STATE_CHECKED);
+
+ui_BatteryStatus = lv_label_create(ui_mainHeader);
+lv_obj_set_width( ui_BatteryStatus, LV_SIZE_CONTENT);  /// 1
+lv_obj_set_height( ui_BatteryStatus, LV_SIZE_CONTENT);   /// 1
+lv_obj_set_x( ui_BatteryStatus, 78 );
+lv_obj_set_y( ui_BatteryStatus, -106 );
+lv_obj_set_align( ui_BatteryStatus, LV_ALIGN_CENTER );
+lv_label_set_text(ui_BatteryStatus,"");
+lv_obj_set_style_text_color(ui_BatteryStatus, lv_color_hex(0x7B7777), LV_PART_MAIN | LV_STATE_DEFAULT );
+lv_obj_set_style_text_opa(ui_BatteryStatus, 255, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 ui_mainArea = lv_obj_create(ui_Main);
 lv_obj_set_width( ui_mainArea, lv_pct(99));

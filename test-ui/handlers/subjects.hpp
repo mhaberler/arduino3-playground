@@ -1,24 +1,16 @@
 #pragma once
 
 #include "defs.hpp"
+#include <lvgl.h>
 
-typedef enum
-{
-    STATUS_WIFI_UNCONFIGURED,
-    STATUS_WIFI_STARTED,
-    STATUS_WIFI_SCAN_COMPLETE,
-    STATUS_WIFI_CONNECTED,
-    STATUS_WIFI_GOT_IP,
-    STATUS_WIFI_LOST_IP,
-    STATUS_WIFI_DISCONNECTED,
-} wifi_status_t;
-
-typedef enum
-{
-    STATUS_HTTP_STOPPED,
-    STATUS_HTTP_IDLE,
-    STATUS_HTTP_ACTIVE,
-} http_status_t;
+#define STATUS_WIFI_UNCONFIGURED lv_palette_main(LV_PALETTE_GREY)
+#define STATUS_WIFI_STARTED lv_palette_main(LV_PALETTE_AMBER)
+#define STATUS_WIFI_SCAN_COMPLETE lv_palette_main(LV_PALETTE_GREEN)
+#define STATUS_WIFI_CONNECTED lv_palette_main(LV_PALETTE_CYAN)
+#define STATUS_WIFI_GOT_IP lv_palette_main(LV_PALETTE_LIME)
+#define STATUS_WIFI_LOST_IP lv_palette_main(LV_PALETTE_DEEP_ORANGE)
+#define STATUS_WIFI_DISCONNECTED lv_palette_main(LV_PALETTE_RED)
+#define STATUS_WIFI_TRAFFIC lv_palette_main(LV_PALETTE_LIGHT_GREEN)
 
 typedef enum
 {
@@ -34,11 +26,8 @@ typedef enum
     STATUS_SDCARD_WRITING
 } sdcard_status_t;
 
-typedef enum
-{
-    STATUS_BLE_IDLE,
-    STATUS_BLE_TRAFFIC,
-    STATUS_BLE_TRAFFIC_FOR_US,
-} ble_status_t;
+#define STATUS_BLE_IDLE lv_palette_main(LV_PALETTE_BLUE_GREY)
+#define STATUS_BLE_TRAFFIC lv_palette_main(LV_PALETTE_BLUE_GREY)
+#define STATUS_BLE_TRAFFIC_FOR_US lv_palette_main(LV_PALETTE_CYAN)
 
-extern lv_subject_t oat_tmp, oat_hum, env_tmp, env_hum, wifi_status, http_status, battery_status, sdcard_status, ble_status;
+extern lv_subject_t oat_tmp, oat_hum, env_tmp, env_hum, wifi_color, battery_status, sdcard_status, ble_color;

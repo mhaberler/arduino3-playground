@@ -11,6 +11,7 @@
 #include "lv_util.h"
 #include "subjects.hpp"
 #include "ui.h"
+#include "ui_custom.hpp"
 
 static Ticker batteryChange;
 static bool update_battery = false;
@@ -20,6 +21,7 @@ void lvgl_setup(void)
 {
     lv_begin();
     ui_init(); // Squareline UI
+    ui_custom_init(); // stuff which cant be easily done in Squareline 
     lv_observer_init();
     batteryChange.attach_ms(2000, []()
                             { update_battery = true; });
