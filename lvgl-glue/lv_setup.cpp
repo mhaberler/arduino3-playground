@@ -4,7 +4,6 @@
 #define LV_TICK_PERIOD_MS 1
 #define TAG __FILE__
 
-
 #undef LVGL_DOUBLE_BUFFER
 
 #ifdef M5UNIFIED
@@ -179,11 +178,11 @@ void lv_begin()
 
 #if defined(LVGL_DOUBLE_BUFFER)
   lv_color_t *buf1 = (lv_color_t *)heap_caps_malloc(buf_size * sizeof(lv_color_t), MALLOC_CAP_DMA);
-  lv_color_t *buf2 = (lv_color_t *)heap_caps_malloc(buf_size  * sizeof(lv_color_t), MALLOC_CAP_DMA);
+  lv_color_t *buf2 = (lv_color_t *)heap_caps_malloc(buf_size * sizeof(lv_color_t), MALLOC_CAP_DMA);
 
   lv_disp_draw_buf_init(&draw_buf, buf1, buf2, buf_size);
 #else
-  lv_color_t *buf1 = (lv_color_t *)heap_caps_malloc(buf_size* sizeof(lv_color_t), MALLOC_CAP_DMA);
+  lv_color_t *buf1 = (lv_color_t *)heap_caps_malloc(buf_size * sizeof(lv_color_t), MALLOC_CAP_DMA);
   lv_disp_draw_buf_init(&draw_buf, buf1, NULL, buf_size);
 #endif
 
@@ -272,25 +271,26 @@ static void gui_task(void *args)
     }
   }
 }
-
-void lvgl_acquire(void)
+extern "C"
 {
-  TaskHandle_t task = xTaskGetCurrentTaskHandle();
-  if (g_lvgl_task_handle != task)
+  void lvgl_acquire(void)
   {
-    xSemaphoreTake(xGuiSemaphore, portMAX_DELAY);
+    TaskHandle_t task = xTaskGetCurrentTaskHandle();
+    if (g_lvgl_task_handle != task)
+    {
+      xSemaphoreTake(xGuiSemaphore, portMAX_DELAY);
+    }
+  }
+
+  void lvgl_release(void)
+  {
+    TaskHandle_t task = xTaskGetCurrentTaskHandle();
+    if (g_lvgl_task_handle != task)
+    {
+      xSemaphoreGive(xGuiSemaphore);
+    }
   }
 }
-
-void lvgl_release(void)
-{
-  TaskHandle_t task = xTaskGetCurrentTaskHandle();
-  if (g_lvgl_task_handle != task)
-  {
-    xSemaphoreGive(xGuiSemaphore);
-  }
-}
-
 #if !defined(LOVYANGFX) && !defined(M5UNIFIED)
 void lv_begin(void) {}
 #endif

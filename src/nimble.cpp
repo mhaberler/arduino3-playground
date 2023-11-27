@@ -2,9 +2,9 @@
 #ifdef TEST_NIMBLE
 #include "defs.hpp"
 #include "NimBLEDevice.h"
-#include "lv_setup.hpp"
 #include "subjects.hpp"
 #include "messages.hpp"
+#include "lv_util.h"
 
 int scanTime = 60 * 1000; // In milliseconds, 0 = scan forever
 BLEScan *pBLEScan;
@@ -118,18 +118,30 @@ class scanCallbacks : public BLEAdvertisedDeviceCallbacks
                 // d4:15:5c:77:56:68 test weiss
                 if (strcasecmp(ruuvi_ad->address, RUUVI_ENV) == 0)
                 {
-                    lv_subject_force_int_prot(&env_tmp, F2I100(ruuvi_ad->temperature));
-                    lv_subject_force_int_prot(&env_hum, F2I100(ruuvi_ad->humidity));
+                    lvgl_acquire();
+                    lv_subject_set_type(&env_tmp, LV_SUBJECT_TYPE_INT);
+                    lv_subject_set_int(&env_tmp, F2I100(ruuvi_ad->temperature));
+                    lv_subject_set_type(&env_tmp, LV_SUBJECT_TYPE_INT);
+                    lv_subject_set_int(&env_hum, F2I100(ruuvi_ad->humidity));
+                    lvgl_release();
                 }
                 if (strcasecmp(ruuvi_ad->address, RUUVI_OAT) == 0)
                 {
-                    lv_subject_force_int_prot(&oat_tmp, F2I100(ruuvi_ad->temperature));
-                    lv_subject_force_int_prot(&oat_hum, F2I100(ruuvi_ad->humidity));
+                    lvgl_acquire();
+                    lv_subject_set_type(&oat_tmp, LV_SUBJECT_TYPE_INT);
+                    lv_subject_set_int(&oat_tmp, F2I100(ruuvi_ad->temperature));
+                    lv_subject_set_type(&oat_tmp, LV_SUBJECT_TYPE_INT);
+                    lv_subject_set_int(&oat_hum, F2I100(ruuvi_ad->humidity));
+                    lvgl_release();
                 }
                 if (strcasecmp(ruuvi_ad->address, "d4:15:5c:77:56:68") == 0)
                 {
-                    lv_subject_force_int_prot(&oat_tmp, F2I100(ruuvi_ad->temperature));
-                    lv_subject_force_int_prot(&oat_hum, F2I100(ruuvi_ad->humidity));
+                    lvgl_acquire();
+                    lv_subject_set_type(&oat_tmp, LV_SUBJECT_TYPE_INT);
+                    lv_subject_set_int(&oat_tmp, F2I100(ruuvi_ad->temperature));
+                    lv_subject_set_type(&oat_hum, LV_SUBJECT_TYPE_INT);
+                    lv_subject_set_int(&oat_hum, F2I100(ruuvi_ad->humidity));
+                    lvgl_release();
                 }
             }
             break;

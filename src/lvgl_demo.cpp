@@ -19,7 +19,7 @@ void lvgl_setup(void)
 {
     lv_begin();
     ui_init(); // Squareline UI
-    observer_init();
+    lv_observer_init();
 }
 
 void lvgl_loop(void)

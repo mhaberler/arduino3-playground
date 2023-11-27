@@ -1,23 +1,21 @@
-#include <lvgl.h>
-#include "lv_observer.h"
 
-void lv_subject_set_invalid(lv_subject_t *subject, int32_t value)
+#include "lv_util.h"
+
+void lv_subject_set_type(lv_subject_t *subject, lv_subject_type_t type)
 {
+    subject->type = type;
+}
+
+lv_subject_type_t lv_subject_get_type(lv_subject_t *subject)
+{
+    return subject->type;
+}
+
+void lv_subject_init_none(lv_subject_t *subject)
+{
+    lv_memzero(subject, sizeof(lv_subject_t));
     subject->type = LV_SUBJECT_TYPE_NONE;
-    lv_subject_notify(subject);
-}
-
-void lv_subject_force_int(lv_subject_t *subject, int32_t value)
-{
-    subject->type = LV_SUBJECT_TYPE_INT;
-    subject->prev_value.num = subject->value.num;
-    subject->value.num = value;
-    lv_subject_notify(subject);
-}
-
-void lv_subject_force_int_prot(lv_subject_t *subject, int32_t value)
-{
-    lvgl_acquire();
-    lv_subject_force_int(subject, value);
-    lvgl_release();
+    subject->value.num = 0;
+    subject->prev_value.num = 0;
+    _lv_ll_init(&(subject->subs_ll), sizeof(lv_observer_t));
 }

@@ -16,8 +16,6 @@
 #define F2I100(x) ((int)((x) * 100.0))
 #define ITOD100(x) ((double)(x) / 100.0)
 
-#define VALID_INT_VALUE(x) ((x) != INT32_MAX)
-
 typedef struct
 {
     lv_subject_t *subject;

@@ -9,9 +9,7 @@
 
 #include "lv_observer.h"
 #if LV_USE_OBSERVER
-#define lv_memzero lv_memset_00
-#define lv_free lv_mem_free
-#define lv_malloc lv_mem_alloc
+
 
 #include "lvgl.h"
 #include "core/lv_event.h"
