@@ -89,7 +89,7 @@ static void expire_values(lv_timer_t *timer)
     expire_fmt(now, &oat_hum_fmt);
     expire_fmt(now, &env_temp_fmt);
     expire_fmt(now, &env_hum_fmt);
-    lv_subject_set_color(&ble_color, STATUS_BLE_IDLE);
+    // lv_subject_set_color(&ble_color, STATUS_BLE_IDLE);
     // lv_subject_set_color(&wifi_color, lv_subject_get_previous_color(&wifi_color));
 }
 

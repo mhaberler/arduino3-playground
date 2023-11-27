@@ -10,7 +10,7 @@
 #include "subjects.hpp"
 #include "lv_util.h"
 
-static Ticker turn_off;
+static Ticker wifi_finished;
 
 static WiFiMulti wifiMulti;
 static WebServer *http_server;
@@ -21,10 +21,10 @@ static void drawGraph(void);
 static void handleRoot(void);
 static void handleNotFound(void);
 
-static void revert_traffic_indicator(void)
+static void revert_wifi_indicator(void)
 {
-  if (!turn_off.active())
-    turn_off.once_ms(500,
+  if (!wifi_finished.active())
+    wifi_finished.once_ms(500,
                      []()
                      {
                       lvgl_acquire();
@@ -127,7 +127,7 @@ static void drawGraph(void)
   out += "</g>\n</svg>\n";
 
   http_server->send(200, "image/svg+xml", out);
-  revert_traffic_indicator();
+  revert_wifi_indicator();
 }
 
 static void handleRoot(void)
@@ -159,7 +159,7 @@ static void handleRoot(void)
 
            hr, min % 60, sec % 60);
   http_server->send(200, "text/html", temp);
-  revert_traffic_indicator();
+  revert_wifi_indicator();
 }
 
 static void handleNotFound(void)
@@ -182,7 +182,7 @@ static void handleNotFound(void)
   }
 
   http_server->send(404, "text/plain", message);
-  revert_traffic_indicator();
+  revert_wifi_indicator();
 }
 
 static void wifi_event_cb(WiFiEvent_t event, WiFiEventInfo_t info)

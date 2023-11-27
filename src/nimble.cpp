@@ -5,10 +5,23 @@
 #include "subjects.hpp"
 #include "ruuvi.h"
 #include "lv_util.h"
+#include <Ticker.h>
 
 static int scanTime = 60 * 1000; // In milliseconds, 0 = scan forever
 static BLEScan *pBLEScan;
 static bool active = false;
+static Ticker ble_finished;
+
+static void revert_ble_indicator(void)
+{
+    if (!ble_finished.active())
+        ble_finished.once_ms(1000,
+                             []()
+                             {
+                      lvgl_acquire();
+  lv_subject_set_color(&ble_color, STATUS_BLE_IDLE);
+  lvgl_release(); });
+}
 
 static ruuviAd_t ruuvi_report;
 
@@ -125,6 +138,7 @@ class scanCallbacks : public BLEAdvertisedDeviceCallbacks
                     lv_subject_set_color(&ble_color, STATUS_BLE_TRAFFIC_FOR_US);
 
                     lvgl_release();
+                    revert_ble_indicator();
                 }
                 if (strcasecmp(ruuvi_ad->address, RUUVI_OAT) == 0)
                 {
@@ -136,6 +150,7 @@ class scanCallbacks : public BLEAdvertisedDeviceCallbacks
                     lv_subject_set_color(&ble_color, STATUS_BLE_TRAFFIC_FOR_US);
 
                     lvgl_release();
+                    revert_ble_indicator();
                 }
                 if (strcasecmp(ruuvi_ad->address, "d4:15:5c:77:56:68") == 0)
                 {
@@ -147,6 +162,7 @@ class scanCallbacks : public BLEAdvertisedDeviceCallbacks
                     lv_subject_set_color(&ble_color, STATUS_BLE_TRAFFIC_FOR_US);
 
                     lvgl_release();
+                    revert_ble_indicator();
                 }
             }
             break;
