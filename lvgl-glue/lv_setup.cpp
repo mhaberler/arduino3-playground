@@ -75,25 +75,27 @@ const char *boardName(void);
 static void lvgl_flush(lv_disp_drv_t *disp, const lv_area_t *area,
                        lv_color_t *color_p)
 {
-
-#ifdef M5UNIFIED
   int w = (area->x2 - area->x1 + 1);
   int h = (area->y2 - area->y1 + 1);
 
+#ifdef M5UNIFIED
   M5.Display.startWrite();
   M5.Display.setAddrWindow(area->x1, area->y1, w, h);
+#if defined(LVGL_USE_DMA)
+  M5.Display.pushPixelsDMA((uint16_t *)&color_p->full, w * h, true);
+#else
   M5.Display.pushPixels((uint16_t *)&color_p->full, w * h, true);
+#endif
   M5.Display.endWrite();
 #endif
+
 #ifdef LOVYANGFX
   if (display.getStartCount() == 0)
   { // Processing if not yet started
     display.startWrite();
   }
-  int w = (area->x2 - area->x1 + 1);
-  int h = (area->y2 - area->y1 + 1);
   display.setAddrWindow(area->x1, area->y1, w, h);
-#if defined(CORES3) || defined(LILYGO_S3CAP)
+#if defined(LVGL_USE_DMA)
   display.pushPixelsDMA((uint16_t *)&color_p->full, w * h, true);
 #else
   display.pushPixels((uint16_t *)&color_p->full, w * h, true);
