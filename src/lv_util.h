@@ -7,7 +7,13 @@
 extern "C"
 {
 #endif
-
+    // Function to compare two lv_color_t values
+    static inline int compare_colors(lv_color_t color1, lv_color_t color2)
+    {
+        return (color1.ch.red == color2.ch.red) &&
+               (color1.ch.green == color2.ch.green) &&
+               (color1.ch.blue == color2.ch.blue);
+    }
     void lvgl_acquire(void);
     void lvgl_release(void);
 

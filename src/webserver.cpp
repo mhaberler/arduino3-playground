@@ -4,10 +4,13 @@
 #include <WebServer.h>
 #include <WiFiMulti.h>
 #include <WiFi.h>
+#include <Ticker.h>
 
 #include "lv_setup.hpp"
 #include "subjects.hpp"
 #include "lv_util.h"
+
+static Ticker turn_off;
 
 static WiFiMulti wifiMulti;
 static WebServer *http_server;
@@ -17,6 +20,17 @@ static void wifi_event_cb(WiFiEvent_t event, WiFiEventInfo_t info);
 static void drawGraph(void);
 static void handleRoot(void);
 static void handleNotFound(void);
+
+static void revert_traffic_indicator(void)
+{
+  if (!turn_off.active())
+    turn_off.once_ms(500,
+                     []()
+                     {
+                      lvgl_acquire();
+  lv_subject_set_color(&wifi_color, STATUS_WIFI_GOT_IP);
+  lvgl_release(); });
+}
 
 void webserver_loop(void)
 {
@@ -113,6 +127,7 @@ static void drawGraph(void)
   out += "</g>\n</svg>\n";
 
   http_server->send(200, "image/svg+xml", out);
+  revert_traffic_indicator();
 }
 
 static void handleRoot(void)
@@ -144,6 +159,7 @@ static void handleRoot(void)
 
            hr, min % 60, sec % 60);
   http_server->send(200, "text/html", temp);
+  revert_traffic_indicator();
 }
 
 static void handleNotFound(void)
@@ -166,6 +182,7 @@ static void handleNotFound(void)
   }
 
   http_server->send(404, "text/plain", message);
+  revert_traffic_indicator();
 }
 
 static void wifi_event_cb(WiFiEvent_t event, WiFiEventInfo_t info)
