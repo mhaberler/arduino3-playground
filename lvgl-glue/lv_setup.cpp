@@ -1,4 +1,3 @@
-
 #include "lv_setup.hpp"
 
 #define LV_TICK_PERIOD_MS 1
@@ -100,7 +99,6 @@ static void lvgl_flush(lv_disp_drv_t *disp, const lv_area_t *area,
   display.pushPixels((uint16_t *)&color_p->full, w * h, true);
 #endif
 #endif
-
   lv_disp_flush_ready(disp);
 }
 
@@ -111,7 +109,6 @@ static void lvgl_read(lv_indev_drv_t *indev_driver,
   data->state = LV_INDEV_STATE_REL;
 
 #if defined(M5UNIFIED)
-
   lgfx::touch_point_t tp[1];
 
   M5.update();
@@ -170,11 +167,10 @@ void lv_begin()
   lv_log_register_print_cb(my_log_cb);
 
   display.init();
-#if defined(LILYGO_S3CAP) || defined(ELECROW_DLC35020S)
-  display.setRotation(3);
+#if defined(INITIAL_ROTATION)
+  display.setRotation(INITIAL_ROTATION);
 #endif
   const size_t buf_size = display.width() * 10;
-  // static lv_color_t buf[2][SCREEN_WIDTH * 10];
 
 #if defined(LVGL_DOUBLE_BUFFER)
   lv_color_t *buf1 = (lv_color_t *)heap_caps_malloc(buf_size * sizeof(lv_color_t), MALLOC_CAP_DMA);
@@ -252,14 +248,14 @@ static void gui_task(void *args)
   ESP_LOGI(TAG, "Start to run LVGL");
   uint32_t time_till_next = 10;
   while (1)
-  { 
+  {
     vTaskDelay(pdMS_TO_TICKS(time_till_next));
     /* Try to take the semaphore, call lvgl related function on success */
-    if (pdTRUE == xSemaphoreTake(xGuiSemaphore, portMAX_DELAY))  // block indefinitely
+    if (pdTRUE == xSemaphoreTake(xGuiSemaphore, portMAX_DELAY)) // block indefinitely
     {
       time_till_next = lv_task_handler();
       xSemaphoreGive(xGuiSemaphore);
-    } 
+    }
   }
 }
 
