@@ -22,6 +22,5 @@ typedef struct
     const char *available;
     const char *unavailable;
     uint32_t ttl_ms;
-    void *user_data;
     uint32_t last_heard_ms;
 } transient_subject_t;

@@ -17,17 +17,17 @@ static lv_timer_t *na_timer;
 
 lv_subject_t oat_tmp, oat_hum, env_tmp, env_hum, wifi_status, http_status, battery_status, sdcard_status, ble_status;
 
-static transient_subject_t oat_temp_fmt = {&oat_tmp, "%.1f°", "n/a", RUUVI_PERIOD, &ui_outsideTemp, 0};
-static transient_subject_t oat_hum_fmt = {&oat_hum, "%.1f%%", "n/a", RUUVI_PERIOD, &ui_outsideHum, 0};
-static transient_subject_t env_temp_fmt = {&env_tmp, "%.1f°", "n/a", RUUVI_PERIOD, &ui_envTemp, 0};
-static transient_subject_t env_hum_fmt = {&env_hum, "%.1f%%", "n/a", RUUVI_PERIOD, &ui_envHum, 0};
+static transient_subject_t oat_temp_fmt = {&oat_tmp, "%.1f°", "n/a", RUUVI_PERIOD, 0};
+static transient_subject_t oat_hum_fmt = {&oat_hum, "%.1f%%", "n/a", RUUVI_PERIOD, 0};
+static transient_subject_t env_temp_fmt = {&env_tmp, "%.1f°", "n/a", RUUVI_PERIOD, 0};
+static transient_subject_t env_hum_fmt = {&env_hum, "%.1f%%", "n/a", RUUVI_PERIOD, 0};
 
 static void value_available_cb(lv_subject_t *subject, lv_observer_t *observer)
 {
     transient_subject_t *tf = (transient_subject_t *)observer->user_data;
     // if (tf->user_data == NULL)
     //     return; // object not initialized (yet)
-    lv_obj_t *target = *(lv_obj_t **)tf->user_data;
+    lv_obj_t *target = (lv_obj_t *)lv_observer_get_target(observer);
 
     tf->last_heard_ms = millis();
     bool valid = lv_subject_get_type(subject) == LV_SUBJECT_TYPE_INT;
@@ -63,7 +63,7 @@ static void ble_status_cb(lv_subject_t *subject, lv_observer_t *observer)
 static void battery_status_cb(lv_subject_t *subject, lv_observer_t *observer)
 {
     int32_t batval = lv_subject_get_int(subject);
-    LV_LOG_USER("status %ld", batval);
+    // LV_LOG_USER("status %ld", batval);
     lv_obj_t *target = (lv_obj_t *)lv_observer_get_target(observer);
 
     if (batval < 20)
@@ -122,10 +122,10 @@ static void init_value_expiry(void)
 
 static void register_observers(void)
 {
-    lv_subject_add_observer(&oat_tmp, value_available_cb, &oat_temp_fmt);
-    lv_subject_add_observer(&oat_hum, value_available_cb, &oat_hum_fmt);
-    lv_subject_add_observer(&env_tmp, value_available_cb, &env_temp_fmt);
-    lv_subject_add_observer(&env_hum, value_available_cb, &env_hum_fmt);
+    lv_subject_add_observer_with_target(&oat_tmp, value_available_cb, ui_outsideTemp, &oat_temp_fmt);
+    lv_subject_add_observer_with_target(&oat_hum, value_available_cb, ui_outsideHum, &oat_hum_fmt);
+    lv_subject_add_observer_with_target(&env_tmp, value_available_cb, ui_envTemp, &env_temp_fmt);
+    lv_subject_add_observer_with_target(&env_hum, value_available_cb, ui_envHum, &env_hum_fmt);
     lv_subject_add_observer_with_target(&wifi_status, wifi_status_cb, ui_WifiStatus, NULL);
     lv_subject_add_observer_with_target(&battery_status, battery_status_cb, ui_BatteryStatus, NULL);
     lv_subject_add_observer_with_target(&sdcard_status, sdcard_status_cb, ui_SdCardStatus, NULL);
