@@ -3,6 +3,7 @@
 #include "Esp.h"
 #include "ui.h"
 #include "lv_setup.hpp"
+#include "ui_compass.h"
 
 extern "C"
 {
@@ -13,8 +14,13 @@ extern "C"
         Serial.printf("used psram: %lu\n", ESP.getPsramSize() - ESP.getFreePsram());
     }
 
+static bool once = false;
     void mainScreenLoaded(lv_event_t *e)
     {
         LV_LOG_USER("xxx");
+        if (!once) {
+            // lv_init_compass_observers();
+            once = true;
+        }
     }
 }

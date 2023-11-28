@@ -11,17 +11,19 @@
 #include "lv_util.h"
 #include "subjects.hpp"
 #include "ui.h"
+#include "ui_compass.h"
 #include "ui_custom.hpp"
 
 static Ticker batteryChange;
 static bool update_battery = false;
 static int32_t battery_value;
+static int32_t heading, mvar, sunp;
 
 void set_battery_indicator(int32_t batval)
 {
     lv_color_t color = lv_palette_main(LV_PALETTE_GREY);
     const void *label = "?";
-        lv_style_selector_t sel = LV_PART_MAIN | LV_STATE_DEFAULT;
+    lv_style_selector_t sel = LV_PART_MAIN | LV_STATE_DEFAULT;
 
     if (batval < 20)
     {
@@ -49,9 +51,9 @@ void set_battery_indicator(int32_t batval)
         label = LV_SYMBOL_BATTERY_FULL;
     }
     lvgl_acquire();
-    battery_color.user_data = (void*)sel;
+    battery_color.user_data = (void *)sel;
     lv_subject_set_color(&battery_color, color);
-    lv_subject_set_pointer(&battery_label, (void*)label);
+    lv_subject_set_pointer(&battery_label, (void *)label);
     lv_subject_notify(&battery_all);
     lvgl_release();
 }
@@ -62,7 +64,7 @@ void lvgl_setup(void)
     ui_init();        // Squareline UI
     ui_custom_init(); // stuff which cant be easily done in Squareline
     lv_observer_init();
-    batteryChange.attach_ms(2000, []()
+    batteryChange.attach_ms(500, []()
                             { update_battery = true; });
 }
 
@@ -75,6 +77,34 @@ void lvgl_loop(void)
             battery_value = 0;
         battery_value += 10;
         set_battery_indicator(battery_value);
+
+        heading += 1;
+        heading %= 360;
+
+        lvgl_acquire();
+
+        heading_mag.user_data = (void *)1;
+        lv_subject_set_int(&heading_mag, heading);
+
+        heading_true.user_data = (void *)1;
+        lv_subject_set_int(&heading_true, heading + 7);
+
+        course_over_ground_true.user_data = (void *)1;
+        lv_subject_set_int(&course_over_ground_true, heading + 33);
+
+        mvar++;
+        mvar %= 6;
+        mag_var.user_data = (void *)1;
+        lv_subject_set_int(&mag_var, mvar);
+
+        sunp++;
+        sunp %= 360;
+        sun_pos.user_data = (void *)1;
+        lv_subject_set_int(&sun_pos, sunp);
+
+        lv_subject_notify(&compass_all);
+
+        lvgl_release();
 
         update_battery = false;
     }

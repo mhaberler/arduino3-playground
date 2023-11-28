@@ -7,11 +7,8 @@
 
 void ui_Compass_screen_init(void)
 {
-ui_Compass = lv_obj_create(NULL);
-lv_obj_clear_flag( ui_Compass, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
-lv_obj_set_flex_flow(ui_Compass,LV_FLEX_FLOW_COLUMN);
-lv_obj_set_flex_align(ui_Compass, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+    ui_Compass = lv_obj_create(NULL);
+    lv_obj_clear_flag(ui_Compass, LV_OBJ_FLAG_SCROLLABLE); /// Flags
 
-lv_obj_add_event_cb(ui_Compass, ui_event_Compass, LV_EVENT_ALL, NULL);
-
+    lv_obj_add_event_cb(ui_Compass, ui_event_Compass, LV_EVENT_ALL, NULL);
 }

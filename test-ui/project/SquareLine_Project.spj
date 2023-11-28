@@ -5583,7 +5583,7 @@
             "MainAlignment": 1,
             "CrossAlignment": 1,
             "TrackAlignment": 1,
-            "LayoutType": 1,
+            "LayoutType": 0,
             "nid": 1665665577,
             "strtype": "OBJECT/Layout_type",
             "strval": "No_layout",
@@ -5774,7 +5774,6 @@
           {
             "disabled": false,
             "nid": 1851812084,
-            "flags": 1048576,
             "strtype": "_event/EventHandler",
             "strval": "GESTURE_LEFT(GESTURE)",
             "childs": [
@@ -5851,7 +5850,6 @@
           {
             "disabled": false,
             "nid": 1067293496,
-            "flags": 1048576,
             "strtype": "_event/EventHandler",
             "strval": "GESTURE_RIGHT(GESTURE)",
             "childs": [
@@ -5928,7 +5926,6 @@
           {
             "disabled": false,
             "nid": 1085073630,
-            "flags": 1048576,
             "strtype": "_event/EventHandler",
             "strval": "CLICKED",
             "childs": [
@@ -8162,7 +8159,7 @@
     "theme_color2": 0,
     "exportFolderPath": "/Users/mah/Ballon/src/BalloonWare/arduino3-playground/test-ui/export",
     "projectExportFolderPath": "/Users/mah/Ballon/src/BalloonWare/arduino3-playground/test-ui/project",
-    "backup_cnt": 107,
+    "backup_cnt": 108,
     "autosave_cnt": 0,
     "lvgl_version": "8.3.6",
     "callfuncsexport": "CPP_FILE",
