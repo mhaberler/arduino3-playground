@@ -1,0 +1,6 @@
+.pio
+.vscode/*
+retired/
+managed_components/
+*.zip
+
