@@ -5190,6 +5190,7 @@
           {
             "disabled": false,
             "nid": -460435358,
+            "flags": 1048576,
             "strtype": "_event/EventHandler",
             "strval": "GESTURE_RIGHT(GESTURE)",
             "childs": [
@@ -5266,6 +5267,7 @@
           {
             "disabled": false,
             "nid": 684584629,
+            "flags": 1048576,
             "strtype": "_event/EventHandler",
             "strval": "GESTURE_LEFT(GESTURE)",
             "childs": [
@@ -5389,7 +5391,7 @@
                   {
                     "nid": 1454951588,
                     "strtype": "CALL FUNCTION/Function_name",
-                    "strval": "mainScreenLoaded",
+                    "strval": "showMemory",
                     "InheritedType": 10
                   },
                   {
@@ -5407,6 +5409,7 @@
           {
             "disabled": false,
             "nid": -1891476901,
+            "flags": 1048576,
             "strtype": "_event/EventHandler",
             "strval": "GESTURE_UP(GESTURE)",
             "childs": [
@@ -5483,6 +5486,7 @@
           {
             "disabled": false,
             "nid": -1962976798,
+            "flags": 1048576,
             "strtype": "_event/EventHandler",
             "strval": "GESTURE_DOWN(GESTURE)",
             "childs": [
@@ -8159,7 +8163,7 @@
     "theme_color2": 0,
     "exportFolderPath": "/Users/mah/Ballon/src/BalloonWare/arduino3-playground/test-ui/export",
     "projectExportFolderPath": "/Users/mah/Ballon/src/BalloonWare/arduino3-playground/test-ui/project",
-    "backup_cnt": 108,
+    "backup_cnt": 112,
     "autosave_cnt": 0,
     "lvgl_version": "8.3.6",
     "callfuncsexport": "CPP_FILE",

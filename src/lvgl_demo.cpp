@@ -83,25 +83,20 @@ void lvgl_loop(void)
         battery_value += 10;
         set_battery_indicator(battery_value);
 
-        heading += 1;
+        heading += 3;
         heading %= 360;
-
-        lvgl_acquire();
-
-        heading_mag.value.num = heading;
-        heading_true.value.num = heading + 7;
-        course_over_ground_true.value.num = heading + 33;
-
         mvar++;
         mvar %= 6;
-        mag_var.value.num = mvar;
-
         sunp++;
         sunp %= 360;
-        sun_pos.value.num = sunp;
 
+        lvgl_acquire();
+        lv_subject_set_int(&heading_mag, heading);
+        lv_subject_set_int(&heading_true, heading + 7);
+        lv_subject_set_int(&course_over_ground_true, heading + 33);
+        lv_subject_set_int(&mag_var, mvar);
+        lv_subject_set_int(&sun_pos, sunp);
         lv_subject_notify(&compass_all);
-
         lvgl_release();
 
         update_battery = false;

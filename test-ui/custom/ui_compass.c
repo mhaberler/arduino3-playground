@@ -99,8 +99,8 @@ void lv_compass_display(lv_obj_t *parent)
     compass_l = lv_label_create(parent);
     lv_label_set_text_static(compass_l, "--" LV_SYMBOL_DEGREES);
     lv_obj_align(compass_l, LV_ALIGN_CENTER, 0, 0);
-#if LV_FONT_MONTSERRAT_14
-    lv_obj_set_style_text_font(compass_l, &lv_font_montserrat_14, 0);
+#if LV_FONT_MONTSERRAT_20
+    lv_obj_set_style_text_font(compass_l, &lv_font_montserrat_20, 0);
 #endif
 
     lv_meter_set_scale_range(compass_display, scale_compass, 0, 72, 360, 270);
@@ -113,8 +113,8 @@ void lv_compass_display(lv_obj_t *parent)
     compass_hdt_l = lv_label_create(parent);
     lv_label_set_text_static(compass_hdt_l, "HDT:  --" LV_SYMBOL_DEGREES);
     lv_obj_align(compass_hdt_l, LV_ALIGN_TOP_LEFT, 2, 2);
-#if LV_FONT_MONTSERRAT_14
-    lv_obj_set_style_text_font(compass_hdt_l, &lv_font_montserrat_14, 0);
+#if LV_FONT_MONTSERRAT_20
+    lv_obj_set_style_text_font(compass_hdt_l, &lv_font_montserrat_20, 0);
 #endif
 #endif
 
@@ -122,8 +122,8 @@ void lv_compass_display(lv_obj_t *parent)
     compass_cogt_l = lv_label_create(parent);
     lv_label_set_text_static(compass_cogt_l, "COGT:   --" LV_SYMBOL_DEGREES);
     lv_obj_align(compass_cogt_l, LV_ALIGN_TOP_RIGHT, -2, 2);
-#if LV_FONT_MONTSERRAT_14
-    lv_obj_set_style_text_font(compass_cogt_l, &lv_font_montserrat_14, 0);
+#if LV_FONT_MONTSERRAT_20
+    lv_obj_set_style_text_font(compass_cogt_l, &lv_font_montserrat_20, 0);
 #endif
 #endif
 
@@ -131,8 +131,8 @@ void lv_compass_display(lv_obj_t *parent)
     compass_mag_var_l = lv_label_create(parent);
     lv_label_set_text_static(compass_mag_var_l, "Var:\n--" LV_SYMBOL_DEGREES);
     lv_obj_align(compass_mag_var_l, LV_ALIGN_BOTTOM_LEFT, 2, -2);
-#if LV_FONT_MONTSERRAT_14
-    lv_obj_set_style_text_font(compass_mag_var_l, &lv_font_montserrat_14, 0);
+#if LV_FONT_MONTSERRAT_20
+    lv_obj_set_style_text_font(compass_mag_var_l, &lv_font_montserrat_20, 0);
 #endif
 #endif
     lv_subject_init_int(&heading_mag, 0);
@@ -151,8 +151,6 @@ static unsigned long last_compass_upd = 0;
 
 static void compass_group_cb(lv_subject_t *subject, lv_observer_t *observer)
 {
-    LV_LOG_USER("");
-
     lv_obj_t *target = (lv_obj_t *)lv_observer_get_target(observer);
 
     lv_subject_t *subject_heading_mag = lv_subject_get_group_element(subject, 0);

@@ -1,3 +1,0 @@
-[submodule "lib/fmtlib"]
-	path = lib/fmtlib
-	url = https://github.com/mhaberler/fmtlib

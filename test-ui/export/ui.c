@@ -81,7 +81,7 @@ lv_indev_wait_release(lv_indev_get_act());
       _ui_screen_change( &ui_Compass, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Compass_screen_init);
 }
 if ( event_code == LV_EVENT_SCREEN_LOADED) {
-      mainScreenLoaded( e );
+      showMemory( e );
 }
 if ( event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_TOP  ) {
 lv_indev_wait_release(lv_indev_get_act());

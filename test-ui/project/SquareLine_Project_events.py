@@ -10,3 +10,7 @@ def mainLoaded(event_struct):
 def mainScreenLoaded(event_struct):
     return
 
+
+def showMemory(event_struct):
+    return
+
