@@ -64,7 +64,12 @@ void lvgl_setup(void)
     ui_init();        // Squareline UI
     ui_custom_init(); // stuff which cant be easily done in Squareline
     lv_observer_init();
-    batteryChange.attach_ms(500, []()
+    heading_mag.user_data = (void *)1;
+    heading_true.user_data = (void *)1;
+    course_over_ground_true.user_data = (void *)1;
+    mag_var.user_data = (void *)1;
+    sun_pos.user_data = (void *)1;
+    batteryChange.attach_ms(1000, []()
                             { update_battery = true; });
 }
 
@@ -83,24 +88,17 @@ void lvgl_loop(void)
 
         lvgl_acquire();
 
-        heading_mag.user_data = (void *)1;
-        lv_subject_set_int(&heading_mag, heading);
-
-        heading_true.user_data = (void *)1;
-        lv_subject_set_int(&heading_true, heading + 7);
-
-        course_over_ground_true.user_data = (void *)1;
-        lv_subject_set_int(&course_over_ground_true, heading + 33);
+        heading_mag.value.num = heading;
+        heading_true.value.num = heading + 7;
+        course_over_ground_true.value.num = heading + 33;
 
         mvar++;
         mvar %= 6;
-        mag_var.user_data = (void *)1;
-        lv_subject_set_int(&mag_var, mvar);
+        mag_var.value.num = mvar;
 
         sunp++;
         sunp %= 360;
-        sun_pos.user_data = (void *)1;
-        lv_subject_set_int(&sun_pos, sunp);
+        sun_pos.value.num = sunp;
 
         lv_subject_notify(&compass_all);
 
