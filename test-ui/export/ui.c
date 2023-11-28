@@ -14,6 +14,7 @@ void ui_Main_screen_init(void);
 void ui_event_Main( lv_event_t * e);
 lv_obj_t *ui_Main;
 lv_obj_t *ui_mainHeader;
+lv_obj_t *ui_GPSStatus;
 lv_obj_t *ui_SdCardStatus;
 lv_obj_t *ui_BLEStatus;
 lv_obj_t *ui_WifiStatus;
