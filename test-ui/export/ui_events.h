@@ -11,7 +11,6 @@ extern "C" {
 #endif
 
 void mainScreenLoaded(lv_event_t * e);
-void emitEvent(lv_event_t * e);
 
 #ifdef __cplusplus
 } /*extern "C"*/

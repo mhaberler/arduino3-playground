@@ -32,23 +32,31 @@ lv_obj_t *ui_outsideTemp;
 lv_obj_t *ui_outsideHum;
 
 
+// SCREEN: ui_Compass
+void ui_Compass_screen_init(void);
+void ui_event_Compass( lv_event_t * e);
+lv_obj_t *ui_Compass;
+
+
+// SCREEN: ui_GPS
+void ui_GPS_screen_init(void);
+void ui_event_GPS( lv_event_t * e);
+lv_obj_t *ui_GPS;
+
+
+// SCREEN: ui_Parameters
+void ui_Parameters_screen_init(void);
+void ui_event_Parameters( lv_event_t * e);
+lv_obj_t *ui_Parameters;
+
+
 // SCREEN: ui_Status
 void ui_Status_screen_init(void);
 void ui_event_Status( lv_event_t * e);
 lv_obj_t *ui_Status;
-lv_obj_t *ui_StatusText;
-lv_obj_t *ui_Slider1;
-lv_obj_t *ui_Chart1;
-
-
-// SCREEN: ui_Params
-void ui_Params_screen_init(void);
-void ui_event_Params( lv_event_t * e);
-lv_obj_t *ui_Params;
-void ui_event_option1( lv_event_t * e);
-lv_obj_t *ui_option1;
-void ui_event_Switch1( lv_event_t * e);
-lv_obj_t *ui_Switch1;
+lv_obj_t *ui_Panel2;
+lv_obj_t *ui_statusHeader;
+lv_obj_t *ui_Label5;
 lv_obj_t *ui____initial_actions0;
 
 ///////////////////// TEST LVGL SETTINGS ////////////////////
@@ -66,54 +74,74 @@ void ui_event_Main( lv_event_t * e) {
     lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
 if ( event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_RIGHT  ) {
 lv_indev_wait_release(lv_indev_get_act());
-      _ui_screen_change( &ui_Status, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Status_screen_init);
+      _ui_screen_change( &ui_GPS, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_GPS_screen_init);
 }
 if ( event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_LEFT  ) {
 lv_indev_wait_release(lv_indev_get_act());
-      _ui_screen_change( &ui_Params, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Params_screen_init);
+      _ui_screen_change( &ui_Compass, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Compass_screen_init);
 }
 if ( event_code == LV_EVENT_SCREEN_LOADED) {
       mainScreenLoaded( e );
 }
-}
-void ui_event_Status( lv_event_t * e) {
-    lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
-if ( event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_LEFT  ) {
+if ( event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_TOP  ) {
 lv_indev_wait_release(lv_indev_get_act());
-      _ui_screen_change( &ui_Main, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Main_screen_init);
+      _ui_screen_change( &ui_Parameters, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Parameters_screen_init);
 }
-if ( event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_RIGHT  ) {
-lv_indev_wait_release(lv_indev_get_act());
-      _ui_screen_change( &ui_Params, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Params_screen_init);
-}
-if ( event_code == LV_EVENT_CLICKED) {
-      _ui_screen_change( &ui_Main, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Main_screen_init);
-}
-}
-void ui_event_Params( lv_event_t * e) {
-    lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
-if ( event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_LEFT  ) {
-lv_indev_wait_release(lv_indev_get_act());
-      _ui_screen_change( &ui_Main, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Main_screen_init);
-}
-if ( event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_RIGHT  ) {
+if ( event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_BOTTOM  ) {
 lv_indev_wait_release(lv_indev_get_act());
       _ui_screen_change( &ui_Status, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Status_screen_init);
 }
+}
+void ui_event_Compass( lv_event_t * e) {
+    lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
+if ( event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_LEFT  ) {
+lv_indev_wait_release(lv_indev_get_act());
+      _ui_screen_change( &ui_GPS, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_GPS_screen_init);
+}
+if ( event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_RIGHT  ) {
+lv_indev_wait_release(lv_indev_get_act());
+      _ui_screen_change( &ui_Main, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Main_screen_init);
+}
 if ( event_code == LV_EVENT_CLICKED) {
       _ui_screen_change( &ui_Main, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Main_screen_init);
 }
 }
-void ui_event_option1( lv_event_t * e) {
+void ui_event_GPS( lv_event_t * e) {
     lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
-if ( event_code == LV_EVENT_VALUE_CHANGED) {
-      emitEvent( e );
+if ( event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_LEFT  ) {
+lv_indev_wait_release(lv_indev_get_act());
+      _ui_screen_change( &ui_Main, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Main_screen_init);
+}
+if ( event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_RIGHT  ) {
+lv_indev_wait_release(lv_indev_get_act());
+      _ui_screen_change( &ui_Compass, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Compass_screen_init);
+}
+if ( event_code == LV_EVENT_CLICKED) {
+      _ui_screen_change( &ui_Main, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Main_screen_init);
 }
 }
-void ui_event_Switch1( lv_event_t * e) {
+void ui_event_Parameters( lv_event_t * e) {
     lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
-if ( event_code == LV_EVENT_VALUE_CHANGED) {
-      emitEvent( e );
+if ( event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_LEFT  ) {
+lv_indev_wait_release(lv_indev_get_act());
+      _ui_screen_change( &ui_Main, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Main_screen_init);
+}
+if ( event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_TOP  ) {
+lv_indev_wait_release(lv_indev_get_act());
+      _ui_screen_change( &ui_Main, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Main_screen_init);
+}
+if ( event_code == LV_EVENT_CLICKED) {
+      _ui_screen_change( &ui_Main, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Main_screen_init);
+}
+}
+void ui_event_Status( lv_event_t * e) {
+    lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
+if ( event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_TOP  ) {
+lv_indev_wait_release(lv_indev_get_act());
+      _ui_screen_change( &ui_Main, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Main_screen_init);
+}
+if ( event_code == LV_EVENT_CLICKED) {
+      _ui_screen_change( &ui_Main, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Main_screen_init);
 }
 }
 
@@ -125,8 +153,10 @@ lv_disp_t *dispp = lv_disp_get_default();
 lv_theme_t *theme = lv_theme_default_init(dispp, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED), true, LV_FONT_DEFAULT);
 lv_disp_set_theme(dispp, theme);
 ui_Main_screen_init();
+ui_Compass_screen_init();
+ui_GPS_screen_init();
+ui_Parameters_screen_init();
 ui_Status_screen_init();
-ui_Params_screen_init();
 ui____initial_actions0 = lv_obj_create(NULL);
 lv_disp_load_scr( ui_Main);
 }

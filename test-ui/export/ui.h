@@ -45,21 +45,25 @@ extern lv_obj_t *ui_envTemp;
 extern lv_obj_t *ui_envHum;
 extern lv_obj_t *ui_outsideTemp;
 extern lv_obj_t *ui_outsideHum;
+// SCREEN: ui_Compass
+void ui_Compass_screen_init(void);
+void ui_event_Compass( lv_event_t * e);
+extern lv_obj_t *ui_Compass;
+// SCREEN: ui_GPS
+void ui_GPS_screen_init(void);
+void ui_event_GPS( lv_event_t * e);
+extern lv_obj_t *ui_GPS;
+// SCREEN: ui_Parameters
+void ui_Parameters_screen_init(void);
+void ui_event_Parameters( lv_event_t * e);
+extern lv_obj_t *ui_Parameters;
 // SCREEN: ui_Status
 void ui_Status_screen_init(void);
 void ui_event_Status( lv_event_t * e);
 extern lv_obj_t *ui_Status;
-extern lv_obj_t *ui_StatusText;
-extern lv_obj_t *ui_Slider1;
-extern lv_obj_t *ui_Chart1;
-// SCREEN: ui_Params
-void ui_Params_screen_init(void);
-void ui_event_Params( lv_event_t * e);
-extern lv_obj_t *ui_Params;
-void ui_event_option1( lv_event_t * e);
-extern lv_obj_t *ui_option1;
-void ui_event_Switch1( lv_event_t * e);
-extern lv_obj_t *ui_Switch1;
+extern lv_obj_t *ui_Panel2;
+extern lv_obj_t *ui_statusHeader;
+extern lv_obj_t *ui_Label5;
 extern lv_obj_t *ui____initial_actions0;
 
 
