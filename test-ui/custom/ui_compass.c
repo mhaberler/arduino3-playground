@@ -12,6 +12,11 @@ static lv_obj_t *compass_hdt_l;
 static lv_obj_t *compass_cogt_l;
 static lv_obj_t *compass_mag_var_l;
 
+#if COMPASS_SUN_POS
+static lv_obj_t *sunbug_l;
+static lv_obj_t *labelsuncont;
+#endif
+
 static lv_obj_t *labelScont;
 static lv_obj_t *labelNcont;
 static lv_obj_t *labelEcont;
@@ -110,6 +115,26 @@ void lv_compass_display(lv_obj_t *parent)
     lv_obj_set_style_transform_angle(labelEcont, 90 * 10, 0);
     lv_obj_set_style_transform_angle(labelWcont, 270 * 10, 0);
 
+#if COMPASS_SUN_POS
+    labelsuncont = lv_obj_create(parent);
+    lv_obj_set_size(labelsuncont, 42, 42);
+    // lv_obj_set_style_pad_all(labelsuncont, 2, LV_PART_MAIN);
+    // lv_style_set_border_width(labelsuncont, 0);
+    lv_obj_set_style_text_color(labelsuncont, lv_palette_main(LV_PALETTE_YELLOW), LV_PART_MAIN);
+    lv_obj_set_style_bg_opa(labelsuncont, LV_OPA_TRANSP, LV_PART_MAIN);
+
+    // lv_obj_set_style_bg_color(labelsuncont, lv_palette_darken(LV_PALETTE_GREY, 4), LV_PART_INDICATOR);
+    lv_obj_align(labelsuncont, LV_ALIGN_CENTER, 0, -52);
+
+    sunbug_l = lv_label_create(labelsuncont);
+    lv_label_set_text_static(sunbug_l, "o"); //  LV_SYMBOL_GPS);
+    lv_obj_align(sunbug_l, LV_ALIGN_CENTER, 0, 0);
+
+    lv_obj_set_style_transform_pivot_x(labelsuncont, 42, 0);
+    lv_obj_set_style_transform_pivot_y(labelsuncont, 42 + 52, 0);
+
+#endif
+
 #if COMPASS_HEADING_TRUE
     compass_hdt_l = lv_label_create(parent);
     lv_label_set_text_static(compass_hdt_l, "HDT:  --" LV_SYMBOL_DEGREES);
@@ -172,7 +197,9 @@ static void compass_group_cb(lv_subject_t *subject, lv_observer_t *observer)
             lv_obj_set_style_transform_angle(labelScont, (180 + rot) * 10, 0);
             lv_obj_set_style_transform_angle(labelEcont, (90 + rot) * 10, 0);
             lv_obj_set_style_transform_angle(labelWcont, (270 + rot) * 10, 0);
-
+#if COMPASS_SUN_POS
+            lv_obj_set_style_transform_angle(labelsuncont, (lv_subject_get_int(subject_sun_pos)) * 10, 0);
+#endif
 #if COMPASS_HEADING_MAG
             lv_label_set_text_fmt(compass_l, subject_heading_mag->user_data ? "%ld" LV_SYMBOL_DEGREES : "--", lv_subject_get_int(subject_heading_mag));
 #endif
