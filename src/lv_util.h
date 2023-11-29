@@ -22,7 +22,7 @@ extern "C"
     {
         subject->user_data = user_data;
     }
-    
+
     static inline void *lv_subject_get_user_data(lv_subject_t *subject)
     {
         return subject->user_data;
@@ -32,6 +32,17 @@ extern "C"
     lv_subject_type_t lv_subject_get_type(lv_subject_t *subject);
     void lv_subject_init_none(lv_subject_t *subject);
 
+#if LV_USE_USER_DATA
+    /**
+     * Bind an color subject to an object's text style color
+     * @param obj       pointer to an object
+     * @param subject   pointer to a subject
+     * @param selector  style selector to be used when applying the color
+     * @return          pointer to the created observer
+     */
+    lv_observer_t *lv_obj_bind_text_style_color(lv_obj_t *obj, lv_subject_t *subject,
+                                          lv_style_selector_t selector);
+#endif
 #ifdef __cplusplus
 } /*extern "C"*/
 #endif
