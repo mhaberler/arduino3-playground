@@ -12,23 +12,26 @@ lv_obj_clear_flag( ui_Status, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 lv_obj_set_flex_flow(ui_Status,LV_FLEX_FLOW_ROW);
 lv_obj_set_flex_align(ui_Status, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
 
-ui_Panel2 = lv_obj_create(ui_Status);
-lv_obj_set_width( ui_Panel2, LV_SIZE_CONTENT);  /// 100
-lv_obj_set_height( ui_Panel2, LV_SIZE_CONTENT);   /// 100
-lv_obj_set_align( ui_Panel2, LV_ALIGN_CENTER );
-lv_obj_set_flex_flow(ui_Panel2,LV_FLEX_FLOW_COLUMN);
-lv_obj_set_flex_align(ui_Panel2, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-lv_obj_clear_flag( ui_Panel2, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
+ui_StatusPanel = lv_obj_create(ui_Status);
+lv_obj_set_width( ui_StatusPanel, LV_SIZE_CONTENT);  /// 100
+lv_obj_set_height( ui_StatusPanel, LV_SIZE_CONTENT);   /// 100
+lv_obj_set_align( ui_StatusPanel, LV_ALIGN_CENTER );
+lv_obj_set_flex_flow(ui_StatusPanel,LV_FLEX_FLOW_COLUMN);
+lv_obj_set_flex_align(ui_StatusPanel, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+lv_obj_clear_flag( ui_StatusPanel, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
-ui_statusHeader = lv_label_create(ui_Panel2);
+ui_statusHeader = lv_label_create(ui_StatusPanel);
 lv_obj_set_width( ui_statusHeader, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_statusHeader, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_align( ui_statusHeader, LV_ALIGN_CENTER );
+lv_label_set_text(ui_statusHeader,"Status");
+lv_obj_set_style_text_font(ui_statusHeader, &lv_font_montserrat_20, LV_PART_MAIN| LV_STATE_DEFAULT);
 
-ui_Label5 = lv_label_create(ui_Panel2);
-lv_obj_set_width( ui_Label5, LV_SIZE_CONTENT);  /// 1
-lv_obj_set_height( ui_Label5, LV_SIZE_CONTENT);   /// 1
-lv_obj_set_align( ui_Label5, LV_ALIGN_CENTER );
+ui_statusText = lv_label_create(ui_StatusPanel);
+lv_obj_set_width( ui_statusText, LV_SIZE_CONTENT);  /// 1
+lv_obj_set_height( ui_statusText, LV_SIZE_CONTENT);   /// 1
+lv_obj_set_align( ui_statusText, LV_ALIGN_CENTER );
+lv_label_set_text(ui_statusText,"this is\nthe status\n");
 
 lv_obj_add_event_cb(ui_Status, ui_event_Status, LV_EVENT_ALL, NULL);
 

@@ -57,13 +57,19 @@ extern lv_obj_t *ui_GPS;
 void ui_Parameters_screen_init(void);
 void ui_event_Parameters( lv_event_t * e);
 extern lv_obj_t *ui_Parameters;
+extern lv_obj_t *ui_Panel3;
+extern lv_obj_t *ui_Panel4;
+extern lv_obj_t *ui_runCompassAnimation;
+extern lv_obj_t *ui_Panel5;
+extern lv_obj_t *ui_Label2;
+extern lv_obj_t *ui_animationSpeed;
 // SCREEN: ui_Status
 void ui_Status_screen_init(void);
 void ui_event_Status( lv_event_t * e);
 extern lv_obj_t *ui_Status;
-extern lv_obj_t *ui_Panel2;
+extern lv_obj_t *ui_StatusPanel;
 extern lv_obj_t *ui_statusHeader;
-extern lv_obj_t *ui_Label5;
+extern lv_obj_t *ui_statusText;
 extern lv_obj_t *ui____initial_actions0;
 
 

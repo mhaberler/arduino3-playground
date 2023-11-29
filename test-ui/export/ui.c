@@ -48,15 +48,21 @@ lv_obj_t *ui_GPS;
 void ui_Parameters_screen_init(void);
 void ui_event_Parameters( lv_event_t * e);
 lv_obj_t *ui_Parameters;
+lv_obj_t *ui_Panel3;
+lv_obj_t *ui_Panel4;
+lv_obj_t *ui_runCompassAnimation;
+lv_obj_t *ui_Panel5;
+lv_obj_t *ui_Label2;
+lv_obj_t *ui_animationSpeed;
 
 
 // SCREEN: ui_Status
 void ui_Status_screen_init(void);
 void ui_event_Status( lv_event_t * e);
 lv_obj_t *ui_Status;
-lv_obj_t *ui_Panel2;
+lv_obj_t *ui_StatusPanel;
 lv_obj_t *ui_statusHeader;
-lv_obj_t *ui_Label5;
+lv_obj_t *ui_statusText;
 lv_obj_t *ui____initial_actions0;
 
 ///////////////////// TEST LVGL SETTINGS ////////////////////
