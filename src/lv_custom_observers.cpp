@@ -30,16 +30,9 @@ static void ruuvi_report_cb(lv_subject_t *subject, lv_observer_t *observer)
             return;
     }
     lv_obj_t *target = (lv_obj_t *)lv_observer_get_target(observer);
-    // LV_LOG_USER(fmt, ITOD100(value));
     lv_label_set_text_fmt(target, fmt, ITOD100(value));
 }
 
-static void set_color_cb(lv_subject_t *subject, lv_observer_t *observer)
-{
-    lv_color_t c = lv_subject_get_color(subject);
-    lv_obj_t *target = (lv_obj_t *)lv_observer_get_target(observer);
-    lv_obj_set_style_text_color(target, c, LV_PART_MAIN | LV_STATE_DEFAULT);
-}
 
 
 static void battery_group_cb(lv_subject_t *subject, lv_observer_t *observer)
@@ -78,7 +71,6 @@ static void register_observers(void)
     lv_subject_add_observer_with_target(&env_temp, ruuvi_report_cb, ui_envTemp, "%.1f°");
     lv_subject_add_observer_with_target(&env_hum, ruuvi_report_cb, ui_envHum, "%.1f%%");
 
-    lv_subject_add_observer_with_target(&wifi_color, set_color_cb, ui_WifiStatus, NULL);
 
     lv_subject_add_observer_with_target(&battery_all, battery_group_cb, ui_BatteryStatus, NULL);
 }
