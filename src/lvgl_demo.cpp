@@ -62,7 +62,7 @@ void set_battery_indicator(int32_t batval)
 void lvgl_setup(void)
 {
     lv_begin();
-    ui_init(); // Squareline UI
+    ui_init();          // Squareline UI
     lv_subjects_init(); // order is important
     lv_observer_init();
     ui_custom_init(); // stuff which cant be easily done in Squareline
@@ -93,16 +93,17 @@ void lvgl_loop(void)
         sunp++;
         sunp %= 360;
 
-        lvgl_acquire();
-
-        lv_subject_set_int(&heading_mag, heading);
-        lv_subject_set_int(&heading_true, heading + 7);
-        lv_subject_set_int(&course_over_ground_true, heading + 33);
-        lv_subject_set_int(&mag_var, mvar);
-        lv_subject_set_int(&sun_pos, sunp);
-        lv_subject_notify(&compass_all);
-        lvgl_release();
-
+        if (lv_scr_act() == ui_Compass)
+        {
+            lvgl_acquire();
+            lv_subject_set_int(&heading_mag, heading);
+            lv_subject_set_int(&heading_true, heading + 7);
+            lv_subject_set_int(&course_over_ground_true, heading + 33);
+            lv_subject_set_int(&mag_var, mvar);
+            lv_subject_set_int(&sun_pos, sunp);
+            lv_subject_notify(&compass_all);
+            lvgl_release();
+        }
         update_battery = false;
     }
 }
