@@ -41,13 +41,6 @@ static void set_color_cb(lv_subject_t *subject, lv_observer_t *observer)
     lv_obj_set_style_text_color(target, c, LV_PART_MAIN | LV_STATE_DEFAULT);
 }
 
-static void sdcard_status_cb(lv_subject_t *subject, lv_observer_t *observer)
-{
-    int32_t v = lv_subject_get_int(subject);
-    if (v == lv_subject_get_previous_int(subject))
-        return;
-    LV_LOG_USER("status %ld", lv_subject_get_int(subject));
-}
 
 static void battery_group_cb(lv_subject_t *subject, lv_observer_t *observer)
 {
@@ -86,9 +79,6 @@ static void register_observers(void)
     lv_subject_add_observer_with_target(&env_hum, ruuvi_report_cb, ui_envHum, "%.1f%%");
 
     lv_subject_add_observer_with_target(&wifi_color, set_color_cb, ui_WifiStatus, NULL);
-
-    lv_subject_add_observer_with_target(&sdcard_status, sdcard_status_cb, ui_SdCardStatus, NULL);
-    lv_subject_add_observer_with_target(&ble_color, set_color_cb, ui_BLEStatus, NULL);
 
     lv_subject_add_observer_with_target(&battery_all, battery_group_cb, ui_BatteryStatus, NULL);
 }

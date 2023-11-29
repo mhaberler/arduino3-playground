@@ -35,6 +35,10 @@ lv_obj_set_x( ui_SdCardStatus, -39 );
 lv_obj_set_y( ui_SdCardStatus, -105 );
 lv_obj_set_align( ui_SdCardStatus, LV_ALIGN_CENTER );
 lv_label_set_text(ui_SdCardStatus,"");
+lv_obj_set_style_text_color(ui_SdCardStatus, lv_color_hex(0x808080), LV_PART_MAIN | LV_STATE_DEFAULT );
+lv_obj_set_style_text_opa(ui_SdCardStatus, 255, LV_PART_MAIN| LV_STATE_DEFAULT);
+lv_obj_set_style_text_color(ui_SdCardStatus, lv_color_hex(0xCDF011), LV_PART_MAIN | LV_STATE_CHECKED );
+lv_obj_set_style_text_opa(ui_SdCardStatus, 255, LV_PART_MAIN| LV_STATE_CHECKED);
 
 ui_BLEStatus = lv_label_create(ui_mainHeader);
 lv_obj_set_width( ui_BLEStatus, LV_SIZE_CONTENT);  /// 1

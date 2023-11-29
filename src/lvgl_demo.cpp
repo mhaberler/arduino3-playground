@@ -20,6 +20,25 @@ static bool update_battery = false;
 static int32_t battery_value;
 static int32_t heading, mvar, sunp;
 
+#ifdef M5UNIFIED
+#include <SD.h>
+
+#ifdef CORES3
+#define AW9523_ADDR 0x58
+#define SD_CS 4
+static bool SDCardExist()
+{
+    return (bool)!((M5.In_I2C.readRegister8(AW9523_ADDR, 0x00, 100000L) >> 4) & 0x01);
+}
+
+bool SDInit()
+{
+    return SD.begin(SD_CS, SPI, 25000000);
+}
+#endif
+#else
+#endif
+
 void set_battery_indicator(int32_t batval)
 {
     lv_color_t color = lv_palette_main(LV_PALETTE_GREY);
@@ -67,6 +86,12 @@ void lvgl_setup(void)
     lv_observer_init();
     ui_custom_init(); // stuff which cant be easily done in Squareline
 
+#if CORES3 && M5UNIFIED
+    if (SDCardExist())
+        SDInit();
+    lv_subject_set_int(&sdcard_status, SDCardExist());
+#endif
+
     heading_mag.user_data = (void *)1;
     heading_true.user_data = (void *)1;
     course_over_ground_true.user_data = (void *)1;
@@ -104,6 +129,13 @@ void lvgl_loop(void)
             lv_subject_notify(&compass_all);
             lvgl_release();
         }
+#if CORES3 && M5UNIFIED
+        lv_subject_set_int(&sdcard_status, SDCardExist());
+#else
+        // just toggle the label checked/unchecked
+        lv_subject_set_int(&sdcard_status, lv_subject_get_int(&sdcard_status) ^ 1);
+
+#endif
         update_battery = false;
     }
 }

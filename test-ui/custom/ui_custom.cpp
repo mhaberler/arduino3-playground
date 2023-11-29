@@ -14,6 +14,9 @@ void ui_custom_init(void)
     lv_compass_display(ui_Compass);
 
     lv_button_bind_checked(ui_runCompassAnimation, &runCompassAnimation);
+    lv_button_bind_checked(ui_runCompassAnimation, &runCompassAnimation);
+    lv_button_bind_checked(ui_BLEStatus, &ble_traffic);
+    lv_button_bind_checked(ui_SdCardStatus, &sdcard_status);
     lv_slider_bind_value(ui_animationSpeed, &animationSpeed);
 }
 

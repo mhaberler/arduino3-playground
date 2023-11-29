@@ -20,7 +20,7 @@ static void revert_ble_indicator(void)
                              []()
                              {
                       lvgl_acquire();
-  lv_subject_set_color(&ble_color, STATUS_BLE_IDLE);
+  lv_subject_set_int(&ble_traffic, 0);
   lvgl_release(); });
 }
 
@@ -80,9 +80,7 @@ class scanCallbacks : public BLEAdvertisedDeviceCallbacks
     {
         // Serial.printf("Advertised Device Result: %s \n",
         //               advertisedDevice->toString().c_str());
-        // lvgl_acquire();
-        // lv_subject_set_color(&ble_color, STATUS_BLE_TRAFFIC);
-        // lvgl_release();
+
         if (advertisedDevice->haveManufacturerData())
         {
             const uint8_t *data =
@@ -138,7 +136,7 @@ class scanCallbacks : public BLEAdvertisedDeviceCallbacks
                     lv_subject_set_int(&env_temp, F2I100(ruuvi_ad->temperature));
                     lv_subject_set_user_data(&env_hum, (void *)now);
                     lv_subject_set_int(&env_hum, F2I100(ruuvi_ad->humidity));
-                    lv_subject_set_color(&ble_color, STATUS_BLE_TRAFFIC_FOR_US);
+                    lv_subject_set_int(&ble_traffic, 1);
 
                     lvgl_release();
                     revert_ble_indicator();
@@ -152,7 +150,7 @@ class scanCallbacks : public BLEAdvertisedDeviceCallbacks
                     lv_subject_set_user_data(&oat_hum, (void *)now);
                     lv_subject_set_int(&oat_hum, F2I100(ruuvi_ad->humidity));
 
-                    lv_subject_set_color(&ble_color, STATUS_BLE_TRAFFIC_FOR_US);
+                    lv_subject_set_int(&ble_traffic, 1);
 
                     lvgl_release();
                     revert_ble_indicator();
@@ -166,7 +164,7 @@ class scanCallbacks : public BLEAdvertisedDeviceCallbacks
                     lv_subject_set_user_data(&oat_hum, (void *)now);
                     lv_subject_set_int(&oat_hum, F2I100(ruuvi_ad->humidity));
 
-                    lv_subject_set_color(&ble_color, STATUS_BLE_TRAFFIC_FOR_US);
+                    lv_subject_set_int(&ble_traffic, 1);
 
                     lvgl_release();
                     revert_ble_indicator();
