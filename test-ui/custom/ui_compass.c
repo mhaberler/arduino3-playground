@@ -1,5 +1,6 @@
 
 #include "ui_compass.h"
+#include "hal/lv_hal_tick.h"
 
 #define ARRAY_LENGTH(x) (sizeof(x) / sizeof((x)[0]))
 
@@ -145,9 +146,8 @@ void lv_compass_display(lv_obj_t *parent)
     lv_subject_add_observer_with_target(&compass_all, compass_group_cb, compass_display, NULL);
 }
 
-
 static int16_t last_heading = 0;
-static unsigned long last_compass_upd = 0;
+static uint32_t last_compass_upd = 0;
 
 static void compass_group_cb(lv_subject_t *subject, lv_observer_t *observer)
 {
@@ -159,7 +159,7 @@ static void compass_group_cb(lv_subject_t *subject, lv_observer_t *observer)
     lv_subject_t *subject_mag_var = lv_subject_get_group_element(subject, 3);
     lv_subject_t *subject_sun_pos = lv_subject_get_group_element(subject, 4);
 
-    if (millis() - last_compass_upd > 500)
+    if (lv_tick_elaps(last_compass_upd) > 500)
     { // reduce expensive rotations
         int32_t h_deg = lv_subject_get_int(subject_heading_mag);
 
@@ -186,6 +186,6 @@ static void compass_group_cb(lv_subject_t *subject, lv_observer_t *observer)
             lv_label_set_text_fmt(compass_cogt_l, subject_course_over_ground_true->user_data ? "COGT:  %ld" LV_SYMBOL_DEGREES : "--", lv_subject_get_int(subject_course_over_ground_true));
 #endif
         }
-        last_compass_upd = millis();
+        last_compass_upd = lv_tick_get();
     }
 }

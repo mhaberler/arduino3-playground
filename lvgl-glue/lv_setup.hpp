@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 void lv_begin(void);
-void lv_observer_init(void);
+
 
 #ifdef __cplusplus
 extern "C"

@@ -9,7 +9,8 @@
 
 #include "lv_setup.hpp"
 #include "lv_util.h"
-#include "subjects.hpp"
+#include "lv_subjects.hpp"
+#include "lv_observer.hpp"
 #include "ui.h"
 #include "ui_compass.h"
 #include "ui_custom.hpp"
@@ -61,9 +62,10 @@ void set_battery_indicator(int32_t batval)
 void lvgl_setup(void)
 {
     lv_begin();
-    ui_init();        // Squareline UI
-    ui_custom_init(); // stuff which cant be easily done in Squareline
+    ui_init(); // Squareline UI
+    lv_subjects_init(); // order is important
     lv_observer_init();
+    ui_custom_init(); // stuff which cant be easily done in Squareline
 
     heading_mag.user_data = (void *)1;
     heading_true.user_data = (void *)1;

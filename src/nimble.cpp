@@ -2,9 +2,10 @@
 #ifdef TEST_NIMBLE
 #include "defs.hpp"
 #include "NimBLEDevice.h"
-#include "subjects.hpp"
-#include "ruuvi.h"
+#include "lv_subjects.hpp"
 #include "lv_util.h"
+#include "ruuvi.h"
+
 #include <Ticker.h>
 
 static int scanTime = 60 * 1000; // In milliseconds, 0 = scan forever

@@ -7,7 +7,7 @@
 #include <Ticker.h>
 
 #include "lv_setup.hpp"
-#include "subjects.hpp"
+#include "lv_subjects.hpp"
 #include "lv_util.h"
 
 static Ticker wifi_finished;

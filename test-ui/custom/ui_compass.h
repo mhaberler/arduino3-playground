@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ui.h"
-#include "lv_observer.h"
+#include <lvgl.h>
+#include "lv_subjects.hpp"
 
 #define LV_SYMBOL_DOUBLE_LEFT LV_SYMBOL_LEFT " " LV_SYMBOL_LEFT
 #define LV_SYMBOL_DOUBLE_RIGHT LV_SYMBOL_RIGHT " " LV_SYMBOL_RIGHT

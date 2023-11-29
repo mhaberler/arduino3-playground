@@ -1,8 +1,7 @@
 #include <lvgl.h>
+#include "hal/lv_hal_tick.h"
 #include "lv_setup.hpp"
-#include "subjects.hpp"
-#include "defs.hpp"
-#include "ui_setters.hpp"
+#include "lv_subjects.hpp"
 #include "ui_events.h"
 #include "ui.h"
 #include "lv_util.h"
@@ -15,16 +14,13 @@ extern lv_obj_t *ui_WifiStatus;
 
 static lv_timer_t *na_timer;
 
-lv_subject_t oat_temp, oat_hum, env_temp, env_hum, wifi_color, http_status, sdcard_status, ble_color;
-lv_subject_t battery_all, battery_color, battery_label;
-
 static void ruuvi_report_cb(lv_subject_t *subject, lv_observer_t *observer)
 {
     const char *fmt = (const char *)observer->user_data;
     uint32_t last_heard = (uint32_t)subject->user_data;
     int32_t value = lv_subject_get_int(subject);
 
-    if ((last_heard == 0) || (millis() - last_heard > RUUVI_PERIOD))
+    if ((last_heard == 0) || (lv_tick_elaps(last_heard) > RUUVI_PERIOD))
     {
         fmt = NOT_AVAILABLE;
     }
@@ -52,8 +48,6 @@ static void sdcard_status_cb(lv_subject_t *subject, lv_observer_t *observer)
         return;
     LV_LOG_USER("status %ld", lv_subject_get_int(subject));
 }
-
-static lv_subject_t *battery_list[] = {&battery_label, &battery_color};
 
 static void battery_group_cb(lv_subject_t *subject, lv_observer_t *observer)
 {
@@ -99,26 +93,9 @@ static void register_observers(void)
     lv_subject_add_observer_with_target(&battery_all, battery_group_cb, ui_BatteryStatus, NULL);
 }
 
-static void subjects_init(void)
-{
-    lv_subject_init_int(&oat_temp, 0);
-    lv_subject_init_int(&oat_hum, 0);
-    lv_subject_init_int(&env_temp, 0);
-    lv_subject_init_int(&env_hum, 0);
-
-    lv_subject_init_color(&wifi_color, STATUS_WIFI_UNCONFIGURED);
-    lv_subject_init_color(&ble_color, STATUS_BLE_IDLE);
-    lv_subject_init_int(&sdcard_status, STATUS_SDCARD_MISSING);
-
-    lv_subject_init_color(&battery_color, lv_palette_main(LV_PALETTE_RED));
-    lv_subject_init_pointer(&battery_label, (void *)LV_SYMBOL_BATTERY_EMPTY);
-    lv_subject_init_group(&battery_all, battery_list, 2);
-}
-
 void lv_observer_init(void)
 {
     lvgl_acquire();
-    subjects_init();
     register_observers();
     init_value_expiry();
     lvgl_release();
