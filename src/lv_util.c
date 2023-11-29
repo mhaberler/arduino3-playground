@@ -25,7 +25,6 @@ static void text_style_color_observer_cb(lv_subject_t *subject, lv_observer_t *o
 {
     lv_style_selector_t selector = (lv_style_selector_t)subject->user_data;
     lv_color_t c = lv_subject_get_color(subject);
-    // LV_LOG_USER("--->  color=%ux\n", c);
     lv_obj_t *target = (lv_obj_t *)lv_observer_get_target(observer);
     lv_obj_set_style_text_color(target, c, selector);
 }
@@ -36,7 +35,6 @@ static void text_style_color_changed_cb(lv_event_t *e)
     lv_subject_t *subject = lv_event_get_user_data(e);
     lv_style_selector_t selector = (lv_style_selector_t)subject->user_data;
     lv_color_t c = lv_obj_get_style_text_color(obj, selector);
-    // LV_LOG_USER("--->  color=%ux\n", c);
     lv_subject_set_color(subject, c);
 }
 

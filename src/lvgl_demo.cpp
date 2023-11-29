@@ -134,7 +134,6 @@ void lvgl_loop(void)
 #else
         // just toggle the label checked/unchecked
         lv_subject_set_int(&sdcard_status, lv_subject_get_int(&sdcard_status) ^ 1);
-
 #endif
         update_battery = false;
     }

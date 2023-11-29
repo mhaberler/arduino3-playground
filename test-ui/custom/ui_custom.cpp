@@ -1,6 +1,7 @@
 #include "ui.h"
 #include "ui_compass.h"
 #include "lv_subjects.hpp"
+#include "lv_util.h"
 #include "Esp.h"
 
 void ui_custom_init(void)
@@ -18,6 +19,7 @@ void ui_custom_init(void)
     lv_button_bind_checked(ui_BLEStatus, &ble_traffic);
     lv_button_bind_checked(ui_SdCardStatus, &sdcard_status);
     lv_slider_bind_value(ui_animationSpeed, &animationSpeed);
+    lv_obj_bind_text_style_color(ui_WifiStatus, &wifi_color, LV_PART_MAIN | LV_STATE_DEFAULT);
 }
 
 // callbacks from the UI

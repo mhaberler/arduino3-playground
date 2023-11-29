@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 // ruuvi reporting interval is 60s
-#define RUUVI_PERIOD ( 62 * 1000)
+#define RUUVI_PERIOD ( 65 * 1000)
 
 
 typedef struct
