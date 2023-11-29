@@ -37,6 +37,7 @@ lv_obj_set_height( ui_runCompassAnimation, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_align( ui_runCompassAnimation, LV_ALIGN_CENTER );
 lv_obj_add_state( ui_runCompassAnimation, LV_STATE_CHECKED );     /// States
 lv_obj_add_flag( ui_runCompassAnimation, LV_OBJ_FLAG_SCROLL_ON_FOCUS );   /// Flags
+lv_obj_set_style_text_font(ui_runCompassAnimation, &lv_font_montserrat_20, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 ui_Panel5 = lv_obj_create(ui_Panel3);
 lv_obj_set_width( ui_Panel5, LV_SIZE_CONTENT);  /// 100
@@ -51,6 +52,7 @@ lv_obj_set_width( ui_Label2, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_Label2, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_align( ui_Label2, LV_ALIGN_CENTER );
 lv_label_set_text(ui_Label2,"animation speed");
+lv_obj_set_style_text_font(ui_Label2, &lv_font_montserrat_20, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 ui_animationSpeed = lv_slider_create(ui_Panel5);
 lv_slider_set_value( ui_animationSpeed, 30, LV_ANIM_OFF);

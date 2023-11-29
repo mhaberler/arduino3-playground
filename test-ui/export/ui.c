@@ -149,6 +149,9 @@ lv_indev_wait_release(lv_indev_get_act());
 if ( event_code == LV_EVENT_CLICKED) {
       _ui_screen_change( &ui_Main, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Main_screen_init);
 }
+if ( event_code == LV_EVENT_SCREEN_LOADED) {
+      statusScreenLoaded( e );
+}
 }
 
 ///////////////////// SCREENS ////////////////////

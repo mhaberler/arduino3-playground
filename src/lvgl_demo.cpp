@@ -64,6 +64,7 @@ void lvgl_setup(void)
     ui_init();        // Squareline UI
     ui_custom_init(); // stuff which cant be easily done in Squareline
     lv_observer_init();
+
     heading_mag.user_data = (void *)1;
     heading_true.user_data = (void *)1;
     course_over_ground_true.user_data = (void *)1;
@@ -91,6 +92,7 @@ void lvgl_loop(void)
         sunp %= 360;
 
         lvgl_acquire();
+
         lv_subject_set_int(&heading_mag, heading);
         lv_subject_set_int(&heading_true, heading + 7);
         lv_subject_set_int(&course_over_ground_true, heading + 33);

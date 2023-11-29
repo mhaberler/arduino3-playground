@@ -14,3 +14,7 @@ def mainScreenLoaded(event_struct):
 def showMemory(event_struct):
     return
 
+
+def statusScreenLoaded(event_struct):
+    return
+

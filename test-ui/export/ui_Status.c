@@ -24,7 +24,7 @@ ui_statusHeader = lv_label_create(ui_StatusPanel);
 lv_obj_set_width( ui_statusHeader, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_statusHeader, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_align( ui_statusHeader, LV_ALIGN_CENTER );
-lv_label_set_text(ui_statusHeader,"Status");
+lv_label_set_text(ui_statusHeader,"Memory usage");
 lv_obj_set_style_text_font(ui_statusHeader, &lv_font_montserrat_20, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 ui_statusText = lv_label_create(ui_StatusPanel);
@@ -32,6 +32,7 @@ lv_obj_set_width( ui_statusText, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_statusText, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_align( ui_statusText, LV_ALIGN_CENTER );
 lv_label_set_text(ui_statusText,"this is\nthe status\n");
+lv_obj_set_style_text_font(ui_statusText, &lv_font_montserrat_20, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 lv_obj_add_event_cb(ui_Status, ui_event_Status, LV_EVENT_ALL, NULL);
 

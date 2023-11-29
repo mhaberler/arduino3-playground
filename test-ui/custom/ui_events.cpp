@@ -18,4 +18,10 @@ extern "C"
     {
         LV_LOG_USER("xxx");
     }
+
+    void statusScreenLoaded(lv_event_t *e)
+    {
+        lv_label_set_text_fmt(ui_statusText, "free heap: %lu\nused psram: %lu\n",
+                              ESP.getFreeHeap(), ESP.getPsramSize() - ESP.getFreePsram());
+    }
 }
