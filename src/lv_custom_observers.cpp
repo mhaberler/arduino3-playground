@@ -49,19 +49,6 @@ static void battery_group_cb(lv_subject_t *subject, lv_observer_t *observer)
         lv_label_set_text(target, label);
 }
 
-static void expire_values(lv_timer_t *timer)
-{
-    lv_subject_notify(&oat_temp);
-    lv_subject_notify(&oat_hum);
-    lv_subject_notify(&env_temp);
-    lv_subject_notify(&env_hum);
-}
-
-static void init_value_expiry(void)
-{
-    lv_timer_create(expire_values, 1000, NULL);
-}
-
 static void register_observers(void)
 {
     lv_subject_add_observer_with_target(&oat_temp, ruuvi_report_cb, ui_outsideTemp, "%.1f°");
@@ -77,6 +64,5 @@ void lv_observer_init(void)
 {
     lvgl_acquire();
     register_observers();
-    init_value_expiry();
     lvgl_release();
 }

@@ -4,6 +4,7 @@
 #include "NimBLEDevice.h"
 #include "lv_subjects.hpp"
 #include "lv_util.h"
+#include "hal/lv_hal_tick.h"
 #include "ruuvi.h"
 
 #include <Ticker.h>
@@ -127,7 +128,7 @@ class scanCallbacks : public BLEAdvertisedDeviceCallbacks
                 // dd:79:c6:8f:bd:a2 oat hum
                 // e6:91:df:7b:e5:4d env
                 // d4:15:5c:77:56:68 test weiss
-                uint32_t now = millis();
+                uint32_t now = lv_tick_get();
 
                 if (strcasecmp(ruuvi_ad->address, RUUVI_ENV) == 0)
                 {
