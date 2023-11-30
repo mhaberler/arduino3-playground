@@ -70,6 +70,17 @@ mark = lv.label(parent)
 mark.set_text(lv.SYMBOL.DOWN)
 mark.align(lv.ALIGN.CENTER, 0, -100)
 
+suncont = lv.obj(parent)
+suncont.set_size(42, 42)  
+suncont.set_style_pad_all(2,lv.PART.MAIN)
+suncont.align(lv.ALIGN.CENTER, 0, -48)
+
+sun = lv.label(suncont)
+sun.set_text("o")
+sun.set_style_text_color(lv.palette_main(lv.PALETTE.RED),lv.PART.MAIN)
+# sun.set_style_bg_opa(lv.OPA.COVER,0)
+sun.align(lv.ALIGN.CENTER, 0, 0)
+
 scale_compass.min = 0
 scale_compass.max = 72
 scale_compass.angle_range = 360
@@ -84,7 +95,7 @@ labelScont.set_style_transform_angle(180 * 10, 0)
 labelEcont.set_style_transform_angle(90 * 10, 0)
 labelWcont.set_style_transform_angle(270 * 10, 0)
 
-def rotate(h_deg):
+def rotate(h_deg, sunpos):
     rot = 360 - h_deg;
 
     scale_compass.angle_range = 360
@@ -97,6 +108,7 @@ def rotate(h_deg):
     labelScont.set_style_transform_angle((180 + rot) * 10, 0)
     labelEcont.set_style_transform_angle((90 + rot) * 10, 0)
     labelWcont.set_style_transform_angle((270 + rot) * 10, 0)
+    suncont.set_style_transform_angle(sunpos * 10, 0)
 
 lv.scr_load(parent)
-rotate(37)
+rotate(37, 0)
