@@ -51,10 +51,10 @@ static void battery_group_cb(lv_subject_t *subject, lv_observer_t *observer)
 
 static void register_observers(void)
 {
-    lv_subject_add_observer_with_target(&oat_temp, ruuvi_report_cb, ui_outsideTemp, "%.1f°");
-    lv_subject_add_observer_with_target(&oat_hum, ruuvi_report_cb, ui_outsideHum, "%.1f%%");
-    lv_subject_add_observer_with_target(&env_temp, ruuvi_report_cb, ui_envTemp, "%.1f°");
-    lv_subject_add_observer_with_target(&env_hum, ruuvi_report_cb, ui_envHum, "%.1f%%");
+    lv_subject_add_observer_with_target(&oat_temp, ruuvi_report_cb, ui_outsideTemp, (void*)"%.1f°");
+    lv_subject_add_observer_with_target(&oat_hum, ruuvi_report_cb, ui_outsideHum, (void*)"%.1f%%");
+    lv_subject_add_observer_with_target(&env_temp, ruuvi_report_cb, ui_envTemp,(void*) "%.1f°");
+    lv_subject_add_observer_with_target(&env_hum, ruuvi_report_cb, ui_envHum, (void*)"%.1f%%");
 
 
     lv_subject_add_observer_with_target(&battery_all, battery_group_cb, ui_BatteryStatus, NULL);

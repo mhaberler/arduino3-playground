@@ -19,10 +19,13 @@
 
 #include <stdint.h>
 
+// master -> 8.3.10
 #define LV_USE_OBSERVER 1
 #define lv_memzero lv_memset_00
 #define lv_free lv_mem_free
 #define lv_malloc lv_mem_alloc
+#define lv_obj_remove_flag lv_obj_clear_flag
+#define lv_obj_remove_state lv_obj_clear_state
 
 /*====================
    COLOR SETTINGS
