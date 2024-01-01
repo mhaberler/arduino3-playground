@@ -18,3 +18,7 @@ def showMemory(event_struct):
 def statusScreenLoaded(event_struct):
     return
 
+
+def nfcEvent(event_struct):
+    return
+

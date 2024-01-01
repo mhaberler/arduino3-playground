@@ -4,8 +4,7 @@
 #include "lv_util.h"
 #include "Esp.h"
 
-void ui_custom_init(void)
-{
+void ui_custom_init(void) {
     lv_label_set_text(ui_BLEStatus, LV_SYMBOL_BLUETOOTH);
     lv_label_set_text(ui_BatteryStatus, LV_SYMBOL_BATTERY_EMPTY);
     lv_label_set_text(ui_SdCardStatus, LV_SYMBOL_SD_CARD);
@@ -25,21 +24,23 @@ void ui_custom_init(void)
 // callbacks from the UI
 extern "C"
 {
-    void showMemory(lv_event_t *e)
-    {
+    void showMemory(lv_event_t *e) {
         LV_LOG_USER("--->  emitEvent\n");
         LV_LOG_USER("free heap: %lu\n", ESP.getFreeHeap());
         LV_LOG_USER("used psram: %lu\n", ESP.getPsramSize() - ESP.getFreePsram());
     }
 
-    void mainScreenLoaded(lv_event_t *e)
-    {
+    void mainScreenLoaded(lv_event_t *e) {
         LV_LOG_USER("xxx");
     }
 
-    void statusScreenLoaded(lv_event_t *e)
-    {
+    void statusScreenLoaded(lv_event_t *e) {
         lv_label_set_text_fmt(ui_statusText, "free heap: %lu\nused psram: %lu\n",
                               ESP.getFreeHeap(), ESP.getPsramSize() - ESP.getFreePsram());
     }
+
+    void nfcEvent(lv_event_t *e) {
+         LV_LOG_USER("nfcEvent: %lu\n", e->code);
+    }
+
 }
