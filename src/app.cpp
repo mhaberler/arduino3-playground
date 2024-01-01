@@ -1,7 +1,7 @@
 #ifdef M5UNIFIED
-#include <M5Unified.h>
+    #include <M5Unified.h>
 #else
-#include <Arduino.h>
+    #include <Arduino.h>
 #endif
 
 void startBLEscan(void);
@@ -12,32 +12,32 @@ void lvgl_setup(void);
 void lvgl_loop(void);
 void webserver_setup(void);
 void webserver_loop(void);
+void nfc_setup(void);
+void nfc_loop(void);
 
-
-
-void setup(void)
-{
-  delay(3000);
+void setup(void) {
+    delay(3000);
 #ifdef M5UNIFIED
-  auto cfg = M5.config();
-  cfg.serial_baudrate = 115200;
-  cfg.led_brightness = 128;
-  cfg.clear_display = true;
-  M5.begin(cfg);
+    auto cfg = M5.config();
+    cfg.serial_baudrate = 115200;
+    cfg.led_brightness = 128;
+    cfg.clear_display = true;
+    M5.begin(cfg);
 #else
-  Serial.begin(115200);
+    Serial.begin(115200);
 #endif
-  test_spdlog();
-  lvgl_setup();
-  gfxdemo_setup();
-  startBLEscan();
-  webserver_setup();
+    test_spdlog();
+    lvgl_setup();
+    gfxdemo_setup();
+    startBLEscan();
+    webserver_setup();
+    nfc_setup();
 }
 
-void loop(void)
-{
-  lvgl_loop();
-  gfxdemo_loop();
-  webserver_loop();
-  delay(1);
+void loop(void) {
+    lvgl_loop();
+    gfxdemo_loop();
+    webserver_loop();
+    nfc_loop();
+    delay(1);
 }
