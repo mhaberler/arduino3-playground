@@ -6,7 +6,6 @@
     #include <Arduino.h>
 #endif
 
-
 #ifdef USE_I2C
     #include <MFRC522DriverI2C.h>
     #include <Wire.h>
@@ -22,6 +21,7 @@
 #include <MFRC522v2.h>
 #include <SPI.h>
 #include <stdlib.h>
+#include "nfc_input.h"
 
 using StatusCode = MFRC522Constants::StatusCode;
 static MFRC522::MIFARE_Key key = {{0xff, 0xff, 0xff, 0xff, 0xff, 0xff}};
@@ -54,7 +54,8 @@ typedef enum {
     BWTAG_TANK,
     BWTAG_BURNER,
     BWTAG_FLOWSENSOR,
-    BWTAG_PRESSURESENSOR
+    BWTAG_PRESSURESENSOR,
+    BWTAG_BAROSENSOR,
 } bwTagType_t;
 
 #define BW_MIMETYPE "application/balloonware"
@@ -65,6 +66,12 @@ static const char *ruuvi_ids[] = {
     "\002swSW: ",
     "\002dt",
 };
+
+bool nfc_emit( uint32_t k, void *user_data) {
+    nfcMessage_t msg = {.key = k, .user_data = user_data};
+    xQueueSend(nfc_queue, (void *)&msg, 0);
+    return true;
+}
 
 bwTagType_t
 analyseTag(NfcTag &tag, JsonDocument &doc) {
@@ -141,6 +148,36 @@ void nfc_loop(void) {
 
         bwTagType_t type = analyseTag(tag, jsondoc);
         Serial.printf("analyseTag=%d\n", type);
+
+        switch (type) {
+            case BWTAG_NO_MATCH:
+                nfc_emit('N', NULL);
+                break;
+            case BWTAG_RUUVI:
+                nfc_emit('R', NULL);
+                break;
+            case BWTAG_RUUVI_OAT:
+                nfc_emit('O', NULL);
+                break;
+            case BWTAG_RUUVI_ENV:
+                nfc_emit('E', NULL);
+                break;
+            case BWTAG_TANK:
+                nfc_emit('T', NULL);
+                break;
+            case BWTAG_BURNER:
+                nfc_emit('B', NULL);
+                break;
+            case BWTAG_FLOWSENSOR:
+                nfc_emit('F', NULL);
+                break;
+            case BWTAG_PRESSURESENSOR:
+                nfc_emit('P', NULL);
+                break;
+            case BWTAG_BAROSENSOR:
+                nfc_emit('B', NULL);
+                break;
+        }
         if (type != BWTAG_NO_MATCH) {
             serializeJsonPretty(jsondoc, Serial);
         }
@@ -151,7 +188,6 @@ void nfc_loop(void) {
         // jsondoc.clear ();
         nfc.haltTag();
     }
-    // delay(1000);
 }
 #else
 void nfc_setup(void) {}

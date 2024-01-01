@@ -41,3 +41,7 @@ void loop(void) {
     nfc_loop();
     delay(1);
 }
+
+size_t getArduinoLoopTaskStackSize(void) {
+    return CUSTOM_ARDUINO_LOOP_STACK_SIZE;
+}
