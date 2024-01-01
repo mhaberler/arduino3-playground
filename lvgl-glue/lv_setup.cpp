@@ -55,6 +55,14 @@ static lv_color_t *buf;
 #define SCREEN_HEIGHT 128
 #endif
 
+#ifdef LILYGO_S3_PRO
+#define LGFX_AUTODETECT
+#include <LGFX_AUTODETECT.hpp>
+#define SCREEN_WIDTH 480
+#define SCREEN_HEIGHT 222
+#endif
+
+
 LGFX display;
 
 static lv_disp_draw_buf_t draw_buf;
