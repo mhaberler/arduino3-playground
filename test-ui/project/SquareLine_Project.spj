@@ -5591,6 +5591,71 @@
               }
             ],
             "InheritedType": 4
+          },
+          {
+            "disabled": false,
+            "nid": -1134403533,
+            "strtype": "SCREEN/EventHandler",
+            "strval": "LONG_PRESSED",
+            "childs": [
+              {
+                "nid": -538307658,
+                "strtype": "_custom/name",
+                "strval": "Event4",
+                "InheritedType": 10
+              },
+              {
+                "nid": 1001293447,
+                "strtype": "_custom/condition_C",
+                "strval": "",
+                "InheritedType": 10
+              },
+              {
+                "nid": -1402657309,
+                "strtype": "_custom/condition_P",
+                "strval": "",
+                "InheritedType": 10
+              },
+              {
+                "nid": -2043738922,
+                "strtype": "_custom/action",
+                "strval": "CALL FUNCTION",
+                "childs": [
+                  {
+                    "nid": 1456520586,
+                    "strtype": "CALL FUNCTION/Name",
+                    "strval": "CALL FUNCTION",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": -1631787092,
+                    "strtype": "CALL FUNCTION/Call",
+                    "strval": "<{Function_name}>( event_struct )",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": -1015749266,
+                    "strtype": "CALL FUNCTION/CallC",
+                    "strval": "<{Function_name}>( e );",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": -703054649,
+                    "strtype": "CALL FUNCTION/Function_name",
+                    "strval": "longPressed",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": -1791827313,
+                    "strtype": "CALL FUNCTION/Dont_export_function",
+                    "strval": "True",
+                    "InheritedType": 2
+                  }
+                ],
+                "InheritedType": 10
+              }
+            ],
+            "InheritedType": 4
           }
         ],
         "saved_objtypeKey": "SCREEN"
@@ -6655,6 +6720,33 @@
                 "strtype": "CONTAINER/Style_scrollbar",
                 "strval": "lv.PART.SCROLLBAR, Rectangle, Pad",
                 "InheritedType": 11
+              },
+              {
+                "disabled": false,
+                "nid": 1414147636,
+                "strtype": "CONTAINER/EventHandler",
+                "strval": "CLICKED",
+                "childs": [
+                  {
+                    "nid": -591925636,
+                    "strtype": "_custom/name",
+                    "strval": "Event3",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": 2000687346,
+                    "strtype": "_custom/condition_C",
+                    "strval": "",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": 145988209,
+                    "strtype": "_custom/condition_P",
+                    "strval": "",
+                    "InheritedType": 10
+                  }
+                ],
+                "InheritedType": 4
               }
             ],
             "saved_objtypeKey": "CONTAINER"
@@ -10565,7 +10657,7 @@
     "theme_color2": 0,
     "uiExportFolderPath": "/Users/mah/Ballon/src/BalloonWare/arduino3-playground/test-ui/export",
     "projectExportFolderPath": "/Users/mah/Ballon/src/BalloonWare/arduino3-playground/test-ui/project",
-    "backup_cnt": 186,
+    "backup_cnt": 205,
     "autosave_cnt": 0,
     "lvgl_version": "8.3.6",
     "callfuncsexport": "CPP_FILE",

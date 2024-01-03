@@ -171,8 +171,41 @@ static void nfc_read(lv_indev_drv_t *indev_driver,
     nfcMessage_t rcv_msg;
     if (xQueueReceive(nfc_queue, (void *)&rcv_msg, 0) == pdTRUE) {
         data->state = LV_INDEV_STATE_PR;
+        switch (rcv_msg.key) {
+            case BWTAG_NO_MATCH:
+                last_key =  'N';
+                break;
+            case BWTAG_RUUVI:
+                last_key =  'R';
+                break;
+            case BWTAG_RUUVI_OAT:
+                last_key =  'O';
+                break;
+            case BWTAG_RUUVI_ENV:
+                last_key =  'E';
+                break;
+            case BWTAG_TANK:
+                last_key =  'T';
+                break;
+            case BWTAG_BURNER:
+                last_key =  'B';
+                break;
+            case BWTAG_FLOWSENSOR:
+                last_key =  'F';
+                break;
+            case BWTAG_PRESSURESENSOR:
+                last_key =  'P';
+                break;
+            case BWTAG_BAROSENSOR:
+                last_key =  'B';
+                break;
+        }
         last_key = rcv_msg.key;
-        // LV_LOG_USER("nfc_read: %lu '%c'\n", last_key, (int) last_key);
+        LV_LOG_USER("nfc_read: %lu '%c' \"%s\"\n", last_key, (int) last_key, rcv_msg.user_data ? rcv_msg.user_data:"");
+
+        if (rcv_msg.user_data) {
+            free(rcv_msg.user_data);
+        }
     } else {
         data->state = LV_INDEV_STATE_REL;
     }

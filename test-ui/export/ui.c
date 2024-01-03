@@ -99,6 +99,9 @@ if ( event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_ac
 lv_indev_wait_release(lv_indev_get_act());
       _ui_screen_change( &ui_Status, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Status_screen_init);
 }
+if ( event_code == LV_EVENT_LONG_PRESSED) {
+      longPressed( e );
+}
 }
 void ui_event_Compass( lv_event_t * e) {
     lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);

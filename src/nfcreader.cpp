@@ -22,6 +22,8 @@
 #include <SPI.h>
 #include <stdlib.h>
 #include "nfc_input.h"
+#include "lvgl.h"
+#include "ui.h"
 
 using StatusCode = MFRC522Constants::StatusCode;
 static MFRC522::MIFARE_Key key = {{0xff, 0xff, 0xff, 0xff, 0xff, 0xff}};
@@ -46,18 +48,6 @@ MFRC522Extended mfrc522{driver}; // Create MFRC522 instance.
 NfcAdapter nfc = NfcAdapter(&mfrc522);
 StaticJsonDocument<2048> jsondoc;
 
-typedef enum {
-    BWTAG_NO_MATCH,
-    BWTAG_RUUVI,
-    BWTAG_RUUVI_OAT,
-    BWTAG_RUUVI_ENV,
-    BWTAG_TANK,
-    BWTAG_BURNER,
-    BWTAG_FLOWSENSOR,
-    BWTAG_PRESSURESENSOR,
-    BWTAG_BAROSENSOR,
-} bwTagType_t;
-
 #define BW_MIMETYPE "application/balloonware"
 
 static const char *ruuvi_ids[] = {
@@ -67,16 +57,24 @@ static const char *ruuvi_ids[] = {
     "\002dt",
 };
 
+
 bool nfc_emit( uint32_t k, void *user_data) {
-    nfcMessage_t msg = {.key = k, .user_data = user_data};
-    xQueueSend(nfc_queue, (void *)&msg, 0);
+    // nfcMessage_t msg = {.key = k, .user_data = user_data};
+    // xQueueSend(nfc_queue, (void *)&msg, 0);
+    // struct _lv_event_dsc_t * lv_obj_add_event_cb(lv_obj_t * obj, lv_event_cb_t event_cb, lv_event_code_t filter,
+    //         void * user_data)
+    lv_event_send(ui_Main, (lv_event_code_t)k, user_data);
+
+    // lv_obj_add_event_cb(ui_Main, my_event_cb, LV_EVENT_CLICKED, NULL);   /*Assign an event callback*/
+
+
     return true;
 }
 
-bwTagType_t
-analyseTag(NfcTag &tag, JsonDocument &doc) {
+uint32_t
+analyseTag(NfcTag &tag, JsonDocument &doc, String &msg) {
     if (!tag.hasNdefMessage()) {
-        return BWTAG_NO_MATCH;
+        return BW_EVENT_TAG_NO_MATCH;
     }
     auto nrec = tag.getNdefMessage().getRecordCount();
     if ((tag.getTagType() == MFRC522Constants::PICC_TYPE_ISO_14443_4) && (nrec == 4)) {
@@ -86,20 +84,22 @@ analyseTag(NfcTag &tag, JsonDocument &doc) {
             const byte *payload = record.getPayload();
             size_t prefix_len = strlen((const char *)ruuvi_ids[i]);
             if (payload == NULL) {
-                return BWTAG_NO_MATCH;
+                return BW_EVENT_TAG_NO_MATCH;
             }
             if (memcmp(payload, ruuvi_ids[i], prefix_len) != 0) {
-                return BWTAG_NO_MATCH;
+                return BW_EVENT_TAG_NO_MATCH;
             }
             content[i] = String(record.getPayload() + prefix_len,
                                 record.getPayloadLength() - prefix_len);
+
         }
         // if we made it here, it's a Ruuvi tag
         doc["ID"] = content[0];
         doc["MAC"] = content[1];
         doc["SW"] = content[2];
         // skip the mystery 'dt' record
-        return BWTAG_RUUVI;
+        serializeJsonPretty(jsondoc, msg);
+        return BW_EVENT_RUUVI;
     }
     if (tag.getTagType() == MFRC522Constants::PICC_TYPE_MIFARE_1K) {
         // tank tag?
@@ -113,15 +113,16 @@ analyseTag(NfcTag &tag, JsonDocument &doc) {
                                         record.getPayloadLength());
                 DeserializationError e = deserializeJson(doc, payload);
                 if (e == DeserializationError::Ok) {
-                    return BWTAG_TANK;
+                    msg = payload;
+                    return BW_EVENT_TANK;
                 }
                 Serial.printf("deserialisation failed: %s\n",
                               e.c_str());
-                return BWTAG_NO_MATCH;
+                return BW_EVENT_TAG_NO_MATCH;
             }
         }
     }
-    return BWTAG_NO_MATCH;
+    return BW_EVENT_TAG_NO_MATCH;
 }
 
 void nfc_setup(void) {
@@ -139,6 +140,8 @@ void nfc_setup(void) {
     nfc.setMifareKey(&key);
     MFRC522Debug::PCD_DumpVersionToSerial(
         mfrc522, Serial); // Show version of PCD - MFRC522 Card Reader.
+
+
 }
 
 void nfc_loop(void) {
@@ -146,41 +149,18 @@ void nfc_loop(void) {
         Serial.println("\nReading NFC tag");
         NfcTag tag = nfc.read();
 
-        bwTagType_t type = analyseTag(tag, jsondoc);
+        String msg;
+        uint32_t type = analyseTag(tag, jsondoc, msg);
         Serial.printf("analyseTag=%d\n", type);
+        void *s = NULL;
+        if (msg.length()) {
+            s = strdup(msg.c_str());
+        }
+        nfc_emit(type, s);
 
-        switch (type) {
-            case BWTAG_NO_MATCH:
-                nfc_emit('N', NULL);
-                break;
-            case BWTAG_RUUVI:
-                nfc_emit('R', NULL);
-                break;
-            case BWTAG_RUUVI_OAT:
-                nfc_emit('O', NULL);
-                break;
-            case BWTAG_RUUVI_ENV:
-                nfc_emit('E', NULL);
-                break;
-            case BWTAG_TANK:
-                nfc_emit('T', NULL);
-                break;
-            case BWTAG_BURNER:
-                nfc_emit('B', NULL);
-                break;
-            case BWTAG_FLOWSENSOR:
-                nfc_emit('F', NULL);
-                break;
-            case BWTAG_PRESSURESENSOR:
-                nfc_emit('P', NULL);
-                break;
-            case BWTAG_BAROSENSOR:
-                nfc_emit('B', NULL);
-                break;
-        }
-        if (type != BWTAG_NO_MATCH) {
-            serializeJsonPretty(jsondoc, Serial);
-        }
+        // if (type != BW_EVENT_NO_MATCH) {
+        //     serializeJsonPretty(jsondoc, Serial);
+        // }
         jsondoc.clear();
 
         // tag.toJson (jsondoc);

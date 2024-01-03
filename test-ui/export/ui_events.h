@@ -11,6 +11,7 @@ extern "C" {
 #endif
 
 void showMemory(lv_event_t * e);
+void longPressed(lv_event_t * e);
 void statusScreenLoaded(lv_event_t * e);
 
 #ifdef __cplusplus

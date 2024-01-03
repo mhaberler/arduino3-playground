@@ -26,3 +26,7 @@ def nfcEvent(event_struct):
 def nfcevent(event_struct):
     return
 
+
+def longPressed(event_struct):
+    return
+
