@@ -22,3 +22,7 @@ def statusScreenLoaded(event_struct):
 def nfcEvent(event_struct):
     return
 
+
+def nfcevent(event_struct):
+    return
+

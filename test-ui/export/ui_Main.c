@@ -8,7 +8,6 @@
 void ui_Main_screen_init(void)
 {
 ui_Main = lv_obj_create(NULL);
-lv_obj_add_state( ui_Main, LV_STATE_FOCUSED );     /// States
 lv_obj_clear_flag( ui_Main, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 lv_obj_set_flex_flow(ui_Main,LV_FLEX_FLOW_COLUMN);
 lv_obj_set_flex_align(ui_Main, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_END, LV_FLEX_ALIGN_START);

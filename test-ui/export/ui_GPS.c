@@ -10,27 +10,32 @@ void ui_GPS_screen_init(void)
 ui_GPS = lv_obj_create(NULL);
 lv_obj_clear_flag( ui_GPS, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
-ui_TextArea2 = lv_textarea_create(ui_GPS);
-lv_obj_set_width( ui_TextArea2, 150);
-lv_obj_set_height( ui_TextArea2, 70);
-lv_obj_set_x( ui_TextArea2, -40 );
-lv_obj_set_y( ui_TextArea2, -60 );
-lv_obj_set_align( ui_TextArea2, LV_ALIGN_CENTER );
-lv_textarea_set_placeholder_text(ui_TextArea2,"Placeholder...");
+ui_Container2 = lv_obj_create(ui_GPS);
+lv_obj_remove_style_all(ui_Container2);
+lv_obj_set_width( ui_Container2, 250);
+lv_obj_set_height( ui_Container2, 150);
+lv_obj_set_x( ui_Container2, 12 );
+lv_obj_set_y( ui_Container2, -10 );
+lv_obj_set_align( ui_Container2, LV_ALIGN_CENTER );
+lv_obj_set_flex_flow(ui_Container2,LV_FLEX_FLOW_COLUMN);
+lv_obj_set_flex_align(ui_Container2, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
+lv_obj_add_state( ui_Container2, LV_STATE_FOCUSED );     /// States
+lv_obj_clear_flag( ui_Container2, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
+lv_obj_set_style_pad_row(ui_Container2, 5, LV_PART_MAIN| LV_STATE_DEFAULT);
+lv_obj_set_style_pad_column(ui_Container2, 5, LV_PART_MAIN| LV_STATE_DEFAULT);
+
+ui_TextArea4 = lv_textarea_create(ui_Container2);
+lv_obj_set_width( ui_TextArea4, 140);
+lv_obj_set_height( ui_TextArea4, LV_SIZE_CONTENT);   /// 50
+lv_obj_set_x( ui_TextArea4, -23 );
+lv_obj_set_y( ui_TextArea4, -2 );
+lv_obj_set_align( ui_TextArea4, LV_ALIGN_CENTER );
+lv_textarea_set_placeholder_text(ui_TextArea4,"xxx");
+lv_textarea_set_one_line(ui_TextArea4,true);
+lv_obj_add_state( ui_TextArea4, LV_STATE_FOCUSED );     /// States
 
 
 
-ui_TextArea3 = lv_textarea_create(ui_GPS);
-lv_obj_set_width( ui_TextArea3, 150);
-lv_obj_set_height( ui_TextArea3, 70);
-lv_obj_set_x( ui_TextArea3, -39 );
-lv_obj_set_y( ui_TextArea3, 46 );
-lv_obj_set_align( ui_TextArea3, LV_ALIGN_CENTER );
-lv_textarea_set_placeholder_text(ui_TextArea3,"Placeholder...");
-
-
-
-lv_obj_add_event_cb(ui_TextArea2, ui_event_TextArea2, LV_EVENT_ALL, NULL);
 lv_obj_add_event_cb(ui_GPS, ui_event_GPS, LV_EVENT_ALL, NULL);
 
 }
