@@ -367,6 +367,8 @@ lv_observer_t * lv_roller_bind_value(lv_obj_t * obj, lv_subject_t * subject);
  */
 lv_observer_t * lv_dropdown_bind_value(lv_obj_t * obj, lv_subject_t * subject);
 
+
+char * lv_strncpy(char * dst, const char * src, size_t dest_size);
 /**********************
  *      MACROS
  **********************/

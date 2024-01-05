@@ -2,15 +2,18 @@
 #include "lv_setup.hpp"
 #include "lv_util.h"
 #include "lv_subjects.hpp"
+#include "nfc_input.h"
+#include "esp_heap_caps.h"
 
 lv_subject_t oat_temp, oat_hum, env_temp, env_hum, wifi_color, http_status, sdcard_status, ble_traffic;
 lv_subject_t battery_all, battery_color, battery_label;
 lv_subject_t runCompassAnimation, animationSpeed;
+lv_subject_t nfcMessage;
+extern bool psramFound();
 
 static lv_subject_t *battery_list[] = {&battery_label, &battery_color};
 
-void lv_subjects_init(void)
-{
+void lv_subjects_init(void) {
     lvgl_acquire();
     lv_subject_init_int(&oat_temp, 0);
     lv_subject_init_int(&oat_hum, 0);
@@ -28,6 +31,8 @@ void lv_subjects_init(void)
 
     lv_subject_init_int(&runCompassAnimation, 0);
     lv_subject_init_int(&animationSpeed, 30);
+
+    lv_subject_init_pointer(&nfcMessage, NULL);
 
     lvgl_release();
 }

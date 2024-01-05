@@ -15,8 +15,11 @@ void webserver_loop(void);
 void nfc_setup(void);
 void nfc_loop(void);
 
+bool psRAMavail;
+
 void setup(void) {
     delay(3000);
+    psRAMavail = ESP.getFreePsram() > 0;
 #ifdef M5UNIFIED
     auto cfg = M5.config();
     cfg.serial_baudrate = 115200;

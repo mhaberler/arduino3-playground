@@ -494,6 +494,16 @@ lv_observer_t * lv_dropdown_bind_value(lv_obj_t * obj, lv_subject_t * subject)
 
 }
 
+char * lv_strncpy(char * dst, const char * src, size_t dest_size)
+{
+    if(dest_size > 0) {
+        dst[0] = '\0';
+        strncat(dst, src, dest_size - 1);
+    }
+
+    return dst;
+}
+
 /**********************
  *   STATIC FUNCTIONS
  **********************/

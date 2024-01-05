@@ -159,60 +159,6 @@ static void lvgl_read(lv_indev_drv_t *indev_driver,
 #endif
 }
 
-#if USE_NFC
-#include "nfc_input.h"
-
-QueueHandle_t nfc_queue;
-
-// funnel NFC events as emulated keys into LVGL
-static void nfc_read(lv_indev_drv_t *indev_driver,
-                     lv_indev_data_t *data) {
-    static uint32_t last_key = 0;
-    nfcMessage_t rcv_msg;
-    if (xQueueReceive(nfc_queue, (void *)&rcv_msg, 0) == pdTRUE) {
-        data->state = LV_INDEV_STATE_PR;
-        switch (rcv_msg.key) {
-            case BWTAG_NO_MATCH:
-                last_key =  'N';
-                break;
-            case BWTAG_RUUVI:
-                last_key =  'R';
-                break;
-            case BWTAG_RUUVI_OAT:
-                last_key =  'O';
-                break;
-            case BWTAG_RUUVI_ENV:
-                last_key =  'E';
-                break;
-            case BWTAG_TANK:
-                last_key =  'T';
-                break;
-            case BWTAG_BURNER:
-                last_key =  'B';
-                break;
-            case BWTAG_FLOWSENSOR:
-                last_key =  'F';
-                break;
-            case BWTAG_PRESSURESENSOR:
-                last_key =  'P';
-                break;
-            case BWTAG_BAROSENSOR:
-                last_key =  'B';
-                break;
-        }
-        last_key = rcv_msg.key;
-        LV_LOG_USER("nfc_read: %lu '%c' \"%s\"\n", last_key, (int) last_key, rcv_msg.user_data ? rcv_msg.user_data:"");
-
-        if (rcv_msg.user_data) {
-            free(rcv_msg.user_data);
-        }
-    } else {
-        data->state = LV_INDEV_STATE_REL;
-    }
-    data->key = last_key;
-}
-#endif
-
 static void my_log_cb(const char *msg) {
     Serial.print(msg);
 }
@@ -256,17 +202,6 @@ void lv_begin() {
     indev_drv.read_cb = lvgl_read;
     lv_indev_t *touch_indev = lv_indev_drv_register(&indev_drv);
     lv_indev_set_group(touch_indev, lv_group_get_default());
-
-#if USE_NFC
-    nfc_queue = xQueueCreate(nfc_queue_len, sizeof(nfcMessage_t));
-
-    static lv_indev_drv_t nfc_indev_drv;
-    lv_indev_drv_init(&nfc_indev_drv);
-    nfc_indev_drv.type = LV_INDEV_TYPE_KEYPAD;
-    nfc_indev_drv.read_cb = nfc_read;
-    lv_indev_t *nfc_indev = lv_indev_drv_register(&nfc_indev_drv);
-    lv_indev_set_group(nfc_indev, lv_group_get_default());
-#endif
 
     /* Create and start a periodic timer interrupt to call lv_tick_inc */
     const esp_timer_create_args_t lv_periodic_timer_args = {

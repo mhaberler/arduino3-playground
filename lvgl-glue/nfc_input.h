@@ -1,7 +1,8 @@
 #pragma once
 
 #include <stdint.h>
-#include "freertos/queue.h"
+
+#define NFC_MAX_MSG_SIZE 1024
 
 typedef enum {
     BWTAG_NO_MATCH,
@@ -15,21 +16,4 @@ typedef enum {
     BWTAG_BAROSENSOR,
 } bwTagType_t;
 
-extern uint32_t 
-    BW_EVENT_TAG_NO_MATCH,
-    BW_EVENT_RUUVI,
-    BW_EVENT_RUUVI_OAT,
-    BW_EVENT_RUUVI_ENV,
-    BW_EVENT_TANK,
-    BW_EVENT_BURNER,
-    BW_EVENT_FLOWSENSOR,
-    BW_EVENT_PRESSURESENSOR,
-    BW_EVENT_BAROSENSOR;
 
-typedef struct {
-    uint32_t key;
-    void *user_data;
-} nfcMessage_t;
-
-extern QueueHandle_t nfc_queue;
-constexpr int nfc_queue_len = 5;
