@@ -12872,39 +12872,50 @@
                             "InheritedType": 10
                           },
                           {
-                            "nid": -1813577711,
+                            "nid": -1952300867,
                             "strtype": "_custom/action",
-                            "strval": "CALL FUNCTION",
+                            "strval": "CHANGE SCREEN",
                             "childs": [
                               {
-                                "nid": 2079979741,
-                                "strtype": "CALL FUNCTION/Name",
-                                "strval": "CALL FUNCTION",
+                                "nid": 1924813041,
+                                "strtype": "CHANGE SCREEN/Name",
+                                "strval": "CHANGE SCREEN",
                                 "InheritedType": 10
                               },
                               {
-                                "nid": -242416725,
-                                "strtype": "CALL FUNCTION/Call",
-                                "strval": "<{Function_name}>( event_struct )",
+                                "nid": 1876931287,
+                                "strtype": "CHANGE SCREEN/Call",
+                                "strval": "ChangeScreen( <{Screen_to}>, lv.SCR_LOAD_ANIM.<{Fade_mode}>, <{Speed}>, <{Delay}>)",
                                 "InheritedType": 10
                               },
                               {
-                                "nid": -1527613493,
-                                "strtype": "CALL FUNCTION/CallC",
-                                "strval": "<{Function_name}>( e );",
+                                "nid": 1843966607,
+                                "strtype": "CHANGE SCREEN/CallC",
+                                "strval": "_ui_screen_change( &<{Screen_to}>, LV_SCR_LOAD_ANIM_<{Fade_mode}>, <{Speed}>, <{Delay}>, &<{Screen_to}>_screen_init);",
                                 "InheritedType": 10
                               },
                               {
-                                "nid": 1914625078,
-                                "strtype": "CALL FUNCTION/Function_name",
-                                "strval": "returnToPrevious",
-                                "InheritedType": 10
+                                "nid": -1287340933,
+                                "strtype": "CHANGE SCREEN/Screen_to",
+                                "strval": "GUID6988442-146730S8282329",
+                                "InheritedType": 9
                               },
                               {
-                                "nid": -2108745924,
-                                "strtype": "CALL FUNCTION/Dont_export_function",
-                                "strval": "True",
-                                "InheritedType": 2
+                                "nid": 1173208101,
+                                "strtype": "CHANGE SCREEN/Fade_mode",
+                                "strval": "FADE_ON",
+                                "InheritedType": 3
+                              },
+                              {
+                                "nid": 1403394827,
+                                "strtype": "CHANGE SCREEN/Speed",
+                                "integer": 500,
+                                "InheritedType": 6
+                              },
+                              {
+                                "nid": 1579839158,
+                                "strtype": "CHANGE SCREEN/Delay",
+                                "InheritedType": 6
                               }
                             ],
                             "InheritedType": 10
@@ -13721,7 +13732,7 @@
     "theme_color2": 0,
     "uiExportFolderPath": "/Users/mah/Ballon/src/BalloonWare/arduino3-playground/test-ui/export",
     "projectExportFolderPath": "/Users/mah/Ballon/src/BalloonWare/arduino3-playground/test-ui/project",
-    "backup_cnt": 389,
+    "backup_cnt": 399,
     "autosave_cnt": 0,
     "lvgl_version": "8.3.6",
     "callfuncsexport": "CPP_FILE",
