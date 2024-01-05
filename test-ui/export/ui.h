@@ -72,6 +72,22 @@ extern lv_obj_t *ui_Status;
 extern lv_obj_t *ui_StatusPanel;
 extern lv_obj_t *ui_statusHeader;
 extern lv_obj_t *ui_statusText;
+// SCREEN: ui_Ruuvi
+void ui_Ruuvi_screen_init(void);
+extern lv_obj_t *ui_Ruuvi;
+extern lv_obj_t *ui_Container1;
+extern lv_obj_t *ui_ruuviHeader;
+extern lv_obj_t *ui_ruuviBody;
+extern lv_obj_t *ui_Container3;
+void ui_event_Envelope( lv_event_t * e);
+extern lv_obj_t *ui_Envelope;
+extern lv_obj_t *ui_Label4;
+void ui_event_OAT( lv_event_t * e);
+extern lv_obj_t *ui_OAT;
+extern lv_obj_t *ui_Label5;
+void ui_event_Cancel( lv_event_t * e);
+extern lv_obj_t *ui_Cancel;
+extern lv_obj_t *ui_Label6;
 extern lv_obj_t *ui____initial_actions0;
 
 

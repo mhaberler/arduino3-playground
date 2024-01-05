@@ -30,3 +30,15 @@ def nfcevent(event_struct):
 def longPressed(event_struct):
     return
 
+
+def setEnvelopeMac(event_struct):
+    return
+
+
+def setOATMac(event_struct):
+    return
+
+
+def returnToPrevious(event_struct):
+    return
+

@@ -65,6 +65,24 @@ lv_obj_t *ui_Status;
 lv_obj_t *ui_StatusPanel;
 lv_obj_t *ui_statusHeader;
 lv_obj_t *ui_statusText;
+
+
+// SCREEN: ui_Ruuvi
+void ui_Ruuvi_screen_init(void);
+lv_obj_t *ui_Ruuvi;
+lv_obj_t *ui_Container1;
+lv_obj_t *ui_ruuviHeader;
+lv_obj_t *ui_ruuviBody;
+lv_obj_t *ui_Container3;
+void ui_event_Envelope( lv_event_t * e);
+lv_obj_t *ui_Envelope;
+lv_obj_t *ui_Label4;
+void ui_event_OAT( lv_event_t * e);
+lv_obj_t *ui_OAT;
+lv_obj_t *ui_Label5;
+void ui_event_Cancel( lv_event_t * e);
+lv_obj_t *ui_Cancel;
+lv_obj_t *ui_Label6;
 lv_obj_t *ui____initial_actions0;
 
 ///////////////////// TEST LVGL SETTINGS ////////////////////
@@ -137,11 +155,8 @@ if ( event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_ac
 lv_indev_wait_release(lv_indev_get_act());
       _ui_screen_change( &ui_Main, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Main_screen_init);
 }
-if ( event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_TOP  ) {
+if ( event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_BOTTOM  ) {
 lv_indev_wait_release(lv_indev_get_act());
-      _ui_screen_change( &ui_Main, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Main_screen_init);
-}
-if ( event_code == LV_EVENT_CLICKED) {
       _ui_screen_change( &ui_Main, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Main_screen_init);
 }
 }
@@ -154,8 +169,23 @@ lv_indev_wait_release(lv_indev_get_act());
 if ( event_code == LV_EVENT_CLICKED) {
       _ui_screen_change( &ui_Main, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Main_screen_init);
 }
-if ( event_code == LV_EVENT_SCREEN_LOADED) {
-      statusScreenLoaded( e );
+}
+void ui_event_Envelope( lv_event_t * e) {
+    lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
+if ( event_code == LV_EVENT_CLICKED) {
+      setEnvelopeMac( e );
+}
+}
+void ui_event_OAT( lv_event_t * e) {
+    lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
+if ( event_code == LV_EVENT_CLICKED) {
+      setOATMac( e );
+}
+}
+void ui_event_Cancel( lv_event_t * e) {
+    lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
+if ( event_code == LV_EVENT_CLICKED) {
+      returnToPrevious( e );
 }
 }
 
@@ -171,6 +201,7 @@ ui_Compass_screen_init();
 ui_GPS_screen_init();
 ui_Parameters_screen_init();
 ui_Status_screen_init();
+ui_Ruuvi_screen_init();
 ui____initial_actions0 = lv_obj_create(NULL);
 lv_disp_load_scr( ui_Main);
 }

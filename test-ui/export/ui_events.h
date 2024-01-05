@@ -12,7 +12,9 @@ extern "C" {
 
 void showMemory(lv_event_t * e);
 void longPressed(lv_event_t * e);
-void statusScreenLoaded(lv_event_t * e);
+void setEnvelopeMac(lv_event_t * e);
+void setOATMac(lv_event_t * e);
+void returnToPrevious(lv_event_t * e);
 
 #ifdef __cplusplus
 } /*extern "C"*/
