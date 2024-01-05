@@ -66,7 +66,7 @@ extern "C"
         LV_LOG_USER("%lu  '%s'\n", e->code, mac.c_str());
 
         setEnvMacAddress(mac);
-        lv_disp_load_scr(previous_screen);
+        lv_disp_load_scr(ui_Main);
 
     }
 
@@ -76,7 +76,7 @@ extern "C"
         LV_LOG_USER("%lu  '%s'\n", e->code, mac.c_str());
 
         setOATMacAddress(mac);
-        lv_disp_load_scr(previous_screen);
+        lv_disp_load_scr(ui_Main);
 
     }
 }
