@@ -2,14 +2,19 @@
 
 #include "Arduino.h"
 #include <list>
+#include <set>
+#include <unordered_set>
 #include "ruuvi.h"
 #include "esp_log.h"
+
+using namespace std;
 
 typedef enum {
     FMT_TEXT,
     FMT_JSON,
     FMT_CSV,
-    FMT_PROTOBUF
+    FMT_PROTOBUF,
+    FMT_TELEPLOT
 } format_t;
 
 typedef enum {
@@ -61,6 +66,34 @@ class Sensor {
     };
 
 };
+typedef unordered_set<Sensor*> SensorSet;
+
+class Unit {
+  private:
+    SensorSet _sensorset;
+  public:
+    const String &name() {};
+    void print(Print &p, format_t format = FMT_TEXT) {};
+
+};
+
+typedef unordered_set<Unit*> UnitSet;
+
+class Equipment {
+  private:
+    UnitSet _unitset;
+  public:
+
+    void add(Unit *u) {
+        _unitset.insert(u);
+    };
+    void render() {
+        for(auto u: _unitset) {
+            u->print(Serial);
+        }
+    };
+};
+
 
 class Ruuvi : public Sensor {
   public:
@@ -71,45 +104,30 @@ class Ruuvi : public Sensor {
     ruuviAd_t value;
 };
 
-class Tank : Sensor {
+class Mopkea : Sensor {
   public:
     void print(Print &p, format_t format = FMT_TEXT) {};
 
 };
 
-class SensorSet {
-    typedef std::list<Sensor*> SensorList;
-
+class TPMS : Sensor {
   public:
-    void add(Sensor *s) {
-        sensorList.push_back(s);
-    };
-    void render() {
-        for(SensorList::const_iterator iter = sensorList.begin(),
-                endIter = sensorList.end();
-                iter != endIter;
-                ++iter) {
-            Sensor *object = *iter;
-            object->print(Serial);
-        }
-    }
-
-  private:
-    SensorList sensorList ;
+    void print(Print &p, format_t format = FMT_TEXT) {};
 
 };
 
-// class GPS : Sensor {
-//   public:
 
-// };
+class GPS : Sensor {
+  public:
 
-// class Barometer : Sensor {
-//   public:
+};
 
-// };
+class Barometer : Sensor {
+  public:
 
-// class IMU : Sensor {
-//   public:
+};
 
-// };
+class IMU : Sensor {
+  public:
+
+};

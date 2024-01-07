@@ -1,12 +1,12 @@
 #include "Sensor.hpp"
 
-SensorSet sset;
+Equipment e;
 
 void init_sensors(void) {
-    Sensor *s = new Ruuvi();
-    sset.add(s);
+    Unit *u = new Unit();
+    e.add(u);
 }
 
 void sensor_loop(void) {
-    sset.render();
+    e.render();
 }
