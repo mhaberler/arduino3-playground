@@ -14,6 +14,8 @@ void webserver_setup(void);
 void webserver_loop(void);
 void nfc_setup(void);
 void nfc_loop(void);
+void init_sensors(void);
+void sensor_loop(void);
 
 bool psRAMavail;
 
@@ -32,6 +34,7 @@ void setup(void) {
     test_spdlog();
     lvgl_setup();
     gfxdemo_setup();
+    init_sensors();
     startBLEscan();
     webserver_setup();
     nfc_setup();
@@ -42,6 +45,7 @@ void loop(void) {
     gfxdemo_loop();
     webserver_loop();
     nfc_loop();
+    sensor_loop();
     delay(1);
 }
 
