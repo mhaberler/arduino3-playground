@@ -50,7 +50,9 @@ MFRC522DriverSPI driver{ss_pin, spiClass, spiSettings}; // Create SPI driver.
 MFRC522Extended mfrc522{driver}; // Create MFRC522 instance.
 
 NfcAdapter nfc = NfcAdapter(&mfrc522);
-SpiRamJsonDocument jsondoc(2048);
+
+SpiRamAllocator allocator;
+JsonDocument jsondoc(&allocator);
 
 #define BW_MIMETYPE "application/balloonware"
 

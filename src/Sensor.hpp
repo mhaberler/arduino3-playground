@@ -74,7 +74,9 @@ class Unit {
   public:
     const String &name() {};
     void print(Print &p, format_t format = FMT_TEXT) {};
-
+    void add(Sensor *s) {
+        _sensorset.insert(s);
+    };
 };
 
 typedef unordered_set<Unit*> UnitSet;
@@ -104,30 +106,30 @@ class Ruuvi : public Sensor {
     ruuviAd_t value;
 };
 
-class Mopkea : Sensor {
+class Mopeka : public Sensor {
   public:
     void print(Print &p, format_t format = FMT_TEXT) {};
 
 };
 
-class TPMS : Sensor {
+class TPMS : public  Sensor {
   public:
     void print(Print &p, format_t format = FMT_TEXT) {};
 
 };
 
 
-class GPS : Sensor {
+class GPS : public Sensor {
   public:
 
 };
 
-class Barometer : Sensor {
+class Barometer : public Sensor {
   public:
 
 };
 
-class IMU : Sensor {
+class IMU : public Sensor {
   public:
 
 };

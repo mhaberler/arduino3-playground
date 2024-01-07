@@ -50,7 +50,7 @@ static void battery_group_cb(lv_subject_t *subject, lv_observer_t *observer) {
 }
 
 static lv_obj_t *previous_screen = ui_Main;
-static SpiRamJsonDocument *jdoc;
+static JsonDocument *jdoc;
 
 // callbacks from the UI
 extern "C"
@@ -84,7 +84,7 @@ extern "C"
 static void nfc_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
     uint32_t code = (uint32_t)subject->user_data;
     // lv_obj_t *target = (lv_obj_t *)lv_observer_get_target(observer);
-    jdoc = (SpiRamJsonDocument *)lv_subject_get_pointer(subject);
+    jdoc = (JsonDocument *)lv_subject_get_pointer(subject);
 
 
     switch (code) {

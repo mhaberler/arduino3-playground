@@ -2,17 +2,16 @@
 
 #include "ArduinoJson.h"
 
-extern bool psRAMavail;
+struct SpiRamAllocator : ArduinoJson::Allocator {
+  void* allocate(size_t size) override {
+    return heap_caps_malloc(size, MALLOC_CAP_SPIRAM);
+  }
 
-struct SpiRamAllocator {
-    void *allocate(size_t size) {
-        if (psRAMavail)
-            return heap_caps_malloc(size, MALLOC_CAP_SPIRAM);
-        else
-            return heap_caps_malloc(size, MALLOC_CAP_DEFAULT);
-    }
-    void deallocate(void *pointer) {
-        heap_caps_free(pointer);
-    }
+  void deallocate(void* pointer) override {
+    heap_caps_free(pointer);
+  }
+
+  void* reallocate(void* ptr, size_t new_size) override {
+    return heap_caps_realloc(ptr, new_size, MALLOC_CAP_SPIRAM);
+  }
 };
-using SpiRamJsonDocument = BasicJsonDocument<SpiRamAllocator>;
