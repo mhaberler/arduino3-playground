@@ -15,3 +15,5 @@ struct SpiRamAllocator : ArduinoJson::Allocator {
     return heap_caps_realloc(ptr, new_size, MALLOC_CAP_SPIRAM);
   }
 };
+
+

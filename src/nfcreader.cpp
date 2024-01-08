@@ -51,8 +51,8 @@ MFRC522Extended mfrc522{driver}; // Create MFRC522 instance.
 
 NfcAdapter nfc = NfcAdapter(&mfrc522);
 
-SpiRamAllocator allocator;
-JsonDocument jsondoc(&allocator);
+SpiRamAllocator spiram_allocator;
+JsonDocument jsondoc(&spiram_allocator);
 
 #define BW_MIMETYPE "application/balloonware"
 
