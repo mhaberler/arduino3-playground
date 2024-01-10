@@ -54,7 +54,8 @@ NfcAdapter nfc = NfcAdapter(&mfrc522);
 SpiRamAllocator spiram_allocator;
 // JsonDocument jsondoc(&spiram_allocator);
 
-SpiRamJsonDocument jsondoc(10240);
+// static SpiRamJsonDocument jsondoc(10240);
+static StaticJsonDocument<10240> jsondoc;
 
 #define BW_MIMETYPE "application/balloonware"
 

@@ -103,7 +103,7 @@ class Unit {
   private:
     SensorSet _sensorset;
   public:
-    bool configure(JsonDocument *conf);
+    bool configure(JsonObject *conf);
     const String &name();
     void print(Print &p, format_t format = FMT_TEXT);
     void add(Sensor *s);

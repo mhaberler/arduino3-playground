@@ -25,10 +25,10 @@ bool Mopeka::decode(const uint8_t *data,
               len);
         return false;
     }
-    if (data[2] != 3) {
-        log_e("Mopeka PRO: invalid HW id %u", data[2]);
-        return false;
-    }
+    // if (data[2] != 3) {
+    //     log_e("Mopeka PRO: invalid HW id %u", data[2]);
+    //     return false;
+    // }
 
     ma.battery = (data[3] & 0x7f) / 32.0;
     ma.syncPressed = (data[4] & 0x80) > 0;
@@ -85,10 +85,10 @@ bool  Mopeka::bleAdvertisement(const bleAdvMsg_t  &msg) {
     }
     _mopeka_report.rssi = msg.rssi;
 
-    if (decode(data, len, _mopeka_report)) {
+    if (!decode(data, len, _mopeka_report)) {
         log_e("failed to decode mopeka msg");
         return false;
     }
-    log_e("mopeka success");
+    // log_e("mopeka success");
     return true;
 }

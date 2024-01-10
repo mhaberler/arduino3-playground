@@ -70,6 +70,6 @@ bool  Ruuvi::bleAdvertisement(const bleAdvMsg_t  &msg) {
 
 RUUVI_DECODED:
     _ruuvi_report.rssi = msg.rssi;
-    log_e("ruuvi success");
+    // log_e("ruuvi success");
     return true;
 }

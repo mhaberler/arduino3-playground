@@ -10,6 +10,17 @@ SpiRamJsonDocument equipment(10240);
 
 UnitSet units;
 
+bool addUnit(JsonObject conf) {
+    Unit *u = new Unit();
+    if (u->configure(&conf)) {
+        units.insert(u);
+    } else {
+        delete u;
+        return false;
+    }
+    return true;
+}
+
 bool readEquipment(const char* dirname) {
     Serial.println("Listing files in directory: " + String(dirname));
 
@@ -42,11 +53,17 @@ bool readEquipment(const char* dirname) {
             if (error) {
                 Serial.println("Failed to parse JSON file: " + filePath);
             } else {
-                Unit *u = new Unit();
-                if (u->configure(&unitconf)) {
-                    units.insert(u);
+                if (unitconf.is<JsonArray>()) {
+                    JsonArray ua = unitconf.as<JsonArray>();
+
+                    for (JsonVariant element : ua) {
+                        addUnit(element.as<JsonObject>());//FIXME retcode
+                    }
+
+                } else if (unitconf.is<JsonObject>()) {
+                    addUnit(unitconf.as<JsonObject>()); //FIXME retcode
                 } else {
-                    delete u;
+
                 }
             }
         }

@@ -4,7 +4,7 @@
 unordered_map<NimBLEAddress, Sensor *> ble_sensors;
 const NimBLEAddress null_mac;
 
-bool Unit::configure(JsonDocument *conf) {
+bool Unit::configure(JsonObject *conf) {
     JsonArray sensors = (*conf)["sensors"].as<JsonArray>();
 
     for(JsonObject s: sensors) {
@@ -34,7 +34,7 @@ bool Unit::configure(JsonDocument *conf) {
         if (sp && sp->configure(s)) {
             _sensorset.insert(sp);
             if (sp->mac() != null_mac) {
-                // Serial.printf("INSERT %s\n", sp->mac().toString().c_str());
+                 Serial.printf("INSERT %s\n", sp->mac().toString().c_str());
                 ble_sensors[sp->mac()] = sp;
             }
             const char *mac = s["mac"].as<const char *>();
@@ -58,8 +58,8 @@ bool bleDeliver(const bleAdvMsg_t &msg) {
 
     NimBLEAddress mac = NimBLEAddress(msg.mac64);
     Sensor *sp = ble_sensors[mac];
-    log_e("deliver %s %p", mac.toString().c_str(), sp);
     if (sp) {
+        log_e("deliver %s %p", mac.toString().c_str(), sp);
         return sp->bleAdvertisement(msg);
     }
     return false;
