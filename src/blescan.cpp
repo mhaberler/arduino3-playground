@@ -28,6 +28,7 @@ class scanCallbacks : public BLEAdvertisedDeviceCallbacks {
                     //       advertisedDevice->toString().c_str());
                     // TPMS mfids
                     ble_adv.mfid = mfid;
+                    ble_adv.msg_size = len;
                     ble_adv.mac64 = (uint64_t) advertisedDevice->getAddress();
                     ble_adv.rssi =  advertisedDevice->getRSSI();
                     memcpy(ble_adv.message, data, std::min(sizeof(ble_adv.message), len));

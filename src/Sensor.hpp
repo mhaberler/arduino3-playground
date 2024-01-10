@@ -11,6 +11,7 @@
 #include "blescan.hpp"
 #include "esp_log.h"
 #include "ruuvi.h"
+#include "mopeka.h"
 
 using namespace std;
 
@@ -87,13 +88,13 @@ class Sensor {
     NimBLEAddress _macAddress;
 
   public:
-        virtual void print(Print &p, format_t format = FMT_TEXT) = 0;
+    virtual void print(Print &p, format_t format = FMT_TEXT) = 0;
     sensorMode_t mode();
     format_t format();
     sensorType_t type();
     NimBLEAddress & mac();
     bool configure(JsonObject conf);
-    bool bleAdvertisement(const bleAdvMsg_t  &msg);
+    virtual bool bleAdvertisement(const bleAdvMsg_t  &msg) = 0;
 };
 
 typedef unordered_set<Sensor*> SensorSet;
@@ -127,25 +128,29 @@ class Equipment {
 
 class Ruuvi : public Sensor {
   public:
-   
+
     void print(Print &p, format_t format = FMT_TEXT);
     void setOnUpdate(std::function<void(const char *value)> onUpdate, facette_t what ) {}
     bool configure(JsonObject conf);
-        bool bleAdvertisement(const bleAdvMsg_t  &msg);
+    bool bleAdvertisement(const bleAdvMsg_t  &msg);
 
   private:
-    ruuviAd_t value;
+    ruuviAd_t _ruuvi_report;
 };
 
 class Mopeka : public Sensor {
   private:
+    mopekaAd_t _mopeka_report;
+    uint16_t _min_mm = 100;
+    uint16_t _max_mm = 857;
+    bool decode(const uint8_t *data,
+                const size_t len, mopekaAd_t &ma);
 
   public:
-    void print(Print &p, format_t format = FMT_TEXT) {};
+    void print(Print &p, format_t format = FMT_TEXT);
     void setOnUpdate(std::function<void(const char *value)> onUpdate, facette_t what ) {}
-    bool configure(JsonObject conf) {
-        return Sensor::configure(conf);
-    };
+    bool configure(JsonObject conf);
+    bool bleAdvertisement(const bleAdvMsg_t  &msg);
 };
 
 class TPMS : public  Sensor {
@@ -157,6 +162,10 @@ class TPMS : public  Sensor {
     bool configure(JsonObject conf) {
         return Sensor::configure(conf);
     };
+    bool bleAdvertisement(const bleAdvMsg_t  &msg) {
+        return false;
+    };
+
 };
 
 class GPS : public Sensor {

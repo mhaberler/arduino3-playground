@@ -58,7 +58,7 @@ bool bleDeliver(const bleAdvMsg_t &msg) {
 
     NimBLEAddress mac = NimBLEAddress(msg.mac64);
     Sensor *sp = ble_sensors[mac];
-    // log_e("deliver %s %p", mac.toString().c_str(), sp);
+    log_e("deliver %s %p", mac.toString().c_str(), sp);
     if (sp) {
         return sp->bleAdvertisement(msg);
     }

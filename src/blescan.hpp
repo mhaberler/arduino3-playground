@@ -22,7 +22,8 @@ namespace std {
 typedef struct  {
     uint64_t mac64;
     uint16_t mfid;
-    int16_t rssi;
+    int8_t rssi;
+    uint8_t msg_size;
     uint8_t message[BLE_ADV_SIZE];
 } bleAdvMsg_t;
 
