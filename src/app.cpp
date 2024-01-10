@@ -17,6 +17,7 @@ void nfc_loop(void);
 void init_sensors(void);
 void sensor_loop(void);
 
+
 bool psRAMavail;
 
 void setup(void) {

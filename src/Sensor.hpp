@@ -1,10 +1,15 @@
 #pragma once
 
 #include "Arduino.h"
+#include "ArduinoJson.h"
+#include "ArduinoJsonCustom.h"
 #include <list>
 #include <set>
 #include <unordered_set>
+#include <unordered_map>
+#include "NimBLEAddress.h"
 #include "ruuvi.h"
+#include "blescan.hpp"
 #include "esp_log.h"
 
 using namespace std;
@@ -56,20 +61,22 @@ typedef enum {
     FT_MAX
 } facette_t;
 
-
 typedef enum {
-  UT_NONE = 0,
-  UT_TANK,
-  UT_BURNER,
-  UT_ENVELOPE,
-  UT_BASKET,
-  UT_FLOW,
-  UT_BLASTVALVE1,
-  UT_BLASTVALVE2,
-  UT_BLASTVALVE3,
-  UT_BLASTVALVE4,
-  UT_MAX
+    UT_NONE = 0,
+    UT_TANK,
+    UT_BURNER,
+    UT_ENVELOPE,
+    UT_OAT,
+    UT_FLOW,
+    UT_BLASTVALVE1,
+    UT_BLASTVALVE2,
+    UT_BLASTVALVE3,
+    UT_BLASTVALVE4,
+    UT_MAX
 } unit_t;
+
+void convertFromJson(JsonVariantConst src, sensorType_t& dst);
+void convertFromJson(JsonVariantConst src, NimBLEAddress& dst);
 
 class Sensor {
   private:
@@ -77,8 +84,10 @@ class Sensor {
     format_t _format;
     sensorType_t _type;
     uint32_t _lastchange;
+    NimBLEAddress _macAddress;
 
   public:
+    Sensor(sensorType_t type) : _type(type) {};
     virtual void print(Print &p, format_t format = FMT_TEXT) = 0;
     sensorMode_t mode() {
         return _mode;
@@ -89,6 +98,18 @@ class Sensor {
     sensorType_t type() {
         return _type;
     };
+    NimBLEAddress & mac() {
+        return _macAddress;
+    };
+    bool configure(JsonObject conf)  {
+        _type = conf["type"];
+        _macAddress = conf["mac"]| conf["MAC"] || "";
+        return (_type != ST_NONE);
+    }
+
+    bool bleAdvertisement(const bleAdvMsg_t  &msg) {
+        return false;
+    }
 
 };
 typedef unordered_set<Sensor*> SensorSet;
@@ -97,11 +118,10 @@ class Unit {
   private:
     SensorSet _sensorset;
   public:
-    const String &name() {};
-    void print(Print &p, format_t format = FMT_TEXT) {};
-    void add(Sensor *s) {
-        _sensorset.insert(s);
-    };
+    bool configure(JsonDocument *conf);
+    const String &name();
+    void print(Print &p, format_t format = FMT_TEXT);
+    void add(Sensor *s);
 };
 
 typedef unordered_set<Unit*> UnitSet;
@@ -121,28 +141,43 @@ class Equipment {
     };
 };
 
-
 class Ruuvi : public Sensor {
   public:
+    Ruuvi() : Sensor(ST_RUUVI)  {};
     void print(Print &p, format_t format = FMT_TEXT) {};
     void setOnUpdate(std::function<void(const char *value)> onUpdate, facette_t what ) {}
-
+    bool configure(JsonObject conf) {
+        return Sensor::configure(conf);
+    };
   private:
     ruuviAd_t value;
 };
 
 class Mopeka : public Sensor {
-  public:
-    void print(Print &p, format_t format = FMT_TEXT) {};
+  private:
 
+  public:
+    Mopeka() : Sensor(ST_MOPEKA)  {};
+
+    void print(Print &p, format_t format = FMT_TEXT) {};
+    void setOnUpdate(std::function<void(const char *value)> onUpdate, facette_t what ) {}
+    bool configure(JsonObject conf) {
+        return Sensor::configure(conf);
+    };
 };
 
 class TPMS : public  Sensor {
+  private:
+
   public:
-    void print(Print &p, format_t format = FMT_TEXT) {};
+    TPMS() : Sensor(ST_TPMS)  {};
 
+    void print(Print &p, format_t format = FMT_TEXT) {  };
+    void setOnUpdate(std::function<void(const char *value)> onUpdate, facette_t what ) {}
+    bool configure(JsonObject conf) {
+        return Sensor::configure(conf);
+    };
 };
-
 
 class GPS : public Sensor {
   public:
@@ -158,3 +193,5 @@ class IMU : public Sensor {
   public:
 
 };
+
+bool bleDeliver(const bleAdvMsg_t &msg);

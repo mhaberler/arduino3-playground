@@ -1,23 +1,19 @@
 {
-    "unit": {
-        "serial": "5020/15",
-        "type": 1,
-        "desc": "Kubicek King Size",
-        "capacity": 82.5,
-        "tara": 24.5,
-        "full": 65,
-        "height": 1137,
-        "color": "#002AB3",
-        "remark": "blaues Tag",
-        "sensors": [
-            {
-                "level": {
-                    "type": 2,
-                    "mac": "F8:95:D1:79:44:21",
-                    "min": 100,
-                    "max": 857
-                }
-            }
-        ]
-    }
+    "serial": "5020/15",
+    "type": 1,
+    "desc": "Kubicek King Size",
+    "capacity": 82.5,
+    "tara": 24.5,
+    "full": 65,
+    "height": 1137,
+    "color": "#002AB3",
+    "remark": "blaues Tag",
+    "sensors": [
+        {
+            "type": 2,
+            "mac": "F8:95:D1:79:44:21",
+            "min": 100,
+            "max": 857
+        }
+    ]
 }

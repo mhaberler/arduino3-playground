@@ -2,18 +2,21 @@
 #include "ArduinoJson.h"
 #include "ArduinoJsonCustom.h"
 #include <LittleFS.h>
+#include "blescan.hpp"
 
 extern SpiRamAllocator spiram_allocator;
-JsonDocument equipment(&spiram_allocator);
 
+SpiRamJsonDocument equipment(10240);
 
-void readEquipment(const char* dirname, JsonArray &ua) {
+UnitSet units;
+
+bool readEquipment(const char* dirname) {
     Serial.println("Listing files in directory: " + String(dirname));
 
     File root = LittleFS.open(dirname);
     if (!root) {
         Serial.println("Failed to open directory");
-        return;
+        return false;
     }
 
     File file = root.openNextFile();
@@ -21,7 +24,7 @@ void readEquipment(const char* dirname, JsonArray &ua) {
         if (file.isDirectory()) {
             Serial.print("  DIR : ");
             Serial.println(file.name());
-            readEquipment(file.name(),ua);
+            readEquipment(file.name());
         } else {
             Serial.print("  FILE: ");
             Serial.print(file.name());
@@ -33,44 +36,42 @@ void readEquipment(const char* dirname, JsonArray &ua) {
             String fileContent = fd.readString();
             fd.close();
 
-            // Parse the file content into a JSON document
-            DynamicJsonDocument unit(1024); // adjust the size based on your data
-
-            // Deserialize the JSON
-            DeserializationError error = deserializeJson(unit, fileContent);
+            DynamicJsonDocument unitconf(1024);
+            DeserializationError error = deserializeJson(unitconf, fileContent);
 
             if (error) {
                 Serial.println("Failed to parse JSON file: " + filePath);
             } else {
-                ua.add(unit);
-
+                Unit *u = new Unit();
+                if (u->configure(&unitconf)) {
+                    units.insert(u);
+                } else {
+                    delete u;
+                }
             }
         }
         file = root.openNextFile();
     }
+    return true;
+}
+
+void process_ble() {
+    bleAdvMsg_t msg;
+    if (xQueueReceive(bleadv_queue, (void *)&msg, 0) == pdTRUE) {
+        bleDeliver(msg);
+    }
 }
 
 void read_config(void) {
-    if (!LittleFS.begin())
+    if (!LittleFS.begin(false))
         return;
-    JsonArray units = equipment.createNestedArray("units");
-
-    readEquipment("/config", units);
-    serializeJsonPretty(equipment, Serial);
-    Serial.println();
+    readEquipment("/config");
 }
 
 void init_sensors(void) {
-    // TPMS *tpms = new TPMS();
-    // Mopeka *mopeka = new Mopeka();
-    // Unit *u = new Unit();
-    // u->add(tpms);
-    // u->add(mopeka);
-
-    // e.add(u);
     read_config();
 }
 
 void sensor_loop(void) {
-    // e.render();
+    process_ble();
 }
