@@ -1,76 +1,33 @@
 #include "Sensor.hpp"
-#include "blescan.hpp"
 
-unordered_map<NimBLEAddress, Sensor *> ble_sensors;
-const NimBLEAddress null_mac;
-
-bool Unit::configure(JsonDocument *conf) {
-    JsonArray sensors = (*conf)["sensors"].as<JsonArray>();
-
-    for(JsonObject s: sensors) {
-        Sensor *sp = NULL;
-        switch (s["type"].as<int>()) {
-            case ST_RUUVI:
-                sp = new Ruuvi();
-                break;
-            case ST_MOPEKA:
-                sp = new Mopeka();
-                break;
-            case ST_TPMS:
-                sp = new TPMS();
-                break;
-            case ST_GPS:
-                break;
-            case ST_FLOWSENSOR:
-                break;
-            case ST_BARO:
-                break;
-            case ST_IMU:
-                break;
-            case ST_MAGNETOMETER:
-                break;
-        }
-        serializeJson(s, Serial);
-        if (sp && sp->configure(s)) {
-            _sensorset.insert(sp);
-            if (sp->mac() != null_mac) {
-                ble_sensors[sp->mac()] = sp;
-            }
-            const char *mac = s["mac"].as<const char *>();
-            Serial.print(mac);
-        }
-    }
-    return true;
+sensorMode_t Sensor::mode() {
+    return _mode;
 }
 
-const String &Unit::name(void) {
-    return "foo";
+sensorType_t Sensor::type() {
+    return _type;
 }
 
-void Unit::print(Print &p, format_t format) {}
+format_t Sensor::format() {
+    return _format;
+}
 
-void Unit::add(Sensor *s) {
-    _sensorset.insert(s);
-};
+NimBLEAddress & Sensor::mac() {
+    return _macAddress;
+}
 
-bool bleDeliver(const bleAdvMsg_t &msg) {
-
-    NimBLEAddress mac = NimBLEAddress(msg.mac64);
-    Sensor *sp = ble_sensors[mac];
-    log_e("deliver %s %p", mac.toString().c_str(), sp);
-    if (sp) {
-        return sp->bleAdvertisement(msg);
+bool Sensor::configure(JsonObject conf)  {
+    _type = conf["type"];
+    if (conf["mac"]) {
+        _macAddress = conf["mac"];
     }
+    if (conf["MAC"]) {
+        _macAddress = conf["MAC"];
+    }
+    // Serial.printf("CONFIGURE type=%u mac=%s\n", (unsigned)_type, _macAddress.toString().c_str());
+    return (_type != ST_NONE);
+}
+
+bool Sensor::bleAdvertisement(const bleAdvMsg_t  &msg) {
     return false;
 }
-
-void convertFromJson(JsonVariantConst src, sensorType_t& dst) {
-    dst = (sensorType_t) src.as<unsigned int>();
-}
-
-void convertFromJson(JsonVariantConst src, NimBLEAddress& dst) {
-    dst = NimBLEAddress(src.as<std::string>());
-}
-
-void setEnvMacAddress(std::string &mac) {}
-void setOATMacAddress(std::string &mac) {}

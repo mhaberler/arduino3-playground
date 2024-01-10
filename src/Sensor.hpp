@@ -8,9 +8,9 @@
 #include <unordered_set>
 #include <unordered_map>
 #include "NimBLEAddress.h"
-#include "ruuvi.h"
 #include "blescan.hpp"
 #include "esp_log.h"
+#include "ruuvi.h"
 
 using namespace std;
 
@@ -87,31 +87,15 @@ class Sensor {
     NimBLEAddress _macAddress;
 
   public:
-    Sensor(sensorType_t type) : _type(type) {};
-    virtual void print(Print &p, format_t format = FMT_TEXT) = 0;
-    sensorMode_t mode() {
-        return _mode;
-    };
-    format_t format() {
-        return _format;
-    };
-    sensorType_t type() {
-        return _type;
-    };
-    NimBLEAddress & mac() {
-        return _macAddress;
-    };
-    bool configure(JsonObject conf)  {
-        _type = conf["type"];
-        _macAddress = conf["mac"]| conf["MAC"] || "";
-        return (_type != ST_NONE);
-    }
-
-    bool bleAdvertisement(const bleAdvMsg_t  &msg) {
-        return false;
-    }
-
+        virtual void print(Print &p, format_t format = FMT_TEXT) = 0;
+    sensorMode_t mode();
+    format_t format();
+    sensorType_t type();
+    NimBLEAddress & mac();
+    bool configure(JsonObject conf);
+    bool bleAdvertisement(const bleAdvMsg_t  &msg);
 };
+
 typedef unordered_set<Sensor*> SensorSet;
 
 class Unit {
@@ -143,12 +127,12 @@ class Equipment {
 
 class Ruuvi : public Sensor {
   public:
-    Ruuvi() : Sensor(ST_RUUVI)  {};
-    void print(Print &p, format_t format = FMT_TEXT) {};
+   
+    void print(Print &p, format_t format = FMT_TEXT);
     void setOnUpdate(std::function<void(const char *value)> onUpdate, facette_t what ) {}
-    bool configure(JsonObject conf) {
-        return Sensor::configure(conf);
-    };
+    bool configure(JsonObject conf);
+        bool bleAdvertisement(const bleAdvMsg_t  &msg);
+
   private:
     ruuviAd_t value;
 };
@@ -157,8 +141,6 @@ class Mopeka : public Sensor {
   private:
 
   public:
-    Mopeka() : Sensor(ST_MOPEKA)  {};
-
     void print(Print &p, format_t format = FMT_TEXT) {};
     void setOnUpdate(std::function<void(const char *value)> onUpdate, facette_t what ) {}
     bool configure(JsonObject conf) {
@@ -170,8 +152,6 @@ class TPMS : public  Sensor {
   private:
 
   public:
-    TPMS() : Sensor(ST_TPMS)  {};
-
     void print(Print &p, format_t format = FMT_TEXT) {  };
     void setOnUpdate(std::function<void(const char *value)> onUpdate, facette_t what ) {}
     bool configure(JsonObject conf) {

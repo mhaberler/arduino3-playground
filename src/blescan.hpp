@@ -12,7 +12,9 @@ namespace std {
     public:
         size_t operator()(NimBLEAddress const& c) const {
             uint64_t u64 = (uint64_t)c;
-            return u64 >> 32 | u64;
+            size_t sz = (u64 >> 32) | u64;
+            // Serial.printf("%s -> %lx %lu\n", c.toString().c_str(), sz, sz);
+            return sz;
         }
     };
 }
