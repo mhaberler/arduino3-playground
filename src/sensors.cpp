@@ -6,7 +6,7 @@
 
 extern SpiRamAllocator spiram_allocator;
 
-SpiRamJsonDocument equipment(10240);
+JsonDocument equipment(&spiram_allocator);
 
 UnitSet units;
 
@@ -47,23 +47,19 @@ bool readEquipment(const char* dirname) {
             String fileContent = fd.readString();
             fd.close();
 
-            DynamicJsonDocument unitconf(1024);
+            JsonDocument unitconf;
             DeserializationError error = deserializeJson(unitconf, fileContent);
 
             if (error) {
-                Serial.println("Failed to parse JSON file: " + filePath);
+                Serial.printf("parse errpr: %s : %s\n", filePath.c_str(),error.c_str());
             } else {
                 if (unitconf.is<JsonArray>()) {
                     JsonArray ua = unitconf.as<JsonArray>();
-
                     for (JsonVariant element : ua) {
                         addUnit(element.as<JsonObject>());//FIXME retcode
                     }
-
                 } else if (unitconf.is<JsonObject>()) {
                     addUnit(unitconf.as<JsonObject>()); //FIXME retcode
-                } else {
-
                 }
             }
         }

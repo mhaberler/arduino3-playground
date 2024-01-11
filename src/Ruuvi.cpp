@@ -8,8 +8,28 @@ uint16_t getUint16(const uint8_t *data, int index) {
     return (uint16_t)((data[index] << 8) + (data[index + 1]));
 }
 
+int32_t getInt32(const uint8_t *data, int index) {
+    return (int32_t)(
+               (data[index] << 24) |
+               (data[index+1] << 16) |
+               (data[index+2] << 8) |
+               (data[index+3]));
+}
+
+uint32_t getUint32(const uint8_t *data, int index) {
+    return (uint32_t)(
+               (data[index] << 24) |
+               (data[index+1] << 16) |
+               (data[index+2] << 8) |
+               (data[index+3]));
+}
+
 uint8_t getUint8(const uint8_t *data, int index) {
     return (uint8_t)((data[index]));
+}
+
+int8_t getInt8(const uint8_t *data, int index) {
+    return (int8_t)((data[index]));
 }
 
 void DecodeV5(const uint8_t *data, ruuviAd_t &ra) {
@@ -40,7 +60,10 @@ void DecodeV3(const uint8_t *data, ruuviAd_t &ra) {
 }
 
 void Ruuvi::print(Print &p, format_t format) {
-
+    JsonDocument doc;
+    doc = _ruuvi_report;
+    serializeJson(doc, p);
+    p.write("\n");
 }
 
 bool Ruuvi::configure(JsonObject conf) {

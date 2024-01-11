@@ -12,8 +12,14 @@
 #include "esp_log.h"
 #include "ruuvi.h"
 #include "mopeka.h"
+#include "tpms.h"
 
 using namespace std;
+
+float round1(float value);
+float round2(float value);
+float round3(float value);
+float round4(float value);
 
 typedef enum {
     FMT_NONE=0,
@@ -78,6 +84,18 @@ typedef enum {
 
 void convertFromJson(JsonVariantConst src, sensorType_t& dst);
 void convertFromJson(JsonVariantConst src, NimBLEAddress& dst);
+
+void convertToJson(const ruuviAd_t & src, JsonVariant dst);
+void convertToJson(const mopekaAd_t & src, JsonVariant dst);
+void convertToJson(const tpmsAd_t & src, JsonVariant dst);
+
+
+int16_t getInt16(const uint8_t *data, int index);
+uint16_t getUint16(const uint8_t *data, int index);
+int32_t getInt32(const uint8_t *data, int index);
+uint32_t getUint32(const uint8_t *data, int index);
+uint8_t getUint8(const uint8_t *data, int index);
+int8_t getInt8(const uint8_t *data, int index);
 
 class Sensor {
   private:
@@ -155,17 +173,13 @@ class Mopeka : public Sensor {
 
 class TPMS : public  Sensor {
   private:
+    tpmsAd_t _tpms_report;
 
   public:
-    void print(Print &p, format_t format = FMT_TEXT) {  };
+    void print(Print &p, format_t format = FMT_TEXT);
     void setOnUpdate(std::function<void(const char *value)> onUpdate, facette_t what ) {}
-    bool configure(JsonObject conf) {
-        return Sensor::configure(conf);
-    };
-    bool bleAdvertisement(const bleAdvMsg_t  &msg) {
-        return false;
-    };
-
+    bool configure(JsonObject conf);
+    bool bleAdvertisement(const bleAdvMsg_t  &msg);
 };
 
 class GPS : public Sensor {

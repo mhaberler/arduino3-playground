@@ -1,7 +1,10 @@
 #include "Sensor.hpp"
 
 void Mopeka::print(Print &p, format_t format) {
-
+    JsonDocument doc;
+    doc = _mopeka_report;
+    serializeJson(doc, p);
+    p.write("\n");
 }
 
 bool Mopeka::configure(JsonObject conf) {
@@ -33,7 +36,7 @@ bool Mopeka::decode(const uint8_t *data,
     ma.battery = (data[3] & 0x7f) / 32.0;
     ma.syncPressed = (data[4] & 0x80) > 0;
     ma.raw_temp = (data[4] & 0x7f);
-    ma.temperature = ma.raw_temp - 40.0; // °C
+    ma.temperature = ma.raw_temp - 40; // °C
     ma.qualityStars = (data[6] >> 6);
 
     ma.acceloX = data[10];

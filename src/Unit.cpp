@@ -34,7 +34,7 @@ bool Unit::configure(JsonObject *conf) {
         if (sp && sp->configure(s)) {
             _sensorset.insert(sp);
             if (sp->mac() != null_mac) {
-                 Serial.printf("INSERT %s\n", sp->mac().toString().c_str());
+                Serial.printf("INSERT %s\n", sp->mac().toString().c_str());
                 ble_sensors[sp->mac()] = sp;
             }
             const char *mac = s["mac"].as<const char *>();
@@ -59,8 +59,11 @@ bool bleDeliver(const bleAdvMsg_t &msg) {
     NimBLEAddress mac = NimBLEAddress(msg.mac64);
     Sensor *sp = ble_sensors[mac];
     if (sp) {
-        log_e("deliver %s %p", mac.toString().c_str(), sp);
-        return sp->bleAdvertisement(msg);
+        // log_e("deliver %s", mac.toString().c_str());
+        bool rc =  sp->bleAdvertisement(msg);
+        if (rc) {
+            sp->print(Serial);
+        }
     }
     return false;
 }
@@ -70,8 +73,52 @@ void convertFromJson(JsonVariantConst src, sensorType_t& dst) {
 }
 
 void convertFromJson(JsonVariantConst src, NimBLEAddress& dst) {
-    // Serial.printf("convertFromJson mac=%s\n", dst.toString().c_str());
     dst = NimBLEAddress(src.as<std::string>());
+}
+
+void convertToJson(const ruuviAd_t & src, JsonVariant dst) {
+    dst["temp"] =  round1(src.temperature);
+    dst["hum"] =  round1(src.humidity);
+    dst["press"] = round1(src.pressure);
+    dst["rssi"] = src.rssi;
+}
+
+void convertToJson(const mopekaAd_t & src, JsonVariant dst) {
+    dst["temp"] =  src.temperature;
+    dst["level"] = src.level;
+    dst["stars"] = src.qualityStars;
+    dst["accX"] = src.acceloX;
+    dst["accY"] = src.acceloY;
+    dst["rssi"] = src.rssi;
+    dst["batt"] = round2(src.battery);
+    if (src.syncPressed)
+        dst["sync"] = 1;
+
+}
+
+void convertToJson(const tpmsAd_t & src, JsonVariant dst) {
+    dst["press"] = round1(src.pressure);
+    dst["temp"] = round1(src.temperature);
+    dst["bat"] = round1(src.batpct);
+    dst["loc"] = src.location;
+    dst["status"] = src.status;
+    dst["rssi"] = src.rssi;
+}
+
+float round1(float value) {
+    return (int)(value * 10 + 0.5) / 10.0;
+}
+
+float round2(float value) {
+    return (int)(value * 100 + 0.5) / 100.0;
+}
+
+float round3(float value) {
+    return (int)(value * 1000 + 0.5) / 1000.0;
+}
+
+float round4(float value) {
+    return (int)(value * 10000 + 0.5) / 10000.0;
 }
 
 void setEnvMacAddress(std::string &mac) {}
