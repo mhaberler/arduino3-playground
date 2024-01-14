@@ -1,16 +1,16 @@
 {
-    "serial": "5020/69",
-    "type": 1,
-    "desc": "Kubicek King Size",
-    "capacity": 82.5,
-    "tara": 24.5,
-    "full": 65,
-    "height": 1137,
-    "color": "#55D733",
-    "remark": "grünes Tag",
+    "id": "5020/69",
+    "ut": 1,
+    "dsc": "Kubicek King Size",
+    "cap": 82.5,
+    "tar": 24.5,
+    "ful": 65,
+    "hght": 1137,
+    "col": "#55D733",
+    "rem": "grünes Tag",
     "sensors": [
         {
-            "type": 2,
+            "st": 2,
             "mac": "CA:E3:54:FA:09:B7",
             "min": 100,
             "max": 857

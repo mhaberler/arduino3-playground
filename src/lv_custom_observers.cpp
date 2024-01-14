@@ -8,9 +8,8 @@
 #include "ruuvi.h"
 #include "nfc_input.h"
 #include "ArduinoJsonCustom.h"
+#include "Sensor.hpp"
 
-void setEnvMacAddress(std::string &mac);
-void setOATMacAddress(std::string &mac);
 
 extern lv_obj_t *ui_SdCardStatus;
 extern lv_obj_t *ui_BatteryStatus;
@@ -65,7 +64,7 @@ extern "C"
 
         LV_LOG_USER("%lu  '%s'\n", e->code, mac.c_str());
 
-        setEnvMacAddress(mac);
+        setupUnit(UT_ENVELOPE, ST_RUUVI, mac);
         lv_disp_load_scr(ui_Main);
 
     }
@@ -75,7 +74,8 @@ extern "C"
 
         LV_LOG_USER("%lu  '%s'\n", e->code, mac.c_str());
 
-        setOATMacAddress(mac);
+        setupUnit(UT_OAT, ST_RUUVI, mac);
+
         lv_disp_load_scr(ui_Main);
 
     }
@@ -85,7 +85,6 @@ static void nfc_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
     uint32_t code = (uint32_t)subject->user_data;
     // lv_obj_t *target = (lv_obj_t *)lv_observer_get_target(observer);
     jdoc = (JsonDocument *)lv_subject_get_pointer(subject);
-
 
     switch (code) {
         case BWTAG_NO_MATCH:

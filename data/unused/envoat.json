@@ -1,19 +1,19 @@
 [
     {
-        "type": 3,
+        "id": "env1",
+        "ut": 3,
         "sensors": [
             {
-                "desc": "envelope",
-                "type": 1,
+                "st": 1,
                 "mac": "DB:08:D3:33:38:EF"
             }
         ]
     },
     {
-        "type": 4,
+        "id": "oat1",
+        "ut": 4,
         "sensors": [
             {
-                "desc": "OAT",
                 "type": 1,
                 "mac": "C2:6E:D1:70:2B:44"
             }

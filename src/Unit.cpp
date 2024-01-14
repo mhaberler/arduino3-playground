@@ -54,6 +54,18 @@ void Unit::add(Sensor *s) {
     _sensorset.insert(s);
 };
 
+bool setupUnit(const unit_t unit, const sensorType_t sensorType, const std::string &mac) {
+    JsonDocument config;
+    config["type"] = (int) unit;
+    JsonArray sensors = config["sensors"].to<JsonArray>();
+    JsonObject sensor = sensors.add<JsonObject>();
+    sensor["type"] = (int)sensorType;
+    sensor["mac"] = mac;
+    serializeJsonPretty(config, Serial);
+
+    return false;
+}
+
 bool bleDeliver(const bleAdvMsg_t &msg) {
 
     NimBLEAddress mac = NimBLEAddress(msg.mac64);
@@ -66,6 +78,18 @@ bool bleDeliver(const bleAdvMsg_t &msg) {
         }
     }
     return false;
+}
+
+uint8_t volt2percent(const float v) {
+    // convert voltage and scale for CR2032
+    float percent = (v - 2.2f) / 0.65f * 100.0f;
+    if (percent < 0.0f) {
+        return 0;
+    }
+    if (percent > 100.0f) {
+        return 100;
+    }
+    return (uint8_t) percent;
 }
 
 void convertFromJson(JsonVariantConst src, sensorType_t& dst) {
@@ -105,21 +129,41 @@ void convertToJson(const tpmsAd_t & src, JsonVariant dst) {
     dst["rssi"] = src.rssi;
 }
 
-float round1(float value) {
-    return (int)(value * 10 + 0.5) / 10.0;
+static const char *_unit_type[] = {
+    "none",
+    "tank",
+    "burner",
+    "envelope",
+    "oat",
+    "flow",
+    "blastvalve1",
+    "blastvalve2",
+    "blastvalve3",
+    "blastvalve4",
+};
+
+static const char *_sensor_type[] = {
+    "none",
+    "ruuvi",
+    "mopeka",
+    "tpms",
+    "gps",
+    "flowsensor",
+    "baro",
+    "imu",
+    "magnetometer",
+};
+
+const char *sensorType(const sensorType_t sensorType) {
+    if (sensorType > ST_NONE && sensorType < ST_MAX) {
+        return _sensor_type[sensorType];
+    }
+    return "**bad sensor type**";
 }
 
-float round2(float value) {
-    return (int)(value * 100 + 0.5) / 100.0;
+const char *unitType(const unit_t unitType) {
+    if (unitType > UT_NONE && unitType < UT_MAX) {
+        return _unit_type[unitType];
+    }
+    return "**bad unit type**";
 }
-
-float round3(float value) {
-    return (int)(value * 1000 + 0.5) / 1000.0;
-}
-
-float round4(float value) {
-    return (int)(value * 10000 + 0.5) / 10000.0;
-}
-
-void setEnvMacAddress(std::string &mac) {}
-void setOATMacAddress(std::string &mac) {}

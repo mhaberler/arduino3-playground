@@ -16,10 +16,12 @@
 
 using namespace std;
 
-float round1(float value);
-float round2(float value);
-float round3(float value);
-float round4(float value);
+#define round1(x) (round((x)*1.0e1) / 1.0e1)
+#define round2(x) (round((x)*1.0e2) / 1.0e2)
+#define round3(x) (round((x)*1.0e3) / 1.0e3)
+#define round4(x) (round((x)*1.0e4) / 1.0e4)
+#define round5(x) (round((x)*1.0e5) / 1.0e5)
+#define round6(x) (round((x)*1.0e6) / 1.0e6)
 
 typedef enum {
     FMT_NONE=0,
@@ -72,7 +74,7 @@ typedef enum {
     UT_NONE = 0,
     UT_TANK,
     UT_BURNER,
-    UT_ENVELOPE,
+    UT_ENVELOPE, 
     UT_OAT,
     UT_FLOW,
     UT_BLASTVALVE1,
@@ -81,6 +83,11 @@ typedef enum {
     UT_BLASTVALVE4,
     UT_MAX
 } unit_t;
+
+bool setupUnit(const unit_t unit, const sensorType_t sensorType, const std::string &mac);
+uint8_t volt2percent(const float volt);
+const char *sensorType(const sensorType_t sensorType);
+const char *unitType(const unit_t unitType);
 
 void convertFromJson(JsonVariantConst src, sensorType_t& dst);
 void convertFromJson(JsonVariantConst src, NimBLEAddress& dst);

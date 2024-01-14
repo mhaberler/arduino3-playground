@@ -17,10 +17,13 @@ void nfc_loop(void);
 void init_sensors(void);
 void sensor_loop(void);
 
-
 bool psRAMavail;
 
 void setup(void) {
+    disableLoopWDT();
+    disableCore0WDT();
+    disableCore1WDT();
+    
     delay(3000);
     psRAMavail = ESP.getFreePsram() > 0;
 #ifdef M5UNIFIED
@@ -48,6 +51,7 @@ void loop(void) {
     nfc_loop();
     sensor_loop();
     delay(1);
+    yield(); // Stop watchdog reset
 }
 
 size_t getArduinoLoopTaskStackSize(void) {

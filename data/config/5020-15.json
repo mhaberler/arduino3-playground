@@ -1,16 +1,16 @@
 {
-    "serial": "5020/15",
-    "type": 1,
-    "desc": "Kubicek King Size",
-    "capacity": 82.5,
-    "tara": 24.5,
-    "full": 65,
-    "height": 1137,
-    "color": "#002AB3",
-    "remark": "blaues Tag",
+    "id": "5020/15",
+    "ut": 1,
+    "dsc": "Kubicek King Size",
+    "cap": 82.5,
+    "tar": 24.5,
+    "ful": 65,
+    "hgt": 1137,
+    "col": "#002AB3",
+    "rem": "blaues Tag",
     "sensors": [
         {
-            "type": 2,
+            "st": 2,
             "mac": "F8:95:D1:79:44:21",
             "min": 100,
             "max": 857

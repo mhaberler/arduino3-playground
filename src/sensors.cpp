@@ -68,6 +68,13 @@ bool readEquipment(const char* dirname) {
     return true;
 }
 
+bool wipe_lfs(void) {
+    if (LittleFS.begin(false)) {
+        return LittleFS.format();
+    }
+    return false;
+}
+
 void process_ble() {
     bleAdvMsg_t msg;
     if (xQueueReceive(bleadv_queue, (void *)&msg, 0) == pdTRUE) {
