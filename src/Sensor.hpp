@@ -13,6 +13,7 @@
 #include "ruuvi.h"
 #include "mopeka.h"
 #include "tpms.h"
+#include "lv_observer.h"
 
 using namespace std;
 
@@ -74,7 +75,7 @@ typedef enum {
     UT_NONE = 0,
     UT_TANK,
     UT_BURNER,
-    UT_ENVELOPE, 
+    UT_ENVELOPE,
     UT_OAT,
     UT_FLOW,
     UT_BLASTVALVE1,
@@ -84,7 +85,6 @@ typedef enum {
     UT_MAX
 } unit_t;
 
-bool setupUnit(const unit_t unit, const sensorType_t sensorType, const std::string &mac);
 uint8_t volt2percent(const float volt);
 const char *sensorType(const sensorType_t sensorType);
 const char *unitType(const unit_t unitType);
@@ -96,7 +96,6 @@ void convertToJson(const ruuviAd_t & src, JsonVariant dst);
 void convertToJson(const mopekaAd_t & src, JsonVariant dst);
 void convertToJson(const tpmsAd_t & src, JsonVariant dst);
 
-
 int16_t getInt16(const uint8_t *data, int index);
 uint16_t getUint16(const uint8_t *data, int index);
 int32_t getInt32(const uint8_t *data, int index);
@@ -107,19 +106,25 @@ int8_t getInt8(const uint8_t *data, int index);
 class Sensor {
   private:
     sensorMode_t _mode;
-    format_t _format;
     sensorType_t _type;
     uint32_t _lastchange;
     NimBLEAddress _macAddress;
+    lv_subject_t *_subject;
 
   public:
+    // Sensor( const std::string &mac, const sensorType_t st) : _macAddress(NimBLEAddress(mac)), _type(st) {};
+    Sensor( NimBLEAddress &mac, const sensorType_t st) : _macAddress(NimBLEAddress(mac)), _type(st) {};
+
     virtual void print(Print &p, format_t format = FMT_TEXT) = 0;
     sensorMode_t mode();
-    format_t format();
     sensorType_t type();
     NimBLEAddress & mac();
     bool configure(JsonObject conf);
     virtual bool bleAdvertisement(const bleAdvMsg_t  &msg) = 0;
+    void setSubject(lv_subject_t *subject) {
+        _subject = subject;
+    };
+
 };
 
 typedef unordered_set<Sensor*> SensorSet;
@@ -127,32 +132,43 @@ typedef unordered_set<Sensor*> SensorSet;
 class Unit {
   private:
     SensorSet _sensorset;
+    std::string _id;
   public:
+    Unit( std::string id) : _id(id) {};
     bool configure(JsonObject *conf);
-    const String &name();
+    const  std::string &name();
     void print(Print &p, format_t format = FMT_TEXT);
     void add(Sensor *s);
+    Sensor *get(sensorType_t st);
 };
 
-typedef unordered_set<Unit*> UnitSet;
+Unit *addUnit(JsonObject conf);
+Unit *setupUnit(const unit_t unit, const sensorType_t sensorType, const std::string &mac);
 
-class Equipment {
-  private:
-    UnitSet _unitset;
-  public:
+// typedef unordered_set<Unit*> UnitSet;
+typedef unordered_map<std::string, Unit *> UnitMap;
 
-    void add(Unit *u) {
-        _unitset.insert(u);
-    };
-    void render() {
-        for(auto u: _unitset) {
-            u->print(Serial);
-        }
-    };
-};
+// class Equipment {
+//   private:
+//     UnitMap _unitmap;
+//   public:
+
+//     // void add(Unit *u) {
+//     //     _unitmap.insert(u);
+//     // };
+//     void render() {
+//         for(auto u: _unitmap) {
+//             Serial.printf("unit '%s': ");
+//             u.second->print(Serial);
+//         }
+//     };
+// };
 
 class Ruuvi : public Sensor {
   public:
+    Ruuvi( const std::string &mac) {
+      Sensor(NimBLEAddress(mac), ST_RUUVI);
+    };
 
     void print(Print &p, format_t format = FMT_TEXT);
     void setOnUpdate(std::function<void(const char *value)> onUpdate, facette_t what ) {}

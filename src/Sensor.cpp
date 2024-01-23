@@ -17,7 +17,7 @@ NimBLEAddress & Sensor::mac() {
 }
 
 bool Sensor::configure(JsonObject conf)  {
-    _type = conf["type"];
+    _type = conf["st"];
     if (conf["mac"]) {
         _macAddress = conf["mac"];
     }

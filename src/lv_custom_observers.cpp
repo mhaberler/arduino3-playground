@@ -10,7 +10,6 @@
 #include "ArduinoJsonCustom.h"
 #include "Sensor.hpp"
 
-
 extern lv_obj_t *ui_SdCardStatus;
 extern lv_obj_t *ui_BatteryStatus;
 extern lv_obj_t *ui_BLEStatus;
@@ -64,7 +63,13 @@ extern "C"
 
         LV_LOG_USER("%lu  '%s'\n", e->code, mac.c_str());
 
-        setupUnit(UT_ENVELOPE, ST_RUUVI, mac);
+        Sensor *sp = new Ruuvi(mac);
+
+        Unit *u = new Unit("envelope");
+        u->add(sp);
+
+        // Unit *u = setupUnit(UT_ENVELOPE, ST_RUUVI, mac);
+
         lv_disp_load_scr(ui_Main);
 
     }
@@ -74,7 +79,9 @@ extern "C"
 
         LV_LOG_USER("%lu  '%s'\n", e->code, mac.c_str());
 
-        setupUnit(UT_OAT, ST_RUUVI, mac);
+        // Unit *u = setupUnit(UT_OAT, ST_RUUVI, mac);
+        // setupSensor(mac, FT_TEMPERATURE, &oat_temp);
+        // setupSensor(mac, FT_HUMIDITY, &oat_hum);
 
         lv_disp_load_scr(ui_Main);
 

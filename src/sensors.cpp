@@ -8,17 +8,28 @@ extern SpiRamAllocator spiram_allocator;
 
 JsonDocument equipment(&spiram_allocator);
 
-UnitSet units;
+UnitMap units;
 
-bool addUnit(JsonObject conf) {
-    Unit *u = new Unit();
-    if (u->configure(&conf)) {
-        units.insert(u);
-    } else {
-        delete u;
-        return false;
+Unit *addUnit(JsonObject conf) {
+    std::string id = conf["id"];
+    if (id.empty()) {
+        log_e("missing id");
+        serializeJson(conf, Serial);
+        return NULL;
     }
-    return true;
+    Unit *u = new Unit(id);
+    if (u->configure(&conf)) {
+        // delete previous unit
+        if (units[id]) {
+            delete units[id];
+        }
+        units[id] = u;
+    } else {
+        log_e("configure failed: %s", id.c_str());
+        delete u;
+        return NULL;
+    }
+    return u;
 }
 
 bool readEquipment(const char* dirname) {

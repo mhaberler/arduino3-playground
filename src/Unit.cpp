@@ -5,11 +5,15 @@ unordered_map<NimBLEAddress, Sensor *> ble_sensors;
 const NimBLEAddress null_mac;
 
 bool Unit::configure(JsonObject *conf) {
+    log_e("Unit::configure");
+
+    serializeJsonPretty((*conf),Serial);
+
     JsonArray sensors = (*conf)["sensors"].as<JsonArray>();
 
     for(JsonObject s: sensors) {
         Sensor *sp = NULL;
-        switch (s["type"].as<int>()) {
+        switch (s["st"].as<int>()) {
             case ST_RUUVI:
                 sp = new Ruuvi();
                 break;
@@ -44,7 +48,7 @@ bool Unit::configure(JsonObject *conf) {
     return true;
 }
 
-const String &Unit::name(void) {
+const std::string &Unit::name(void) {
     return "foo";
 }
 
@@ -54,16 +58,25 @@ void Unit::add(Sensor *s) {
     _sensorset.insert(s);
 };
 
-bool setupUnit(const unit_t unit, const sensorType_t sensorType, const std::string &mac) {
+Unit *setupUnit(const unit_t unit, const sensorType_t sensorType, const std::string &mac) {
     JsonDocument config;
-    config["type"] = (int) unit;
+    switch (unit) {
+        case UT_ENVELOPE:
+            config["id"] = "envelope";
+            break;
+        case UT_OAT:
+            config["id"] = "OAT";
+            break;
+        default:
+            return NULL;
+    }
+    config["ut"] = (int) unit;
     JsonArray sensors = config["sensors"].to<JsonArray>();
     JsonObject sensor = sensors.add<JsonObject>();
-    sensor["type"] = (int)sensorType;
+    sensor["st"] = (int)sensorType;
     sensor["mac"] = mac;
-    serializeJsonPretty(config, Serial);
+    return addUnit(config.as<JsonObject>());
 
-    return false;
 }
 
 bool bleDeliver(const bleAdvMsg_t &msg) {
