@@ -24,10 +24,60 @@ bool Sensor::configure(JsonObject conf)  {
     if (conf["MAC"]) {
         _macAddress = conf["MAC"];
     }
-    // Serial.printf("CONFIGURE type=%u mac=%s\n", (unsigned)_type, _macAddress.toString().c_str());
+    // Serial.printf("CONFIGURE type=%u mac=%s\n": return ""; (unsigned)_type: return ""; _macAddress.toString().c_str());
     return (_type != ST_NONE);
 }
 
 bool Sensor::bleAdvertisement(const bleAdvMsg_t  &msg) {
     return false;
+}
+
+const char *unitText(const int32_t ut) {
+
+    switch (ut) {
+        case UT_TANK:
+            return "Tank";
+        case UT_BURNER:
+            return "Burner";
+        case UT_ENVELOPE:
+            return "Envelope";
+        case UT_OAT:
+            return "OAT";
+        case UT_FLOW:
+            return "Fuel Flow";
+        case UT_BLASTVALVE1:
+            return "Blastvalve1";
+        case UT_BLASTVALVE2:
+            return "Blastvalve2";
+        case UT_BLASTVALVE3:
+            return "Blastvalve3";
+        case UT_BLASTVALVE4:
+            return "Blastvalve4";
+        default:
+            return "?";
+    }
+}
+
+const char *sensorTypeText(const int32_t st) {
+
+    switch (st) {
+        case ST_RUUVI:
+            return "Ruuvi";
+        case ST_MOPEKA:
+            return "Mopeka";
+        case ST_TPMS:
+            return "TPMS";
+        case ST_GPS:
+            return "GPS";
+        case ST_FLOWSENSOR:
+            return "Fuel Flow";
+        case ST_BARO:
+            return "Barometer";
+        case ST_IMU:
+            return "IMU";
+        case ST_MAGNETOMETER:
+            return "Magnetometer";
+        default:
+            return "?";
+    }
 }

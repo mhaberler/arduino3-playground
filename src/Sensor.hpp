@@ -42,6 +42,8 @@ typedef enum {
     SM_MAX
 } sensorMode_t;
 
+// NB: keep in sync with sensorTypeText() 
+
 typedef enum {
     ST_NONE = 0,
     ST_RUUVI,
@@ -71,6 +73,7 @@ typedef enum {
     FT_MAX
 } facette_t;
 
+// NB: keep in sync with unitText() 
 typedef enum {
     UT_NONE = 0,
     UT_TANK,
@@ -107,17 +110,28 @@ class Sensor {
   private:
     sensorMode_t _mode;
     sensorType_t _type;
+    format_t _format;
     uint32_t _lastchange;
     NimBLEAddress _macAddress;
     lv_subject_t *_subject;
 
   public:
     // Sensor( const std::string &mac, const sensorType_t st) : _macAddress(NimBLEAddress(mac)), _type(st) {};
-    Sensor( NimBLEAddress &mac, const sensorType_t st) : _macAddress(NimBLEAddress(mac)), _type(st) {};
+    // Sensor( NimBLEAddress &mac, const sensorType_t st) : _macAddress(NimBLEAddress(mac)), _type(st) {};
+    void setAddress(NimBLEAddress &mac) {
+        _macAddress = mac;
+    };
+    void setAddress(const std::string &mac) {
+        _macAddress = NimBLEAddress(mac);
+    };
+    void setType(const sensorType_t st) {
+        _type = st;
+    };
 
     virtual void print(Print &p, format_t format = FMT_TEXT) = 0;
     sensorMode_t mode();
     sensorType_t type();
+    format_t format();
     NimBLEAddress & mac();
     bool configure(JsonObject conf);
     virtual bool bleAdvertisement(const bleAdvMsg_t  &msg) = 0;
@@ -167,7 +181,8 @@ typedef unordered_map<std::string, Unit *> UnitMap;
 class Ruuvi : public Sensor {
   public:
     Ruuvi( const std::string &mac) {
-      Sensor(NimBLEAddress(mac), ST_RUUVI);
+        setAddress(mac);
+        setType(ST_RUUVI);
     };
 
     void print(Print &p, format_t format = FMT_TEXT);
@@ -221,3 +236,6 @@ class IMU : public Sensor {
 };
 
 bool bleDeliver(const bleAdvMsg_t &msg);
+
+const char *unitText(const int32_t ut);
+const char *sensorTypeText(const int32_t st);

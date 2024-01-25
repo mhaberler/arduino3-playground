@@ -4,6 +4,7 @@ SET(SOURCES ui_Main.c
     ui_Parameters.c
     ui_Status.c
     ui_Ruuvi.c
+    ui_Unit.c
     ui.c
     ui_comp_hook.c
     ui_helpers.c

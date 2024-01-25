@@ -21,13 +21,13 @@ lv_obj_clear_flag( ui_Container1, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
 ui_ruuviHeader = lv_label_create(ui_Container1);
 lv_obj_set_width( ui_ruuviHeader, lv_pct(100));
-lv_obj_set_height( ui_ruuviHeader, LV_SIZE_CONTENT);   /// 10
+lv_obj_set_height( ui_ruuviHeader, lv_pct(15));
 lv_obj_set_align( ui_ruuviHeader, LV_ALIGN_CENTER );
 lv_obj_set_style_text_font(ui_ruuviHeader, &lv_font_montserrat_20, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 ui_ruuviBody = lv_label_create(ui_Container1);
 lv_obj_set_width( ui_ruuviBody, lv_pct(100));
-lv_obj_set_height( ui_ruuviBody, lv_pct(70));
+lv_obj_set_height( ui_ruuviBody, lv_pct(65));
 lv_obj_set_align( ui_ruuviBody, LV_ALIGN_CENTER );
 lv_obj_set_style_text_font(ui_ruuviBody, &lv_font_montserrat_18, LV_PART_MAIN| LV_STATE_DEFAULT);
 

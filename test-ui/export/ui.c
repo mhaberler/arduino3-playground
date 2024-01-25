@@ -83,6 +83,22 @@ lv_obj_t *ui_Label5;
 void ui_event_Cancel( lv_event_t * e);
 lv_obj_t *ui_Cancel;
 lv_obj_t *ui_Label6;
+
+
+// SCREEN: ui_Unit
+void ui_Unit_screen_init(void);
+lv_obj_t *ui_Unit;
+lv_obj_t *ui_Container4;
+lv_obj_t *ui_unitHeader;
+lv_obj_t *ui_unitBody;
+lv_obj_t *ui_Container5;
+lv_obj_t *ui_unitColor;
+void ui_event_UnitSave( lv_event_t * e);
+lv_obj_t *ui_UnitSave;
+lv_obj_t *ui_Label1;
+void ui_event_UnitCancel( lv_event_t * e);
+lv_obj_t *ui_UnitCancel;
+lv_obj_t *ui_Label7;
 lv_obj_t *ui____initial_actions0;
 
 ///////////////////// TEST LVGL SETTINGS ////////////////////
@@ -188,6 +204,18 @@ if ( event_code == LV_EVENT_CLICKED) {
       _ui_screen_change( &ui_Main, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Main_screen_init);
 }
 }
+void ui_event_UnitSave( lv_event_t * e) {
+    lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
+if ( event_code == LV_EVENT_CLICKED) {
+      setUnit( e );
+}
+}
+void ui_event_UnitCancel( lv_event_t * e) {
+    lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
+if ( event_code == LV_EVENT_CLICKED) {
+      _ui_screen_change( &ui_Main, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Main_screen_init);
+}
+}
 
 ///////////////////// SCREENS ////////////////////
 
@@ -202,6 +230,7 @@ ui_GPS_screen_init();
 ui_Parameters_screen_init();
 ui_Status_screen_init();
 ui_Ruuvi_screen_init();
+ui_Unit_screen_init();
 ui____initial_actions0 = lv_obj_create(NULL);
 lv_disp_load_scr( ui_Main);
 }

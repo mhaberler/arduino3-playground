@@ -12,4 +12,5 @@ extern "C"
     void nfcEvent(lv_event_t *e);
     void setEnvelopeMac(lv_event_t *e);
     void setOATMac(lv_event_t *e);
+    void setUnit(lv_event_t * e);
 }

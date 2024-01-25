@@ -86,6 +86,14 @@ extern "C"
         lv_disp_load_scr(ui_Main);
 
     }
+
+    void setUnit(lv_event_t * e) {
+        std::string id((*jdoc)["payload"]["id"]);
+        LV_LOG_USER("%lu  '%s'\n", e->code, id.c_str());
+        addUnit((*jdoc)["payload"]);
+        lv_disp_load_scr(ui_Main);
+    }
+
 }
 
 static void nfc_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
@@ -105,7 +113,7 @@ static void nfc_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
                 lv_label_set_text(ui_ruuviHeader, "Ruuvi Sensor detected");
                 String mac =  (*jdoc)["payload"]["MAC"];
                 String sw =  (*jdoc)["payload"]["SW"];
-                lv_label_set_text_fmt(ui_ruuviBody, "MAC: %s\nFirmware: %s",
+                lv_label_set_text_fmt(ui_ruuviBody, "\nMAC: %s\nFirmware: %s",
                                       mac.c_str(), sw.c_str());
                 // lv_obj_add_event_cb(ui_Envelope, setEnvelopeMac, LV_EVENT_CLICKED, jdoc);
                 // lv_obj_add_event_cb(ui_OAT, setOATMac, LV_EVENT_CLICKED, jdoc);
@@ -113,7 +121,35 @@ static void nfc_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
 
             }
             break;
-        case BWTAG_TANK:
+        case BWTAG_TANK: {
+                previous_screen = lv_scr_act();
+                String id =  (*jdoc)["payload"]["id"];
+                String dsc =  (*jdoc)["payload"]["dsc"];
+                int32_t ut = (*jdoc)["payload"]["ut"];
+                lv_label_set_text_fmt(ui_unitHeader, "%s %s %s",
+                                      unitText(ut), id.c_str(), dsc.c_str());
+                String stxt = "\n";
+                JsonArray sensors = (*jdoc)["payload"]["sensors"].as<JsonArray>();
+                for(JsonObject s: sensors) {
+                    stxt += sensorTypeText(s["st"].as<int>());
+                    stxt += " " + s["mac"].as<String>();
+                    stxt += "\n";
+                }
+                lv_label_set_text(ui_unitBody, stxt.c_str());
+                String rem =  (*jdoc)["payload"]["rem"];
+                if (rem.length()) {
+                    lv_label_set_text(ui_unitColor, rem.c_str());
+                    lv_obj_clear_flag(ui_unitColor, LV_OBJ_FLAG_HIDDEN);
+                }
+                String col =  (*jdoc)["payload"]["col"];
+                if (col.length()) {
+                    lv_color_t tagcolor = lv_color_from_sharpRGB(col.c_str());
+                    lv_obj_clear_flag(ui_unitColor, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_set_style_bg_color(ui_unitColor, tagcolor, LV_PART_MAIN | LV_STATE_DEFAULT );
+                    lv_obj_set_style_bg_opa(ui_unitColor, 255, LV_PART_MAIN| LV_STATE_DEFAULT);
+                }
+                lv_disp_load_scr(ui_Unit);
+            }
             break;
         default:
             break;

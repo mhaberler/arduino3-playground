@@ -88,6 +88,20 @@ extern lv_obj_t *ui_Label5;
 void ui_event_Cancel( lv_event_t * e);
 extern lv_obj_t *ui_Cancel;
 extern lv_obj_t *ui_Label6;
+// SCREEN: ui_Unit
+void ui_Unit_screen_init(void);
+extern lv_obj_t *ui_Unit;
+extern lv_obj_t *ui_Container4;
+extern lv_obj_t *ui_unitHeader;
+extern lv_obj_t *ui_unitBody;
+extern lv_obj_t *ui_Container5;
+extern lv_obj_t *ui_unitColor;
+void ui_event_UnitSave( lv_event_t * e);
+extern lv_obj_t *ui_UnitSave;
+extern lv_obj_t *ui_Label1;
+void ui_event_UnitCancel( lv_event_t * e);
+extern lv_obj_t *ui_UnitCancel;
+extern lv_obj_t *ui_Label7;
 extern lv_obj_t *ui____initial_actions0;
 
 

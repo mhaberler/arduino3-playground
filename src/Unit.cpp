@@ -15,7 +15,7 @@ bool Unit::configure(JsonObject *conf) {
         Sensor *sp = NULL;
         switch (s["st"].as<int>()) {
             case ST_RUUVI:
-                sp = new Ruuvi();
+                sp = new Ruuvi(s["mac"].as<std::string>());
                 break;
             case ST_MOPEKA:
                 sp = new Mopeka();

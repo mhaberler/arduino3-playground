@@ -42,3 +42,7 @@ def setOATMac(event_struct):
 def returnToPrevious(event_struct):
     return
 
+
+def setUnit(event_struct):
+    return
+
