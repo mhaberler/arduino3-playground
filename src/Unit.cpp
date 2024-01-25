@@ -7,13 +7,18 @@ const NimBLEAddress null_mac;
 bool Unit::configure(JsonObject *conf) {
     log_e("Unit::configure");
 
-    serializeJsonPretty((*conf),Serial);
+    serializeJson((*conf),Serial);
+    Serial.printf("\n");
 
+    int32_t ut = (*conf)["ut"].as<int>();
+    String dsc = (*conf)["dsc"];
+    String id = (*conf)["id"];
     JsonArray sensors = (*conf)["sensors"].as<JsonArray>();
 
     for(JsonObject s: sensors) {
         Sensor *sp = NULL;
-        switch (s["st"].as<int>()) {
+        int32_t st = s["st"].as<int>();
+        switch (st) {
             case ST_RUUVI:
                 sp = new Ruuvi(s["mac"].as<std::string>());
                 break;
@@ -34,15 +39,17 @@ bool Unit::configure(JsonObject *conf) {
             case ST_MAGNETOMETER:
                 break;
         }
-        serializeJson(s, Serial);
+
         if (sp && sp->configure(s)) {
             _sensorset.insert(sp);
             if (sp->mac() != null_mac) {
-                Serial.printf("INSERT %s\n", sp->mac().toString().c_str());
+                Serial.printf("INSERT %s:%s %s:%s\n",
+                              unitText(ut),
+                              id.c_str(),
+                              sensorTypeText(st),
+                              sp->mac().toString().c_str());
                 ble_sensors[sp->mac()] = sp;
             }
-            const char *mac = s["mac"].as<const char *>();
-            Serial.print(mac);
         }
     }
     return true;

@@ -88,9 +88,22 @@ extern "C"
     }
 
     void setUnit(lv_event_t * e) {
-        std::string id((*jdoc)["payload"]["id"]);
-        LV_LOG_USER("%lu  '%s'\n", e->code, id.c_str());
-        addUnit((*jdoc)["payload"]);
+        LV_LOG_USER("");
+
+        JsonVariant jv = (*jdoc)["payload"];
+        if (jv.is<JsonArray>()) {
+            JsonArray units = jv.as<JsonArray>();
+            for(JsonObject u: units) {
+                std::string id(u["id"]);
+                LV_LOG_USER("addU %s", id.c_str());
+                addUnit(u);
+            }
+        } else {
+            // addUnit((*jdoc)["payload"]);
+            std::string id(jv["id"]);
+            LV_LOG_USER("add single %s", id.c_str());
+            addUnit(jv);
+        }
         lv_disp_load_scr(ui_Main);
     }
 
