@@ -62,6 +62,9 @@ void DecodeV3(const uint8_t *data, ruuviAd_t &ra) {
 void Ruuvi::print(Print &p, format_t format) {
     JsonDocument doc;
     doc = _ruuvi_report;
+    doc["st"] = ST_RUUVI;
+    // doc["dsc"] = ST_RUUVI;
+    
     serializeJson(doc, p);
     p.write("\n");
 }

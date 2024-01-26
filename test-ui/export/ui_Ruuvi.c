@@ -53,7 +53,7 @@ ui_Label4 = lv_label_create(ui_Envelope);
 lv_obj_set_width( ui_Label4, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_Label4, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_align( ui_Label4, LV_ALIGN_CENTER );
-lv_label_set_text(ui_Label4,"save as\nEnvelope");
+lv_label_set_text(ui_Label4,"use as\nEnvelope");
 lv_obj_set_style_text_align(ui_Label4, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 ui_OAT = lv_btn_create(ui_Container3);
@@ -67,7 +67,7 @@ ui_Label5 = lv_label_create(ui_OAT);
 lv_obj_set_width( ui_Label5, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_Label5, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_align( ui_Label5, LV_ALIGN_CENTER );
-lv_label_set_text(ui_Label5,"save as\nOAT");
+lv_label_set_text(ui_Label5,"use as\nOAT");
 lv_obj_set_style_text_align(ui_Label5, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 ui_Cancel = lv_btn_create(ui_Container3);

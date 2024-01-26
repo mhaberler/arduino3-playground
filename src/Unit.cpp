@@ -21,12 +21,15 @@ bool Unit::configure(JsonObject *conf) {
         switch (st) {
             case ST_RUUVI:
                 sp = new Ruuvi(s["mac"].as<std::string>());
+                sp->setUnit(this);
                 break;
             case ST_MOPEKA:
                 sp = new Mopeka();
+                sp->setUnit(this);
                 break;
             case ST_TPMS:
                 sp = new TPMS();
+                sp->setUnit(this);
                 break;
             case ST_GPS:
                 break;
@@ -124,6 +127,7 @@ void convertToJson(const ruuviAd_t & src, JsonVariant dst) {
     dst["temp"] =  round1(src.temperature);
     dst["hum"] =  round1(src.humidity);
     dst["press"] = round1(src.pressure);
+    dst["batt"] = volt2percent((float)src.voltage/1000.0);
     dst["rssi"] = src.rssi;
 }
 
@@ -133,19 +137,19 @@ void convertToJson(const mopekaAd_t & src, JsonVariant dst) {
     dst["stars"] = src.qualityStars;
     dst["accX"] = src.acceloX;
     dst["accY"] = src.acceloY;
-    dst["rssi"] = src.rssi;
-    dst["batt"] = round2(src.battery);
     if (src.syncPressed)
         dst["sync"] = 1;
+    dst["rssi"] = src.rssi;
+    dst["batt"] = volt2percent(src.battery);
 
 }
 
 void convertToJson(const tpmsAd_t & src, JsonVariant dst) {
     dst["press"] = round1(src.pressure);
     dst["temp"] = round1(src.temperature);
-    dst["bat"] = round1(src.batpct);
     dst["loc"] = src.location;
     dst["status"] = src.status;
+    dst["batt"] = src.batpct;
     dst["rssi"] = src.rssi;
 }
 

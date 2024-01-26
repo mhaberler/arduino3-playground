@@ -3,6 +3,7 @@
 #include <lvgl.h>
 
 void ui_custom_init(void);
+lv_color_t getDefaultColor(void);
 
 extern "C"
 {

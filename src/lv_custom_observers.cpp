@@ -3,6 +3,7 @@
 #include "lv_setup.hpp"
 #include "lv_subjects.hpp"
 #include "ui_events.h"
+#include "ui_custom.hpp"
 #include "ui.h"
 #include "lv_util.h"
 #include "ruuvi.h"
@@ -59,39 +60,35 @@ extern "C"
     }
 
     void setEnvelopeMac(lv_event_t *e)  {
-        const char* json ="{\"id\":\"env1\",\"ut\":3,\"sensors\":[{\"st\":1,}]}";
+        // https://jsontostring.com/
+        const char* jstxt ="{\"id\":\"env1\",\"ut\":3,\"sensors\":[{\"st\":1}]}";
         JsonDocument tmpl;
-        deserializeJson(tmpl, json);
+        deserializeJson(tmpl, jstxt);
         tmpl["sensors"][0]["mac"] = (*jdoc)["payload"]["MAC"];
         addUnit(tmpl.as<JsonObject>());
         lv_disp_load_scr(ui_Main);
     }
 
     void setOATMac(lv_event_t *e) {
-        const char* json ="{\"id\":\"OAT1\",\"ut\":4,\"sensors\":[{\"st\":1,}]}";
+        const char* jstxt ="{\"id\":\"OAT1\",\"ut\":4,\"sensors\":[{\"st\":1}]}";
         JsonDocument tmpl;
-        deserializeJson(tmpl, json);
+        deserializeJson(tmpl, jstxt);
         tmpl["sensors"][0]["mac"] = (*jdoc)["payload"]["MAC"];
         addUnit(tmpl.as<JsonObject>());
         lv_disp_load_scr(ui_Main);
     }
 
     void setUnit(lv_event_t * e) {
-        LV_LOG_USER("");
+        // LV_LOG_USER("");
 
         JsonVariant jv = (*jdoc)["payload"];
         if (jv.is<JsonArray>()) {
             JsonArray units = jv.as<JsonArray>();
             for(JsonObject u: units) {
                 std::string id(u["id"]);
-                LV_LOG_USER("addU %s", id.c_str());
+                // LV_LOG_USER("addU %s", id.c_str());
                 addUnit(u);
             }
-        } else {
-            // addUnit((*jdoc)["payload"]);
-            std::string id(jv["id"]);
-            LV_LOG_USER("add single %s", id.c_str());
-            addUnit(jv);
         }
         lv_disp_load_scr(ui_Main);
     }
@@ -100,7 +97,6 @@ extern "C"
 
 static void nfc_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
     uint32_t code = (uint32_t)subject->user_data;
-    // lv_obj_t *target = (lv_obj_t *)lv_observer_get_target(observer);
     jdoc = (JsonDocument *)lv_subject_get_pointer(subject);
 
     switch (code) {
@@ -119,26 +115,46 @@ static void nfc_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
             }
             break;
         case BWTAG_PROXY_TAG: {
+                JsonVariant jv = (*jdoc)["payload"];
+
+                if (!jv.is<JsonArray>()) {
+                    // format error
+                    // beep
+                    return ;
+                }
                 previous_screen = lv_scr_act();
-                String id =  (*jdoc)["payload"]["id"];
-                String dsc =  (*jdoc)["payload"]["dsc"];
-                int32_t ut = (*jdoc)["payload"]["ut"];
-                lv_label_set_text_fmt(ui_unitHeader, "%s %s %s",
-                                      unitText(ut), id.c_str(), dsc.c_str());
-                String stxt = "\n";
-                JsonArray sensors = (*jdoc)["payload"]["sensors"].as<JsonArray>();
-                for(JsonObject s: sensors) {
-                    stxt += sensorTypeText(s["st"].as<int>());
-                    stxt += " " + s["mac"].as<String>();
-                    stxt += "\n";
+                String header, body;
+                lv_color_t tagcolor = getDefaultColor();
+                bool colorfound = false;
+
+                JsonArray units = jv.as<JsonArray>();
+                for(JsonObject u: units) {
+                    if (!colorfound && u.containsKey("col")) {
+                        tagcolor = lv_color_from_sharpRGB(u["col"]);
+                        colorfound = true;
+                    }
+                    header += unitType((unit_t)u["ut"].as<int>());
+                    header += " ";
+
+                    body += unitType((unit_t)u["ut"].as<int>());
+                    body += ":";
+                    body += u["id"].as<const char *>();
+                    body += "\n";
+
+                    JsonArray sensors = u["sensors"].as<JsonArray>();
+                    for(JsonObject s: sensors) {
+                        body += "  ";
+                        body += sensorType((sensorType_t)s["st"].as<int>());
+                        body += ":";
+                        body += s["mac"].as<const char *>();
+                        body += "\n";
+                    }
+                    lv_label_set_text(ui_unitHeader, header.c_str());
+                    lv_label_set_text(ui_unitBody, body.c_str());
                 }
-                lv_label_set_text(ui_unitBody, stxt.c_str());
-                String col =  (*jdoc)["payload"]["col"];
-                if (col.length()) {
-                    lv_color_t tagcolor = lv_color_from_sharpRGB(col.c_str());
-                    lv_obj_set_style_bg_color(ui_UnitSave, tagcolor, LV_PART_MAIN | LV_STATE_DEFAULT );
-                    lv_obj_set_style_bg_opa(ui_UnitSave, 255, LV_PART_MAIN| LV_STATE_DEFAULT);
-                }
+
+                lv_obj_set_style_bg_color(ui_UnitSave, tagcolor, LV_PART_MAIN | LV_STATE_DEFAULT );
+                lv_obj_set_style_bg_opa(ui_UnitSave, 255, LV_PART_MAIN| LV_STATE_DEFAULT);
                 lv_disp_load_scr(ui_Unit);
             }
             break;
@@ -146,7 +162,6 @@ static void nfc_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
             break;
     }
 }
-
 static void register_observers(void) {
     lv_subject_add_observer_with_target(&oat_temp, ruuvi_report_cb, ui_outsideTemp, (void*)"%.1f°");
     lv_subject_add_observer_with_target(&oat_hum, ruuvi_report_cb, ui_outsideHum, (void*)"%.1f%%");

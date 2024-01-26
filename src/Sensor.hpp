@@ -106,6 +106,8 @@ uint32_t getUint32(const uint8_t *data, int index);
 uint8_t getUint8(const uint8_t *data, int index);
 int8_t getInt8(const uint8_t *data, int index);
 
+class Unit;
+
 class Sensor {
   private:
     sensorMode_t _mode;
@@ -114,6 +116,7 @@ class Sensor {
     uint32_t _lastchange;
     NimBLEAddress _macAddress;
     lv_subject_t *_subject;
+    Unit *_unit;
 
   public:
     // Sensor( const std::string &mac, const sensorType_t st) : _macAddress(NimBLEAddress(mac)), _type(st) {};
@@ -126,6 +129,9 @@ class Sensor {
     };
     void setType(const sensorType_t st) {
         _type = st;
+    };
+    void setUnit(Unit *u) {
+        _unit = u;
     };
 
     virtual void print(Print &p, format_t format = FMT_TEXT) = 0;

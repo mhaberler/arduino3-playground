@@ -2,6 +2,18 @@
 
 #include "ArduinoJson.h"
 
+// // https://github.com/bblanchon/ArduinoJson/issues/1904#issuecomment-1498614172
+// JsonVariant resolveJsonPath(JsonVariant variant, const char* path) {
+//   for (size_t n = 0; path[n]; n++) {
+//     if (path[n] == '.') {
+//       variant = variant[JsonString(path, n)];
+//       path += n + 1;
+//       n = 0;
+//     }
+//   }
+//   return variant[path];
+// }
+
 #if ARDUINOJSON_VERSION_MAJOR > 6
 struct SpiRamAllocator : ArduinoJson::Allocator {
     void* allocate(size_t size) override {

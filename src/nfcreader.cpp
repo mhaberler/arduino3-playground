@@ -71,53 +71,65 @@ analyseTag(NfcTag &tag, JsonDocument &doc) {
     if (!tag.hasNdefMessage()) {
         return BWTAG_NO_MATCH;
     }
-    auto nrec = tag.getNdefMessage().getRecordCount();
-    if ((tag.getTagType() == MFRC522Constants::PICC_TYPE_ISO_14443_4) && (nrec == 4)) {
-        String content[4];
-        for (auto i = 0; i < nrec; i++) {
-            NdefRecord record = tag.getNdefMessage()[i];
-            const byte *payload = record.getPayload();
-            size_t prefix_len = strlen((const char *)ruuvi_ids[i]);
-            if (payload == NULL) {
-                return BWTAG_NO_MATCH;
-            }
-            if (memcmp(payload, ruuvi_ids[i], prefix_len) != 0) {
-                return BWTAG_NO_MATCH;
-            }
-            content[i] = String(record.getPayload() + prefix_len,
-                                record.getPayloadLength() - prefix_len);
+    uint8_t nrec = tag.getNdefMessage().getRecordCount();
+    NfcTag::PICC_Type tagType = tag.getTagType();
 
-        }
-        // if we made it here, it's a Ruuvi tag
-        auto ruuvi = doc.createNestedObject("payload");
-        ruuvi["ID"] = content[0];
-        ruuvi["MAC"] = content[1];
-        ruuvi["SW"] = content[2];
-        // skip the mystery 'dt' record
-        return BWTAG_RUUVI;
-    }
-    if (tag.getTagType() == MFRC522Constants::PICC_TYPE_MIFARE_1K) {
-        // tank tag?
-        for (auto i = 0; i < nrec; i++) {
-            NdefRecord record = tag.getNdefMessage()[i];
+    switch (tagType) {
 
-            if (record.getType() && (strncmp((const char *)record.getType(),
-                                             BW_MIMETYPE, record.getTypeLength()) == 0)) {
-                // this is for us. Payload is a JSON string.
-                String payload = String(record.getPayload(),
-                                        record.getPayloadLength());
+        case  MFRC522Constants::PICC_TYPE_ISO_14443_4: {
+                if (nrec == 4) {
+                    String content[4];
+                    for (auto i = 0; i < nrec; i++) {
+                        NdefRecord record = tag.getNdefMessage()[i];
+                        const byte *payload = record.getPayload();
+                        size_t prefix_len = strlen((const char *)ruuvi_ids[i]);
+                        if (payload == NULL) {
+                            return BWTAG_NO_MATCH;
+                        }
+                        if (memcmp(payload, ruuvi_ids[i], prefix_len) != 0) {
+                            return BWTAG_NO_MATCH;
+                        }
+                        content[i] = String(record.getPayload() + prefix_len,
+                                            record.getPayloadLength() - prefix_len);
 
-                DynamicJsonDocument t(NFC_MAX_MSG_SIZE);
-                DeserializationError e = deserializeJson(t, payload);
-                if (e == DeserializationError::Ok) {
-                    doc["payload"] = t;
-                    return BWTAG_PROXY_TAG;
+                    }
+                    // if we made it here, it's a Ruuvi tag
+                    auto ruuvi = doc.createNestedObject("payload");
+                    ruuvi["ID"] = content[0];
+                    ruuvi["MAC"] = content[1];
+                    ruuvi["SW"] = content[2];
+                    // skip the mystery 'dt' record
+                    return BWTAG_RUUVI;
                 }
-                Serial.printf("deserialisation failed: %s\n",
-                              e.c_str());
-                return BWTAG_NO_MATCH;
             }
-        }
+            break;
+        case MFRC522Constants::PICC_TYPE_MIFARE_1K:
+        case MFRC522Constants::PICC_TYPE_MIFARE_UL: {
+
+                for (auto i = 0; i < nrec; i++) {
+                    NdefRecord record = tag.getNdefMessage()[i];
+
+                    if (record.getType() && (strncmp((const char *)record.getType(),
+                                                     BW_MIMETYPE, record.getTypeLength()) == 0)) {
+                        // this is for us. Payload is a JSON string.
+                        String payload = String(record.getPayload(),
+                                                record.getPayloadLength());
+
+                        DynamicJsonDocument t(NFC_MAX_MSG_SIZE);
+                        DeserializationError e = deserializeJson(t, payload);
+                        if (e == DeserializationError::Ok) {
+                            doc["payload"] = t;
+                            return BWTAG_PROXY_TAG;
+                        }
+                        Serial.printf("deserialisation failed: %s, '%s'\n",
+                                      e.c_str(), payload.c_str());
+                        return BWTAG_NO_MATCH;
+                    }
+                }
+            }
+            break;
+
+        default: ;
     }
     return BWTAG_NO_MATCH;
 }

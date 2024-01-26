@@ -11307,7 +11307,7 @@
                           {
                             "nid": 410252933,
                             "strtype": "LABEL/Text",
-                            "strval": "save as\\nEnvelope",
+                            "strval": "use as\\nEnvelope",
                             "InheritedType": 10
                           },
                           {
@@ -11938,7 +11938,7 @@
                           {
                             "nid": -701842497,
                             "strtype": "LABEL/Text",
-                            "strval": "save as\\nOAT",
+                            "strval": "use as\\nOAT",
                             "InheritedType": 10
                           },
                           {
@@ -13969,7 +13969,7 @@
                   {
                     "nid": -52768701,
                     "strtype": "LABEL/Text",
-                    "strval": "Text",
+                    "strval": "",
                     "InheritedType": 10
                   },
                   {
@@ -14043,8 +14043,8 @@
                     "flags": 17,
                     "strtype": "OBJECT/Position",
                     "intarray": [
-                      0,
-                      0
+                      35,
+                      2
                     ],
                     "InheritedType": 7
                   },
@@ -14269,7 +14269,7 @@
                   {
                     "nid": 180704492,
                     "strtype": "LABEL/Text",
-                    "strval": "Text",
+                    "strval": "",
                     "InheritedType": 10
                   },
                   {
@@ -16373,7 +16373,7 @@
     "theme_color2": 0,
     "uiExportFolderPath": "/Users/mah/Ballon/src/BalloonWare/arduino3-playground/test-ui/export",
     "projectExportFolderPath": "/Users/mah/Ballon/src/BalloonWare/arduino3-playground/test-ui/project",
-    "backup_cnt": 535,
+    "backup_cnt": 563,
     "autosave_cnt": 0,
     "lvgl_version": "8.3.6",
     "callfuncsexport": "CPP_FILE",

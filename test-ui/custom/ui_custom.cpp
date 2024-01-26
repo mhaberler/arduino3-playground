@@ -5,7 +5,6 @@
 #include "Esp.h"
 #include "nfc_input.h"
 
-
 void bw_event_MAIN_PAGE( lv_event_t * e) {
     lv_event_code_t event_code = lv_event_get_code(e);
     lv_obj_t * target = lv_event_get_target(e);
@@ -14,8 +13,16 @@ void bw_event_MAIN_PAGE( lv_event_t * e) {
     LV_LOG_USER("--->  bw_event_MAIN_PAGE %d '%s'\n", event_code, param? param:"NULL");
 
 }
+static lv_color_t saveDefaultColor;
+
+lv_color_t getDefaultColor(void) {
+    return saveDefaultColor;
+}
 
 void ui_custom_init(void) {
+
+    saveDefaultColor = lv_obj_get_style_bg_color(ui_UnitSave, LV_PART_MAIN | LV_STATE_DEFAULT);
+
     lv_label_set_text(ui_BLEStatus, LV_SYMBOL_BLUETOOTH);
     lv_label_set_text(ui_BatteryStatus, LV_SYMBOL_BATTERY_EMPTY);
     lv_label_set_text(ui_SdCardStatus, LV_SYMBOL_SD_CARD);
@@ -30,7 +37,6 @@ void ui_custom_init(void) {
     lv_button_bind_checked(ui_SdCardStatus, &sdcard_status);
     lv_slider_bind_value(ui_animationSpeed, &animationSpeed);
     lv_obj_bind_text_style_color(ui_WifiStatus, &wifi_color, LV_PART_MAIN | LV_STATE_DEFAULT);
-
 
 }
 
@@ -59,6 +65,5 @@ extern "C"
     void longPressed(lv_event_t *e) {
         LV_LOG_USER("longPressed: %lu\n", e->code);
     }
-
 
 }

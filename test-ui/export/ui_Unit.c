@@ -23,12 +23,16 @@ ui_unitHeader = lv_label_create(ui_Container4);
 lv_obj_set_width( ui_unitHeader, lv_pct(100));
 lv_obj_set_height( ui_unitHeader, lv_pct(15));
 lv_obj_set_align( ui_unitHeader, LV_ALIGN_CENTER );
+lv_label_set_text(ui_unitHeader,"");
 lv_obj_set_style_text_font(ui_unitHeader, &lv_font_montserrat_20, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 ui_unitBody = lv_label_create(ui_Container4);
 lv_obj_set_width( ui_unitBody, lv_pct(100));
 lv_obj_set_height( ui_unitBody, lv_pct(65));
+lv_obj_set_x( ui_unitBody, 35 );
+lv_obj_set_y( ui_unitBody, 2 );
 lv_obj_set_align( ui_unitBody, LV_ALIGN_CENTER );
+lv_label_set_text(ui_unitBody,"");
 lv_obj_set_style_text_font(ui_unitBody, &lv_font_montserrat_18, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 ui_Container5 = lv_obj_create(ui_Container4);
