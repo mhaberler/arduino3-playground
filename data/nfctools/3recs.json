@@ -1,0 +1,116 @@
+{
+    "ntgui_version": 17,
+    "data": [
+        {
+            "kRecordDescription": "geo:46,17",
+            "kRecordSelection": 2,
+            "kRecordField1": "geo:46,17",
+            "kRecordSize": 10,
+            "kRecordObject": {
+                "kTnf": 1,
+                "kChunked": false,
+                "kType": [
+                    85
+                ],
+                "kId": [],
+                "kPayload": [
+                    0,
+                    103,
+                    101,
+                    111,
+                    58,
+                    52,
+                    54,
+                    44,
+                    49,
+                    55
+                ]
+            }
+        },
+        {
+            "kRecordDescription": "mah@mah.priv.at\nme2\nfoo!",
+            "kRecordField3": "foo!",
+            "kRecordField2": "me2",
+            "kRecordSelection": 3,
+            "kRecordField1": "mah@mah.priv.at",
+            "kRecordSize": 40,
+            "kRecordObject": {
+                "kTnf": 1,
+                "kChunked": false,
+                "kType": [
+                    85
+                ],
+                "kId": [],
+                "kPayload": [
+                    6,
+                    109,
+                    97,
+                    104,
+                    64,
+                    109,
+                    97,
+                    104,
+                    46,
+                    112,
+                    114,
+                    105,
+                    118,
+                    46,
+                    97,
+                    116,
+                    63,
+                    115,
+                    117,
+                    98,
+                    106,
+                    101,
+                    99,
+                    116,
+                    61,
+                    109,
+                    101,
+                    50,
+                    38,
+                    98,
+                    111,
+                    100,
+                    121,
+                    61,
+                    102,
+                    111,
+                    111,
+                    37,
+                    50,
+                    49
+                ]
+            }
+        },
+        {
+            "kRecordDescription": "http://www.google.at",
+            "kRecordField2": "google.at",
+            "kRecordSelection": 1,
+            "kRecordField1": "http://www.",
+            "kRecordSize": 10,
+            "kRecordObject": {
+                "kTnf": 1,
+                "kChunked": false,
+                "kType": [
+                    85
+                ],
+                "kId": [],
+                "kPayload": [
+                    1,
+                    103,
+                    111,
+                    111,
+                    103,
+                    108,
+                    101,
+                    46,
+                    97,
+                    116
+                ]
+            }
+        }
+    ]
+}
