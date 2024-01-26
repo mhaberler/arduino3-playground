@@ -1,23 +1,25 @@
-{
-    "id": "5020/16",
-    "ut": 1,
-    "dsc": "Kubicek King Size",
-    "cap": 82.5,
-    "tar": 24.5,
-    "full": 65,
-    "hgt": 1137,
-    "col": "#DD6D1D",
-    "rem": "oranges Tag",
-    "sensors": [
-        {
-            "st": 2,
-            "mac": "D8:C6:11:CA:12:55",
-            "min": 100,
-            "max": 857
-        },
-        {
-            "st": 3,
-            "mac": "80:EA:CA:11:79:6F"
-        }
-    ]
-}
+[
+    {
+        "id": "5020/16",
+        "ut": 1,
+        "dsc": "Kubicek King Size",
+        "cap": 82.5,
+        "tar": 24.5,
+        "full": 65,
+        "hgt": 1137,
+        "col": "#DD6D1D",
+        "rem": "oranges Tag",
+        "sensors": [
+            {
+                "st": 2,
+                "mac": "D8:C6:11:CA:12:55",
+                "min": 100,
+                "max": 857
+            },
+            {
+                "st": 3,
+                "mac": "80:EA:CA:11:79:6F"
+            }
+        ]
+    }
+]

@@ -1,19 +1,21 @@
-{
-    "id": "5020/40",
-    "ut": 1,
-    "dsc": "Kubicek King Size",
-    "cap": 82.5,
-    "tar": 24.5,
-    "ful": 65,
-    "hght": 1137,
-    "col": "#D3C120",
-    "rem": "gelbes Tag",
-    "sensors": [
-        {
-            "st": 2,
-            "mac": "E7:38:29:A0:A1:D7",
-            "min": 100,
-            "max": 857
-        }
-    ]
-}
+[
+    {
+        "id": "5020/40",
+        "ut": 1,
+        "dsc": "Kubicek King Size",
+        "cap": 82.5,
+        "tar": 24.5,
+        "ful": 65,
+        "hght": 1137,
+        "col": "#D3C120",
+        "rem": "gelbes Tag",
+        "sensors": [
+            {
+                "st": 2,
+                "mac": "E7:38:29:A0:A1:D7",
+                "min": 100,
+                "max": 857
+            }
+        ]
+    }
+]

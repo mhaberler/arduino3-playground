@@ -1,19 +1,21 @@
-{
-    "id": "5020/24",
-    "ut": 1,
-    "dsc": "Kubicek King Size",
-    "cap": 82.5,
-    "tar": 24.5,
-    "ful": 65,
-    "hgt": 1137,
-    "col": "#B8CAD7",
-    "rem": "weisses Tag",
-    "sensors": [
-        {
-            "st": 2,
-            "mac": "EC:A7:32:91:78:E2",
-            "min": 100,
-            "max": 857
-        }
-    ]
-}
+[
+    {
+        "id": "5020/24",
+        "ut": 1,
+        "dsc": "Kubicek King Size",
+        "cap": 82.5,
+        "tar": 24.5,
+        "ful": 65,
+        "hgt": 1137,
+        "col": "#B8CAD7",
+        "rem": "weisses Tag",
+        "sensors": [
+            {
+                "st": 2,
+                "mac": "EC:A7:32:91:78:E2",
+                "min": 100,
+                "max": 857
+            }
+        ]
+    }
+]
