@@ -42,7 +42,7 @@ typedef enum {
     SM_MAX
 } sensorMode_t;
 
-// NB: keep in sync with sensorTypeText() 
+// NB: keep in sync with sensorTypeText()
 
 typedef enum {
     ST_NONE = 0,
@@ -73,7 +73,7 @@ typedef enum {
     FT_MAX
 } facette_t;
 
-// NB: keep in sync with unitText() 
+// NB: keep in sync with unitText()
 typedef enum {
     UT_NONE = 0,
     UT_TANK,
@@ -114,9 +114,10 @@ class Sensor {
     sensorType_t _type;
     format_t _format;
     uint32_t _lastchange;
-    NimBLEAddress _macAddress;
     lv_subject_t *_subject;
     Unit *_unit;
+  protected:
+    NimBLEAddress _macAddress;
 
   public:
     // Sensor( const std::string &mac, const sensorType_t st) : _macAddress(NimBLEAddress(mac)), _type(st) {};
@@ -144,6 +145,9 @@ class Sensor {
     void setSubject(lv_subject_t *subject) {
         _subject = subject;
     };
+    const  std::string &name();
+    const  std::string &fullName();
+    virtual  const std::string & id(void) = 0;
 
 };
 
@@ -153,13 +157,22 @@ class Unit {
   private:
     SensorSet _sensorset;
     std::string _id;
+    unit_t _ut;
   public:
     Unit( std::string id) : _id(id) {};
     bool configure(JsonObject *conf);
-    const  std::string &name();
     void print(Print &p, format_t format = FMT_TEXT);
     void add(Sensor *s);
     Sensor *get(sensorType_t st);
+    void setType(const unit_t ut) {
+        _ut = ut;
+    }
+    const unit_t getType(void) {
+        return _ut;
+    }
+    const  std::string &name(void) {
+        return std::string(unitType(getType())) + ":" + _id;
+    }
 };
 
 Unit *addUnit(JsonObject conf);
@@ -195,6 +208,7 @@ class Ruuvi : public Sensor {
     void setOnUpdate(std::function<void(const char *value)> onUpdate, facette_t what ) {}
     bool configure(JsonObject conf);
     bool bleAdvertisement(const bleAdvMsg_t  &msg);
+    const std::string & id(void);
 
   private:
     ruuviAd_t _ruuvi_report;
@@ -213,6 +227,8 @@ class Mopeka : public Sensor {
     void setOnUpdate(std::function<void(const char *value)> onUpdate, facette_t what ) {}
     bool configure(JsonObject conf);
     bool bleAdvertisement(const bleAdvMsg_t  &msg);
+    const std::string & id(void);
+
 };
 
 class TPMS : public  Sensor {
@@ -224,6 +240,8 @@ class TPMS : public  Sensor {
     void setOnUpdate(std::function<void(const char *value)> onUpdate, facette_t what ) {}
     bool configure(JsonObject conf);
     bool bleAdvertisement(const bleAdvMsg_t  &msg);
+    const std::string & id(void);
+
 };
 
 class GPS : public Sensor {
@@ -242,6 +260,3 @@ class IMU : public Sensor {
 };
 
 bool bleDeliver(const bleAdvMsg_t &msg);
-
-const char *unitText(const int32_t ut);
-const char *sensorTypeText(const int32_t st);

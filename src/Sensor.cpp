@@ -28,11 +28,19 @@ bool Sensor::configure(JsonObject conf)  {
     return (_type != ST_NONE);
 }
 
+const  std::string& Sensor::name(void) {
+    return std::string(sensorType(_type)) + ":" + id();
+}
+
+const  std::string &Sensor::fullName() {
+    return _unit->name() + ":" + name();
+};
+
 bool Sensor::bleAdvertisement(const bleAdvMsg_t  &msg) {
     return false;
 }
 
-const char *unitText(const int32_t ut) {
+const char *unitType(const unit_t ut) {
 
     switch (ut) {
         case UT_TANK:
@@ -58,7 +66,7 @@ const char *unitText(const int32_t ut) {
     }
 }
 
-const char *sensorTypeText(const int32_t st) {
+const char *sensorType(const sensorType_t st) {
 
     switch (st) {
         case ST_RUUVI:

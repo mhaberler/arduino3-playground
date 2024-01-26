@@ -16,6 +16,10 @@ bool TPMS::configure(JsonObject conf) {
     return (type() != ST_NONE);
 };
 
+const std::string& TPMS::id(void) {
+    return std::string(NimBLEAddress(_macAddress));
+}
+
 bool  TPMS::bleAdvertisement(const bleAdvMsg_t  &msg) {
 
     const uint8_t *data = msg.message;

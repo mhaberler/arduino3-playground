@@ -20,6 +20,10 @@ bool Mopeka::configure(JsonObject conf) {
     return (type() != ST_NONE);
 };
 
+const std::string& Mopeka::id(void) {
+    return std::string(NimBLEAddress(_macAddress));
+}
+
 bool Mopeka::decode(const uint8_t *data,
                     const size_t len, mopekaAd_t &ma) {
 
