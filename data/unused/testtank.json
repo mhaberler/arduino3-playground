@@ -1,8 +1,8 @@
 [
     {
-        "id": "5020/test",
+        "id": "tankdemo",
         "ut": 1,
-        "dsc": "Kubicek King Size",
+        "dsc": "Pivo",
         "cap": 82.5,
         "tar": 24.5,
         "ful": 65,
@@ -12,13 +12,13 @@
         "sensors": [
             {
                 "st": 2,
-                "mac": "CC:52:69:42:FD:86",
+                "mac": "c3:03:89:6e:8d:17",
                 "min": 100,
                 "max": 857
             },
             {
                 "st": 3,
-                "mac": "82:EA:CA:32:22:4C"
+                "mac": "82:ea:ca:32:22:4c"
             }
         ]
     }

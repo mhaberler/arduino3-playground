@@ -16,6 +16,10 @@ NimBLEAddress & Sensor::mac() {
     return _macAddress;
 }
 
+const  std::string Sensor::unitName(void) {
+    return _unit->name();
+}
+
 bool Sensor::configure(JsonObject conf)  {
     _type = conf["st"];
     if (conf["mac"]) {
@@ -28,13 +32,13 @@ bool Sensor::configure(JsonObject conf)  {
     return (_type != ST_NONE);
 }
 
-const  std::string& Sensor::name(void) {
-    return std::string(sensorType(_type)) + ":" + id();
-}
+// const  std::string& Sensor::name(void) {
+//     return std::string(sensorType(_type)) + ":" + id();
+// }
 
-const  std::string &Sensor::fullName() {
-    return _unit->name() + ":" + name();
-};
+// const  std::string Sensor::fullName() {
+//     return "XXX"; // _unit->name(); //  + ":" + name();
+// };
 
 bool Sensor::bleAdvertisement(const bleAdvMsg_t  &msg) {
     return false;

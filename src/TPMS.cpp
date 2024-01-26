@@ -10,20 +10,15 @@ void TPMS::print(Print &p, format_t format) {
 }
 
 bool TPMS::configure(JsonObject conf) {
-    if (!Sensor::configure(conf))
-        return false;
-    // Serial.printf("CONFIGURE type=%u mac=%s\n", (unsigned)_type, _macAddress.toString().c_str());
-    return (type() != ST_NONE);
+    return Sensor::configure(conf);
 };
-
-const std::string& TPMS::id(void) {
-    return std::string(NimBLEAddress(_macAddress));
-}
 
 bool  TPMS::bleAdvertisement(const bleAdvMsg_t  &msg) {
 
     const uint8_t *data = msg.message;
     const uint8_t len = msg.msg_size;
+
+    log_e("tpms input");
 
     _tpms_report.rssi = msg.rssi;
     if (msg.mfid == 0x0100) {

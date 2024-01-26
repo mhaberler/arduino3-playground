@@ -60,7 +60,6 @@ bool Unit::configure(JsonObject *conf) {
 }
 
 
-
 void Unit::print(Print &p, format_t format) {}
 
 void Unit::add(Sensor *s) {
@@ -96,6 +95,7 @@ bool bleDeliver(const bleAdvMsg_t &msg) {
         // log_e("deliver %s", mac.toString().c_str());
         bool rc =  sp->bleAdvertisement(msg);
         if (rc) {
+            Serial.printf("%s %s ", sp->unitName().c_str(), sp->fullName().c_str());
             sp->print(Serial);
         }
     }

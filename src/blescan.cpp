@@ -24,6 +24,8 @@ class scanCallbacks : public BLEAdvertisedDeviceCallbacks {
 
                 case 0x0499:
                 case 0x0059:
+                case 0x0100:
+                case 172:
                     // log_d("Advertised Device Result: %s",
                     //       advertisedDevice->toString().c_str());
                     // TPMS mfids

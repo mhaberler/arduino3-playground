@@ -145,9 +145,10 @@ class Sensor {
     void setSubject(lv_subject_t *subject) {
         _subject = subject;
     };
-    const  std::string &name();
-    const  std::string &fullName();
-    virtual  const std::string & id(void) = 0;
+    virtual const  std::string name(void) = 0;
+    virtual const  std::string fullName(void) = 0;
+    virtual  const std::string id(void) = 0;
+    const  std::string unitName(void);
 
 };
 
@@ -170,9 +171,10 @@ class Unit {
     const unit_t getType(void) {
         return _ut;
     }
-    const  std::string &name(void) {
+    const  std::string name(void) {
         return std::string(unitType(getType())) + ":" + _id;
     }
+
 };
 
 Unit *addUnit(JsonObject conf);
@@ -208,8 +210,16 @@ class Ruuvi : public Sensor {
     void setOnUpdate(std::function<void(const char *value)> onUpdate, facette_t what ) {}
     bool configure(JsonObject conf);
     bool bleAdvertisement(const bleAdvMsg_t  &msg);
-    const std::string & id(void);
 
+    const std::string id(void) {
+        return std::string(NimBLEAddress(_macAddress));
+    };
+    const std::string name(void) {
+        return sensorType(type());
+    };
+    const std::string fullName(void) {
+        return name() + ":" + id();
+    }
   private:
     ruuviAd_t _ruuvi_report;
 };
@@ -227,8 +237,15 @@ class Mopeka : public Sensor {
     void setOnUpdate(std::function<void(const char *value)> onUpdate, facette_t what ) {}
     bool configure(JsonObject conf);
     bool bleAdvertisement(const bleAdvMsg_t  &msg);
-    const std::string & id(void);
-
+    const std::string id(void) {
+        return std::string(NimBLEAddress(_macAddress));
+    };
+    const std::string name(void) {
+        return sensorType(type());
+    };
+    const std::string fullName(void) {
+        return name() + ":" + id();
+    }
 };
 
 class TPMS : public  Sensor {
@@ -240,8 +257,15 @@ class TPMS : public  Sensor {
     void setOnUpdate(std::function<void(const char *value)> onUpdate, facette_t what ) {}
     bool configure(JsonObject conf);
     bool bleAdvertisement(const bleAdvMsg_t  &msg);
-    const std::string & id(void);
-
+    const std::string id(void) {
+        return std::string(NimBLEAddress(_macAddress));
+    };
+    const std::string name(void) {
+        return sensorType(type());
+    };
+    const std::string fullName(void) {
+        return name() + ":" + id();
+    }
 };
 
 class GPS : public Sensor {

@@ -69,9 +69,6 @@ void Ruuvi::print(Print &p, format_t format) {
     p.write("\n");
 }
 
-const std::string& Ruuvi::id(void) {
-    return std::string(NimBLEAddress(_macAddress));
-}
 
 bool Ruuvi::configure(JsonObject conf) {
     return Sensor::configure(conf);

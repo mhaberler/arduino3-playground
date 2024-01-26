@@ -2,7 +2,7 @@
     {
         "id": "5020/16",
         "ut": 1,
-        "dsc": "Kubicek King Size",
+        "dsc": "KKS",
         "cap": 82.5,
         "tar": 24.5,
         "full": 65,
@@ -25,13 +25,13 @@
     {
         "id": "5020/27",
         "ut": 1,
-        "dsc": "Kubicek King Size",
+        "dsc": "KKS",
         "cap": 82.5,
         "tar": 24.5,
         "ful": 65,
         "hght": 1137,
         "col": "#454C5D",
-        "rem": "graues Tag",
+        "rem": "grau",
         "sensors": [
             {
                 "st": 2,
