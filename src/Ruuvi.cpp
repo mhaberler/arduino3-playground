@@ -16,6 +16,14 @@ int32_t getInt32(const uint8_t *data, int index) {
                (data[index+3]));
 }
 
+int32_t getInt32LE(const uint8_t *data, int index) {
+    return (int32_t)(
+               (data[index]) |
+               (data[index+1] << 8) |
+               (data[index+2] << 16) |
+               (data[index+3] << 24));
+}
+
 uint32_t getUint32(const uint8_t *data, int index) {
     return (uint32_t)(
                (data[index] << 24) |
@@ -64,11 +72,10 @@ void Ruuvi::print(Print &p, format_t format) {
     doc = _ruuvi_report;
     doc["st"] = ST_RUUVI;
     // doc["dsc"] = ST_RUUVI;
-    
+
     serializeJson(doc, p);
     p.write("\n");
 }
-
 
 bool Ruuvi::configure(JsonObject conf) {
     return Sensor::configure(conf);

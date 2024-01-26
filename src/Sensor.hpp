@@ -105,6 +105,7 @@ int32_t getInt32(const uint8_t *data, int index);
 uint32_t getUint32(const uint8_t *data, int index);
 uint8_t getUint8(const uint8_t *data, int index);
 int8_t getInt8(const uint8_t *data, int index);
+int32_t getInt32LE(const uint8_t *data, int index);
 
 class Unit;
 

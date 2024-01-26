@@ -22,13 +22,12 @@ class scanCallbacks : public BLEAdvertisedDeviceCallbacks {
             uint16_t mfid = data[1] << 8 | data[0];
             switch (mfid) {
 
-                case 0x0499:
-                case 0x0059:
-                case 0x0100:
-                case 172:
+                case 0x0499: // Ruuvi manufacturer ID
+                case 0x0059: // Mopeka manufacturer ID
+                case 0x0100: // TPMS manufacturer ID variant 1
+                case 0x00AC: // TPMS manufacturer ID variant 2 - TPMS3_, hijacked TomTom
                     // log_d("Advertised Device Result: %s",
                     //       advertisedDevice->toString().c_str());
-                    // TPMS mfids
                     ble_adv.mfid = mfid;
                     ble_adv.msg_size = len;
                     ble_adv.mac64 = (uint64_t) advertisedDevice->getAddress();
