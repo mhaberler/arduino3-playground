@@ -95,7 +95,6 @@ extern lv_obj_t *ui_Container4;
 extern lv_obj_t *ui_unitHeader;
 extern lv_obj_t *ui_unitBody;
 extern lv_obj_t *ui_Container5;
-extern lv_obj_t *ui_unitColor;
 void ui_event_UnitSave( lv_event_t * e);
 extern lv_obj_t *ui_UnitSave;
 extern lv_obj_t *ui_Label1;

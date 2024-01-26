@@ -42,12 +42,6 @@ lv_obj_clear_flag( ui_Container5, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 lv_obj_set_style_pad_row(ui_Container5, 0, LV_PART_MAIN| LV_STATE_DEFAULT);
 lv_obj_set_style_pad_column(ui_Container5, 20, LV_PART_MAIN| LV_STATE_DEFAULT);
 
-ui_unitColor = lv_label_create(ui_Container5);
-lv_obj_set_width( ui_unitColor, lv_pct(30));
-lv_obj_set_height( ui_unitColor, lv_pct(100));
-lv_obj_set_align( ui_unitColor, LV_ALIGN_CENTER );
-lv_label_set_text(ui_unitColor,"");
-
 ui_UnitSave = lv_btn_create(ui_Container5);
 lv_obj_set_width( ui_UnitSave, lv_pct(30));
 lv_obj_set_height( ui_UnitSave, lv_pct(100));

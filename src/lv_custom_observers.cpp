@@ -59,32 +59,21 @@ extern "C"
     }
 
     void setEnvelopeMac(lv_event_t *e)  {
-        std::string mac((*jdoc)["payload"]["MAC"]);
-
-        LV_LOG_USER("%lu  '%s'\n", e->code, mac.c_str());
-
-        Sensor *sp = new Ruuvi(mac);
-
-        Unit *u = new Unit("envelope");
-        u->add(sp);
-
-        // Unit *u = setupUnit(UT_ENVELOPE, ST_RUUVI, mac);
-
+        const char* json ="{\"id\":\"env1\",\"ut\":3,\"sensors\":[{\"st\":1,}]}";
+        JsonDocument tmpl;
+        deserializeJson(tmpl, json);
+        tmpl["sensors"][0]["mac"] = (*jdoc)["payload"]["MAC"];
+        addUnit(tmpl.as<JsonObject>());
         lv_disp_load_scr(ui_Main);
-
     }
 
     void setOATMac(lv_event_t *e) {
-        std::string mac((*jdoc)["payload"]["MAC"]);
-
-        LV_LOG_USER("%lu  '%s'\n", e->code, mac.c_str());
-
-        // Unit *u = setupUnit(UT_OAT, ST_RUUVI, mac);
-        // setupSensor(mac, FT_TEMPERATURE, &oat_temp);
-        // setupSensor(mac, FT_HUMIDITY, &oat_hum);
-
+        const char* json ="{\"id\":\"OAT1\",\"ut\":4,\"sensors\":[{\"st\":1,}]}";
+        JsonDocument tmpl;
+        deserializeJson(tmpl, json);
+        tmpl["sensors"][0]["mac"] = (*jdoc)["payload"]["MAC"];
+        addUnit(tmpl.as<JsonObject>());
         lv_disp_load_scr(ui_Main);
-
     }
 
     void setUnit(lv_event_t * e) {
@@ -118,9 +107,7 @@ static void nfc_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
         case BWTAG_NO_MATCH:
             // beep
             break;
-        case BWTAG_RUUVI:
-        case BWTAG_RUUVI_OAT:
-        case BWTAG_RUUVI_ENV: {
+        case BWTAG_RUUVI: {
                 previous_screen = lv_scr_act();
 
                 lv_label_set_text(ui_ruuviHeader, "Ruuvi Sensor detected");
@@ -128,13 +115,10 @@ static void nfc_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
                 String sw =  (*jdoc)["payload"]["SW"];
                 lv_label_set_text_fmt(ui_ruuviBody, "\nMAC: %s\nFirmware: %s",
                                       mac.c_str(), sw.c_str());
-                // lv_obj_add_event_cb(ui_Envelope, setEnvelopeMac, LV_EVENT_CLICKED, jdoc);
-                // lv_obj_add_event_cb(ui_OAT, setOATMac, LV_EVENT_CLICKED, jdoc);
                 lv_disp_load_scr(ui_Ruuvi);
-
             }
             break;
-        case BWTAG_TANK: {
+        case BWTAG_PROXY_TAG: {
                 previous_screen = lv_scr_act();
                 String id =  (*jdoc)["payload"]["id"];
                 String dsc =  (*jdoc)["payload"]["dsc"];
@@ -149,17 +133,11 @@ static void nfc_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
                     stxt += "\n";
                 }
                 lv_label_set_text(ui_unitBody, stxt.c_str());
-                String rem =  (*jdoc)["payload"]["rem"];
-                if (rem.length()) {
-                    lv_label_set_text(ui_unitColor, rem.c_str());
-                    lv_obj_clear_flag(ui_unitColor, LV_OBJ_FLAG_HIDDEN);
-                }
                 String col =  (*jdoc)["payload"]["col"];
                 if (col.length()) {
                     lv_color_t tagcolor = lv_color_from_sharpRGB(col.c_str());
-                    lv_obj_clear_flag(ui_unitColor, LV_OBJ_FLAG_HIDDEN);
-                    lv_obj_set_style_bg_color(ui_unitColor, tagcolor, LV_PART_MAIN | LV_STATE_DEFAULT );
-                    lv_obj_set_style_bg_opa(ui_unitColor, 255, LV_PART_MAIN| LV_STATE_DEFAULT);
+                    lv_obj_set_style_bg_color(ui_UnitSave, tagcolor, LV_PART_MAIN | LV_STATE_DEFAULT );
+                    lv_obj_set_style_bg_opa(ui_UnitSave, 255, LV_PART_MAIN| LV_STATE_DEFAULT);
                 }
                 lv_disp_load_scr(ui_Unit);
             }

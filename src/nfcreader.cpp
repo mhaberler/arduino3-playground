@@ -111,7 +111,7 @@ analyseTag(NfcTag &tag, JsonDocument &doc) {
                 DeserializationError e = deserializeJson(t, payload);
                 if (e == DeserializationError::Ok) {
                     doc["payload"] = t;
-                    return BWTAG_TANK;
+                    return BWTAG_PROXY_TAG;
                 }
                 Serial.printf("deserialisation failed: %s\n",
                               e.c_str());

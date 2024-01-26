@@ -92,7 +92,6 @@ lv_obj_t *ui_Container4;
 lv_obj_t *ui_unitHeader;
 lv_obj_t *ui_unitBody;
 lv_obj_t *ui_Container5;
-lv_obj_t *ui_unitColor;
 void ui_event_UnitSave( lv_event_t * e);
 lv_obj_t *ui_UnitSave;
 lv_obj_t *ui_Label1;
