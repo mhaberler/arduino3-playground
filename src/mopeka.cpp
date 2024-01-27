@@ -20,9 +20,8 @@ bool Mopeka::configure(JsonObject conf) {
     return (type() != ST_NONE);
 };
 
-
-bool Mopeka::decode(const uint8_t *data,
-                    const size_t len, mopekaAd_t &ma) {
+bool Mopeka::_decode(const uint8_t *data,
+                     const size_t len, mopekaAd_t &ma) {
 
     if (len != 12) {
         log_e("Mopeka PRO: manufacturer data len (%u - expect 12)",
@@ -89,10 +88,10 @@ bool  Mopeka::bleAdvertisement(const bleAdvMsg_t  &msg) {
     }
     _mopeka_report.rssi = msg.rssi;
 
-    if (!decode(data, len, _mopeka_report)) {
+    if (!_decode(data, len, _mopeka_report)) {
         log_e("failed to decode mopeka msg");
         return false;
     }
-    // log_e("mopeka success");
+    _mopeka_report.lastchange = millis();
     return true;
 }

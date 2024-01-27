@@ -44,7 +44,7 @@ typedef enum { MOPEKA_CC2540, MOPEKA_NRF52, MOPEKA_GW } mopekaAdvertID;
 // // propane/butane corr:  https://github.com/Albertworker1004/Mopeka_React-Native/blob/main/Tank%20Check/src/lib/sensors/tankcheck.ts#L574
 
 typedef struct {
-
+    uint32_t lastchange;
     int16_t temperature;
     int16_t level;
     float battery;

@@ -44,7 +44,7 @@ bool Sensor::bleAdvertisement(const bleAdvMsg_t  &msg) {
     return false;
 }
 
-const char *unitType(const unit_t ut) {
+const char *unitTypeStr(const unit_t ut) {
 
     switch (ut) {
         case UT_TANK:
@@ -53,24 +53,14 @@ const char *unitType(const unit_t ut) {
             return "Burner";
         case UT_ENVELOPE:
             return "Envelope";
-        case UT_OAT:
-            return "OAT";
-        case UT_FLOW:
-            return "Fuel Flow";
-        case UT_BLASTVALVE1:
-            return "Blastvalve1";
-        case UT_BLASTVALVE2:
-            return "Blastvalve2";
-        case UT_BLASTVALVE3:
-            return "Blastvalve3";
-        case UT_BLASTVALVE4:
-            return "Blastvalve4";
+        case UT_BASKET:
+            return "Basket";
         default:
             return "?";
     }
 }
 
-const char *sensorType(const sensorType_t st) {
+const char *sensorTypeStr(const sensorType_t st) {
 
     switch (st) {
         case ST_RUUVI:

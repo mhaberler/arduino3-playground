@@ -27,6 +27,8 @@ bool  TPMS::bleAdvertisement(const bleAdvMsg_t  &msg) {
             _tpms_report.batpct = getUint8(data, 16);
             _tpms_report.status = getUint8(data, 17);
             _tpms_report.rssi = msg.rssi;
+            _tpms_report.lastchange = millis();
+
             return true;
         }
     }
@@ -38,6 +40,8 @@ bool  TPMS::bleAdvertisement(const bleAdvMsg_t  &msg) {
             _tpms_report.location = getUint8(data, 6) & 0x7f;
             _tpms_report.status = 0;
             _tpms_report.rssi = msg.rssi;
+            _tpms_report.lastchange = millis();
+
             return true;
         }
     }

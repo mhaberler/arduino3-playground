@@ -61,7 +61,7 @@ extern "C"
 
     void setEnvelopeMac(lv_event_t *e)  {
         // https://jsontostring.com/
-        const char* jstxt ="{\"id\":\"env1\",\"ut\":3,\"sensors\":[{\"st\":1}]}";
+        const char* jstxt ="{\"id\":\"env\",\"ut\":3,\"sensors\":[{\"st\":1}]}";
         JsonDocument tmpl;
         deserializeJson(tmpl, jstxt);
         tmpl["sensors"][0]["mac"] = (*jdoc)["payload"]["MAC"];
@@ -70,7 +70,7 @@ extern "C"
     }
 
     void setOATMac(lv_event_t *e) {
-        const char* jstxt ="{\"id\":\"OAT1\",\"ut\":4,\"sensors\":[{\"st\":1}]}";
+        const char* jstxt ="{\"id\":\"oair\",\"ut\":4,\"sensors\":[{\"st\":1}]}";
         JsonDocument tmpl;
         deserializeJson(tmpl, jstxt);
         tmpl["sensors"][0]["mac"] = (*jdoc)["payload"]["MAC"];
@@ -79,20 +79,16 @@ extern "C"
     }
 
     void setUnit(lv_event_t * e) {
-        // LV_LOG_USER("");
-
         JsonVariant jv = (*jdoc)["payload"];
         if (jv.is<JsonArray>()) {
             JsonArray units = jv.as<JsonArray>();
             for(JsonObject u: units) {
                 std::string id(u["id"]);
-                // LV_LOG_USER("addU %s", id.c_str());
                 addUnit(u);
             }
         }
         lv_disp_load_scr(ui_Main);
     }
-
 }
 
 static void nfc_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
@@ -133,10 +129,10 @@ static void nfc_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
                         tagcolor = lv_color_from_sharpRGB(u["col"]);
                         colorfound = true;
                     }
-                    header += unitType((unit_t)u["ut"].as<int>());
+                    header += unitTypeStr(u["ut"].as<unit_t>());
                     header += " ";
 
-                    body += unitType((unit_t)u["ut"].as<int>());
+                    body += unitTypeStr(u["ut"].as<unit_t>());
                     body += ":";
                     body += u["id"].as<const char *>();
                     body += "\n";
@@ -144,7 +140,7 @@ static void nfc_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
                     JsonArray sensors = u["sensors"].as<JsonArray>();
                     for(JsonObject s: sensors) {
                         body += "  ";
-                        body += sensorType((sensorType_t)s["st"].as<int>());
+                        body += sensorTypeStr(s["st"].as<sensorType_t>());
                         body += ":";
                         body += s["mac"].as<const char *>();
                         body += "\n";

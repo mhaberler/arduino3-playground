@@ -46,7 +46,7 @@
         ]
     },
     {
-        "id": "env1",
+        "id": "env",
         "ut": 3,
         "sensors": [
             {
@@ -56,7 +56,7 @@
         ]
     },
     {
-        "id": "oat1",
+        "id": "oair",
         "ut": 4,
         "sensors": [
             {

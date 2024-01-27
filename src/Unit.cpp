@@ -10,27 +10,24 @@ bool Unit::configure(JsonObject *conf) {
     serializeJson((*conf),Serial);
     Serial.printf("\n");
 
-    int ut = (*conf)["ut"].as<int>();
-    setType((unit_t)ut);
+    unit_t ut = (*conf)["ut"].as<unit_t>();
+    setType(ut);
     String dsc = (*conf)["dsc"];
     String id = (*conf)["id"];
     JsonArray sensors = (*conf)["sensors"].as<JsonArray>();
 
     for(JsonObject s: sensors) {
         Sensor *sp = NULL;
-        int32_t st = s["st"].as<int>();
+        sensorType_t st = s["st"].as<sensorType_t>();
         switch (st) {
             case ST_RUUVI:
-                sp = new Ruuvi(this); // s["mac"].as<std::string>());
-                // sp->setUnit(this);
+                sp = new Ruuvi(this); 
                 break;
             case ST_MOPEKA:
                 sp = new Mopeka(this);
-                // sp->setUnit(this);
                 break;
             case ST_TPMS:
                 sp = new TPMS(this);
-                // sp->setUnit(this);
                 break;
             case ST_GPS:
                 break;
@@ -48,9 +45,9 @@ bool Unit::configure(JsonObject *conf) {
             _sensorset.insert(sp);
             if (sp->mac() != null_mac) {
                 Serial.printf("add BLE %s:%s %s:%s\n",
-                              unitType((unit_t)ut),
+                              unitTypeStr(ut),
                               id.c_str(),
-                              sensorType((sensorType_t)st),
+                              sensorTypeStr(st),
                               sp->mac().toString().c_str());
                 ble_sensors[sp->mac()] = sp;
             }
@@ -66,26 +63,25 @@ void Unit::add(Sensor *s) {
     _sensorset.insert(s);
 };
 
-Unit *setupUnit(const unit_t unit, const sensorType_t sensorType, const std::string &mac) {
-    JsonDocument config;
-    switch (unit) {
-        case UT_ENVELOPE:
-            config["id"] = "envelope";
-            break;
-        case UT_OAT:
-            config["id"] = "OAT";
-            break;
-        default:
-            return NULL;
-    }
-    config["ut"] = (int) unit;
-    JsonArray sensors = config["sensors"].to<JsonArray>();
-    JsonObject sensor = sensors.add<JsonObject>();
-    sensor["st"] = (int)sensorType;
-    sensor["mac"] = mac;
-    return addUnit(config.as<JsonObject>());
-
-}
+// Unit *setupUnit(const unit_t unit, const sensorType_t sensorType, const std::string &mac) {
+//     JsonDocument config;
+//     switch (unit) {
+//         case UT_ENVELOPE:
+//             config["id"] = "envelope";
+//             break;
+//         case UT_BASKET:
+//             config["id"] = "Basket";
+//             break;
+//         default:
+//             return NULL;
+//     }
+//     config["ut"] = (int) unit;
+//     JsonArray sensors = config["sensors"].to<JsonArray>();
+//     JsonObject sensor = sensors.add<JsonObject>();
+//     sensor["st"] = (int)sensorType;
+//     sensor["mac"] = mac;
+//     return addUnit(config.as<JsonObject>());
+// }
 
 bool bleDeliver(const bleAdvMsg_t &msg) {
 

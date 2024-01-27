@@ -79,18 +79,13 @@ typedef enum {
     UT_TANK,
     UT_BURNER,
     UT_ENVELOPE,
-    UT_OAT,
-    UT_FLOW,
-    UT_BLASTVALVE1,
-    UT_BLASTVALVE2,
-    UT_BLASTVALVE3,
-    UT_BLASTVALVE4,
+    UT_BASKET,
     UT_MAX
 } unit_t;
 
 uint8_t volt2percent(const float volt);
-const char *sensorType(const sensorType_t sensorType);
-const char *unitType(const unit_t unitType);
+const char *sensorTypeStr(const sensorType_t sensorType);
+const char *unitTypeStr(const unit_t unitType);
 
 void convertFromJson(JsonVariantConst src, sensorType_t& dst);
 void convertFromJson(JsonVariantConst src, NimBLEAddress& dst);
@@ -113,28 +108,26 @@ class Sensor {
   private:
     sensorMode_t _mode;
     format_t _format;
-    uint32_t _lastchange;
     lv_subject_t *_subject;
+    uint32_t _created; // timestamp
   protected:
     NimBLEAddress _macAddress;
     Unit *_unit;
     sensorType_t _type;
 
   public:
-    Sensor(Unit *u) : _unit(u) {};
+    Sensor(Unit *u) : _created(millis()), _unit(u) {
+    };
     void setAddress(NimBLEAddress &mac) {
         _macAddress = mac;
     };
     void setAddress(const std::string &mac) {
         _macAddress = NimBLEAddress(mac);
     };
-    // void setType(const sensorType_t st) {
-    //     _type = st;
-    // };
-    // void setUnit(Unit *u) {
-    //     _unit = u;
-    // };
-
+    uint32_t created(void) {
+        return _created;
+    };
+    virtual uint32_t lastChange(void) = 0;
     virtual void print(Print &p, format_t format = FMT_TEXT) = 0;
     sensorMode_t mode();
     sensorType_t type();
@@ -159,9 +152,13 @@ class Unit {
     SensorSet _sensorset;
     std::string _id;
     unit_t _ut;
+    uint32_t _created; // timestamp
   public:
-    Unit( std::string id) : _id(id) {};
+    Unit( std::string id) : _id(id),_created(millis()) {};
     bool configure(JsonObject *conf);
+    uint32_t created(void) {
+        return _created;
+    };
     void print(Print &p, format_t format = FMT_TEXT);
     void add(Sensor *s);
     Sensor *get(sensorType_t st);
@@ -172,13 +169,12 @@ class Unit {
         return _ut;
     };
     const  std::string name(void) {
-        return std::string(unitType(getType())) + ":" + _id;
+        return std::string(unitTypeStr(getType())) + ":" + _id;
     };
-
 };
 
 Unit *addUnit(JsonObject conf);
-Unit *setupUnit(const unit_t unit, const sensorType_t sensorType, const std::string &mac);
+// Unit *setupUnit(const unit_t unit, const sensorType_t sensorType, const std::string &mac);
 
 // typedef unordered_set<Unit*> UnitSet;
 typedef unordered_map<std::string, Unit *> UnitMap;
@@ -200,6 +196,8 @@ typedef unordered_map<std::string, Unit *> UnitMap;
 // };
 
 class Ruuvi : public Sensor {
+  private:
+    ruuviAd_t _ruuvi_report;
   public:
     Ruuvi(Unit *u) : Sensor(u) {
         _type = ST_RUUVI;
@@ -208,18 +206,19 @@ class Ruuvi : public Sensor {
     void setOnUpdate(std::function<void(const char *value)> onUpdate, facette_t what ) {}
     bool configure(JsonObject conf);
     bool bleAdvertisement(const bleAdvMsg_t  &msg);
+    uint32_t lastChange(void) {
+        return _ruuvi_report.lastchange;
+    };
 
     const std::string id(void) {
         return std::string(NimBLEAddress(_macAddress));
     };
     const std::string name(void) {
-        return sensorType(type());
+        return sensorTypeStr(type());
     };
     const std::string fullName(void) {
         return name() + ":" + id();
     }
-  private:
-    ruuviAd_t _ruuvi_report;
 };
 
 class Mopeka : public Sensor {
@@ -227,9 +226,8 @@ class Mopeka : public Sensor {
     mopekaAd_t _mopeka_report;
     uint16_t _min_mm = 100;
     uint16_t _max_mm = 857;
-    bool decode(const uint8_t *data,
-                const size_t len, mopekaAd_t &ma);
-
+    bool _decode(const uint8_t *data,
+                 const size_t len, mopekaAd_t &ma);
   public:
     Mopeka(Unit *u) : Sensor(u) {
         _type = ST_MOPEKA;
@@ -238,11 +236,15 @@ class Mopeka : public Sensor {
     void setOnUpdate(std::function<void(const char *value)> onUpdate, facette_t what ) {}
     bool configure(JsonObject conf);
     bool bleAdvertisement(const bleAdvMsg_t  &msg);
+    uint32_t lastChange(void) {
+        return _mopeka_report.lastchange;
+    };
+
     const std::string id(void) {
         return std::string(NimBLEAddress(_macAddress));
     };
     const std::string name(void) {
-        return sensorType(type());
+        return sensorTypeStr(type());
     };
     const std::string fullName(void) {
         return name() + ":" + id();
@@ -261,11 +263,14 @@ class TPMS : public  Sensor {
     void setOnUpdate(std::function<void(const char *value)> onUpdate, facette_t what ) {}
     bool configure(JsonObject conf);
     bool bleAdvertisement(const bleAdvMsg_t  &msg);
+    uint32_t lastChange(void) {
+        return _tpms_report.lastchange;
+    };
     const std::string id(void) {
         return std::string(NimBLEAddress(_macAddress));
     };
     const std::string name(void) {
-        return sensorType(type());
+        return sensorTypeStr(type());
     };
     const std::string fullName(void) {
         return name() + ":" + id();

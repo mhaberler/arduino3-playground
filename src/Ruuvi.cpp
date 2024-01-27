@@ -40,7 +40,7 @@ int8_t getInt8(const uint8_t *data, int index) {
     return (int8_t)((data[index]));
 }
 
-void DecodeV5(const uint8_t *data, ruuviAd_t &ra) {
+static void DecodeV5(const uint8_t *data, ruuviAd_t &ra) {
     ra.ruuvi_format = 5;
     ra.temperature = (float)getInt16(data, 3) * 0.005;
     ra.humidity = (float)getUint16(data, 5) * 0.0025;
@@ -54,7 +54,7 @@ void DecodeV5(const uint8_t *data, ruuviAd_t &ra) {
     ra.sequence = getUint16(data, 18);
 }
 
-void DecodeV3(const uint8_t *data, ruuviAd_t &ra) {
+static void DecodeV3(const uint8_t *data, ruuviAd_t &ra) {
     ra.ruuvi_format = 3;
     float t = (float)(getUint8(data, 4) & 0b01111111) +
               (float)getUint8(data, 5) / 100;
@@ -103,6 +103,7 @@ bool  Ruuvi::bleAdvertisement(const bleAdvMsg_t  &msg) {
     return false;
 
 RUUVI_DECODED:
+    _ruuvi_report.lastchange = millis();
     _ruuvi_report.rssi = msg.rssi;
     // log_e("ruuvi success");
     return true;

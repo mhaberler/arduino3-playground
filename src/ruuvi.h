@@ -5,8 +5,8 @@
 // ruuvi reporting interval is 60s
 #define RUUVI_PERIOD ( 65 * 1000)
 
-typedef struct
-{
+typedef struct {
+    uint32_t lastchange;
     float temperature;
     float humidity;
     float pressure;
