@@ -54,24 +54,28 @@ typedef enum {
     ST_BARO,
     ST_IMU,
     ST_MAGNETOMETER,
+    ST_MQTT_SUBSCRIPTION,
     ST_MAX
 } sensorType_t;
 
 typedef enum {
-    FT_NONE,
-    FT_TEMPERATURE,
-    FT_HUMIDITY,
-    FT_PRESSURE,
-    FT_VOLTAGE,
-    FT_CURRENT,
-    FT_LONGITUDE,
-    FT_LATITUDE,
-    FT_ALTITUDE,
-    FT_SPEED,
-    FT_VSPEED,
-    FT_VACCEL,
-    FT_MAX
-} facette_t;
+    AT_NONE,
+    AT_TEMPERATURE,
+    AT_HUMIDITY,
+    AT_FLOW,
+    AT_BURNER_ON,
+    AT_BURNER_OFF,
+    AT_PRESSURE,
+    AT_VOLTAGE,
+    AT_CURRENT,
+    AT_LONGITUDE,
+    AT_LATITUDE,
+    AT_ALTITUDE,
+    AT_HSPEED,
+    AT_VSPEED,
+    AT_VACCEL,
+    AT_MAX
+} aspect_t;
 
 // NB: keep in sync with unitText()
 typedef enum {
@@ -80,6 +84,8 @@ typedef enum {
     UT_BURNER,
     UT_ENVELOPE,
     UT_BASKET,
+    UT_AIRCRAFT,
+    UT_VEHICLE,
     UT_MAX
 } unit_t;
 
@@ -203,7 +209,7 @@ class Ruuvi : public Sensor {
         _type = ST_RUUVI;
     };
     void print(Print &p, format_t format = FMT_TEXT);
-    void setOnUpdate(std::function<void(const char *value)> onUpdate, facette_t what ) {}
+    void setOnUpdate(std::function<void(const char *value)> onUpdate, aspect_t what ) {}
     bool configure(JsonObject conf);
     bool bleAdvertisement(const bleAdvMsg_t  &msg);
     uint32_t lastChange(void) {
@@ -233,7 +239,7 @@ class Mopeka : public Sensor {
         _type = ST_MOPEKA;
     };
     void print(Print &p, format_t format = FMT_TEXT);
-    void setOnUpdate(std::function<void(const char *value)> onUpdate, facette_t what ) {}
+    void setOnUpdate(std::function<void(const char *value)> onUpdate, aspect_t what ) {}
     bool configure(JsonObject conf);
     bool bleAdvertisement(const bleAdvMsg_t  &msg);
     uint32_t lastChange(void) {
@@ -260,7 +266,7 @@ class TPMS : public  Sensor {
         _type = ST_TPMS;
     };
     void print(Print &p, format_t format = FMT_TEXT);
-    void setOnUpdate(std::function<void(const char *value)> onUpdate, facette_t what ) {}
+    void setOnUpdate(std::function<void(const char *value)> onUpdate, aspect_t what ) {}
     bool configure(JsonObject conf);
     bool bleAdvertisement(const bleAdvMsg_t  &msg);
     uint32_t lastChange(void) {

@@ -45,7 +45,6 @@ bool Sensor::bleAdvertisement(const bleAdvMsg_t  &msg) {
 }
 
 const char *unitTypeStr(const unit_t ut) {
-
     switch (ut) {
         case UT_TANK:
             return "Tank";
@@ -61,7 +60,6 @@ const char *unitTypeStr(const unit_t ut) {
 }
 
 const char *sensorTypeStr(const sensorType_t st) {
-
     switch (st) {
         case ST_RUUVI:
             return "Ruuvi";
