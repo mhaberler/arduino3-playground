@@ -179,3 +179,10 @@ Proxy Tags may be colored, and have color and text information stored. This can 
 
 While RuuviTags can be NFC-scanned as well, scanning a Proxy Tag in a more conveniently accessible location might be preferrable.
 
+Link Unit to Manufacturer Site
+------------------------------
+
+Since NFC tags can store (among others) a HTTP URI, an obvious add-on is to store a link to the manufacturer's site, passing the serial number as a paramter. 
+This could be used to link a device to the manufacturer's release history, recalls, field change orders etc.
+
+All that is needed is holding a mobile close to the tag, and confirm opening the link.
