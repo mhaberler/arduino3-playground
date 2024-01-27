@@ -21,16 +21,16 @@ bool Unit::configure(JsonObject *conf) {
         int32_t st = s["st"].as<int>();
         switch (st) {
             case ST_RUUVI:
-                sp = new Ruuvi(s["mac"].as<std::string>());
-                sp->setUnit(this);
+                sp = new Ruuvi(this); // s["mac"].as<std::string>());
+                // sp->setUnit(this);
                 break;
             case ST_MOPEKA:
-                sp = new Mopeka();
-                sp->setUnit(this);
+                sp = new Mopeka(this);
+                // sp->setUnit(this);
                 break;
             case ST_TPMS:
-                sp = new TPMS();
-                sp->setUnit(this);
+                sp = new TPMS(this);
+                // sp->setUnit(this);
                 break;
             case ST_GPS:
                 break;
@@ -47,7 +47,7 @@ bool Unit::configure(JsonObject *conf) {
         if (sp && sp->configure(s)) {
             _sensorset.insert(sp);
             if (sp->mac() != null_mac) {
-                Serial.printf("INSERT %s:%s %s:%s\n",
+                Serial.printf("add BLE %s:%s %s:%s\n",
                               unitType((unit_t)ut),
                               id.c_str(),
                               sensorType((sensorType_t)st),

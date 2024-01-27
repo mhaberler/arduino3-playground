@@ -112,29 +112,28 @@ class Unit;
 class Sensor {
   private:
     sensorMode_t _mode;
-    sensorType_t _type;
     format_t _format;
     uint32_t _lastchange;
     lv_subject_t *_subject;
-    Unit *_unit;
   protected:
     NimBLEAddress _macAddress;
+    Unit *_unit;
+    sensorType_t _type;
 
   public:
-    // Sensor( const std::string &mac, const sensorType_t st) : _macAddress(NimBLEAddress(mac)), _type(st) {};
-    // Sensor( NimBLEAddress &mac, const sensorType_t st) : _macAddress(NimBLEAddress(mac)), _type(st) {};
+    Sensor(Unit *u) : _unit(u) {};
     void setAddress(NimBLEAddress &mac) {
         _macAddress = mac;
     };
     void setAddress(const std::string &mac) {
         _macAddress = NimBLEAddress(mac);
     };
-    void setType(const sensorType_t st) {
-        _type = st;
-    };
-    void setUnit(Unit *u) {
-        _unit = u;
-    };
+    // void setType(const sensorType_t st) {
+    //     _type = st;
+    // };
+    // void setUnit(Unit *u) {
+    //     _unit = u;
+    // };
 
     virtual void print(Print &p, format_t format = FMT_TEXT) = 0;
     sensorMode_t mode();
@@ -168,13 +167,13 @@ class Unit {
     Sensor *get(sensorType_t st);
     void setType(const unit_t ut) {
         _ut = ut;
-    }
-    const unit_t getType(void) {
+    };
+    unit_t getType(void) {
         return _ut;
-    }
+    };
     const  std::string name(void) {
         return std::string(unitType(getType())) + ":" + _id;
-    }
+    };
 
 };
 
@@ -202,11 +201,9 @@ typedef unordered_map<std::string, Unit *> UnitMap;
 
 class Ruuvi : public Sensor {
   public:
-    Ruuvi( const std::string &mac) {
-        setAddress(mac);
-        setType(ST_RUUVI);
+    Ruuvi(Unit *u) : Sensor(u) {
+        _type = ST_RUUVI;
     };
-
     void print(Print &p, format_t format = FMT_TEXT);
     void setOnUpdate(std::function<void(const char *value)> onUpdate, facette_t what ) {}
     bool configure(JsonObject conf);
@@ -234,6 +231,9 @@ class Mopeka : public Sensor {
                 const size_t len, mopekaAd_t &ma);
 
   public:
+    Mopeka(Unit *u) : Sensor(u) {
+        _type = ST_MOPEKA;
+    };
     void print(Print &p, format_t format = FMT_TEXT);
     void setOnUpdate(std::function<void(const char *value)> onUpdate, facette_t what ) {}
     bool configure(JsonObject conf);
@@ -254,6 +254,9 @@ class TPMS : public  Sensor {
     tpmsAd_t _tpms_report;
 
   public:
+    TPMS(Unit *u) : Sensor(u) {
+        _type = ST_TPMS;
+    };
     void print(Print &p, format_t format = FMT_TEXT);
     void setOnUpdate(std::function<void(const char *value)> onUpdate, facette_t what ) {}
     bool configure(JsonObject conf);
