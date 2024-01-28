@@ -129,7 +129,8 @@ analyseTag(NfcTag &tag, JsonDocument &doc) {
             }
             break;
 
-        default: ;
+        default:
+            ;
     }
     return BWTAG_NO_MATCH;
 }
@@ -162,13 +163,11 @@ void nfc_loop(void) {
         uint32_t type = analyseTag(tag, jsondoc);
         jsondoc["type"] = type;
 
-        String msg;
-        serializeJsonPretty(jsondoc, msg);
-        Serial.printf("analyseTag=%d '%s' %p\n", type, msg.c_str(),&jsondoc);
+        // FIXME eventually use serializeJson() 
+        size_t n = serializeJsonPretty(jsondoc, lv_subject_get_string_buf(&nfcMessage), lv_subject_get_string_size(&nfcMessage));
 
-        // lv_subject_set_user_data(&nfcMessage, (void *)type);
-        lv_subject_set_pointer(&nfcMessage, &jsondoc);
-
+        Serial.printf("analyseTag=%d n=%u '%s'\n", type, n, lv_subject_get_string_buf(&nfcMessage));
+        lv_subject_notify(&nfcMessage);
         nfc.haltTag();
     }
 }

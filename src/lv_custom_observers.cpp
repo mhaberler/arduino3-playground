@@ -49,7 +49,7 @@ static void battery_group_cb(lv_subject_t *subject, lv_observer_t *observer) {
 }
 
 static lv_obj_t *previous_screen = ui_Main;
-static JsonDocument *jdoc;
+static JsonDocument jdoc;
 
 // callbacks from the UI
 extern "C"
@@ -64,7 +64,7 @@ extern "C"
         const char* jstxt ="{\"id\":\"env\",\"ut\":3,\"sensors\":[{\"st\":1}]}";
         JsonDocument tmpl;
         deserializeJson(tmpl, jstxt);
-        tmpl["sensors"][0]["mac"] = (*jdoc)["payload"]["MAC"];
+        tmpl["sensors"][0]["mac"] = jdoc["payload"]["MAC"];
         equipment.addUnit(tmpl.as<JsonObject>());
         lv_disp_load_scr(ui_Main);
     }
@@ -73,13 +73,13 @@ extern "C"
         const char* jstxt ="{\"id\":\"oair\",\"ut\":4,\"sensors\":[{\"st\":1}]}";
         JsonDocument tmpl;
         deserializeJson(tmpl, jstxt);
-        tmpl["sensors"][0]["mac"] = (*jdoc)["payload"]["MAC"];
+        tmpl["sensors"][0]["mac"] = jdoc["payload"]["MAC"];
         equipment.addUnit(tmpl.as<JsonObject>());
         lv_disp_load_scr(ui_Main);
     }
 
     void setUnit(lv_event_t * e) {
-        JsonVariant jv = (*jdoc)["payload"];
+        JsonVariant jv = jdoc["payload"];
         if (jv.is<JsonArray>()) {
             JsonArray units = jv.as<JsonArray>();
             for(JsonObject u: units) {
@@ -95,16 +95,21 @@ extern "C"
         wipeLittleFS();
         ESP.restart();
     }
-
 }
 
 static void nfc_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
-    jdoc = (JsonDocument *)lv_subject_get_pointer(subject);
-    if ((jdoc == NULL) || jdoc->isNull()) {
+    const char *input = lv_subject_get_string(subject);
+
+    DeserializationError error = deserializeJson(jdoc, input);
+    if (error) {
+        LV_LOG_ERROR("deserializeJson() failed: %s",error.f_str());
+        return;
+    }
+    if (jdoc.isNull()) {
         LV_LOG_USER("empty jdoc");
         return;
     }
-    uint32_t code = (*jdoc)["type"].as<uint32_t>();
+    uint32_t code = jdoc["type"].as<uint32_t>();
 
     switch (code) {
         case BWTAG_NO_MATCH:
@@ -114,15 +119,15 @@ static void nfc_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
                 previous_screen = lv_scr_act();
 
                 lv_label_set_text(ui_ruuviHeader, "Ruuvi Sensor detected");
-                String mac =  (*jdoc)["payload"]["MAC"];
-                String sw =  (*jdoc)["payload"]["SW"];
+                String mac = jdoc["payload"]["MAC"];
+                String sw = jdoc["payload"]["SW"];
                 lv_label_set_text_fmt(ui_ruuviBody, "\nMAC: %s\nFirmware: %s",
                                       mac.c_str(), sw.c_str());
                 lv_disp_load_scr(ui_Ruuvi);
             }
             break;
         case BWTAG_PROXY_TAG: {
-                JsonVariant jv = (*jdoc)["payload"];
+                JsonVariant jv = jdoc["payload"];
 
                 if (!jv.is<JsonArray>()) {
                     // format error

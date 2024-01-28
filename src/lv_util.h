@@ -31,6 +31,21 @@ void lv_subject_set_type(lv_subject_t *subject, lv_subject_type_t type);
 lv_subject_type_t lv_subject_get_type(lv_subject_t *subject);
 void lv_subject_init_none(lv_subject_t *subject);
 
+static inline size_t lv_subject_get_string_size(lv_subject_t *subject) {
+    if (subject->type == LV_SUBJECT_TYPE_STRING) {
+        return subject->size;
+    }
+    return 0;
+}
+
+static inline char *lv_subject_get_string_buf(lv_subject_t *subject) {
+    if (subject->type == LV_SUBJECT_TYPE_STRING) {
+        return (char *)subject->value.pointer;
+    }
+    return NULL;
+}
+
+
 #if LV_USE_USER_DATA
 /**
  * Bind an color subject to an object's text style color

@@ -5,6 +5,8 @@
 #include "nfc_input.h"
 #include "esp_heap_caps.h"
 
+#define NFC_MESSAGESIZE 8192
+
 lv_subject_t oat_temp, oat_hum, env_temp, env_hum, wifi_color, http_status, sdcard_status, ble_traffic;
 lv_subject_t battery_all, battery_color, battery_label;
 lv_subject_t runCompassAnimation, animationSpeed;
@@ -32,7 +34,8 @@ void lv_subjects_init(void) {
     lv_subject_init_int(&runCompassAnimation, 0);
     lv_subject_init_int(&animationSpeed, 30);
 
-    lv_subject_init_pointer(&nfcMessage, NULL);
+    void *p =  heap_caps_malloc(NFC_MESSAGESIZE, MALLOC_CAP_SPIRAM);
+    lv_subject_init_string(&nfcMessage, (char *)p, NULL, NFC_MESSAGESIZE, "{}");
 
     lvgl_release();
 }
