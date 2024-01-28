@@ -158,6 +158,46 @@ Tracker: Unit and MQTT Sensor example
 ]
 ````
 
+Storing Units in a File System
+------------------------------
+Once a tag or sensor is read successfully, the user has the option to Save (really Save and Apply), or Cancel the operation.
+
+The 'id' unique key of a Unit can be a fairly arbitrary string which does not necessarily result in a valid basename for a particular filesystem.
+
+Therefore, on Save the 'id' unique key is sanitized into a legit basename by the following code fragment:
+
+````c
+    // Replace invalid characters with underscores
+    for (char &c : sanitizedPath) {
+        if (c == '/' || c == '\\' || c == ':' || c == '*' || c == '?' || c == '"' || c == '<' || c == '>' || c == '|') {
+            c = '_';
+        }
+    }
+
+    // Trim leading and trailing spaces
+    sanitizedPath.trim();
+````
+The pathname shall be `"/equipment/<basename>.json"`, for example:
+
+````
+'5020/16' -> /equipment/5020_16.json
+'5020/24' -> /equipment/5020_24.json
+'env' -> /equipment/env.json
+'oair' -> /equipment/oair.json
+
+````
+
+Since the 'id' unique key is stored in the Unit object, the basename has no meaning except for being unique.
+
+Restoring Units from a File System
+----------------------------------
+
+On startup, all files matching `"/equipment/*.json"` are read, parsed and added as Units.
+
+Clearing the Configuration
+--------------------------
+
+This is done by removing all files from `"/equipment"`, possibly followed by a restart.
 
 Relation to NFC usage
 ---------------------
