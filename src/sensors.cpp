@@ -24,6 +24,8 @@ Unit *addUnit(JsonObject conf) {
             delete units[id];
         }
         units[id] = u;
+        // save unit as <id>.json
+
     } else {
         log_e("configure failed: %s", id.c_str());
         delete u;
@@ -32,12 +34,20 @@ Unit *addUnit(JsonObject conf) {
     return u;
 }
 
+int32_t wipeUnits(void) {
+
+}
+
+int32_t restoreUnits(const char* dirname) {
+
+}
+
 bool readEquipment(const char* dirname) {
     Serial.println("Listing files in directory: " + String(dirname));
 
     File root = LittleFS.open(dirname);
     if (!root) {
-        Serial.println("Failed to open directory");
+        log_e("Failed to open directory");
         return false;
     }
 
@@ -94,8 +104,10 @@ void process_ble() {
 }
 
 void read_config(void) {
-    if (!LittleFS.begin(false))
+    if (!LittleFS.begin(false)) {
+        log_e("LittleFS mount failed");
         return;
+    }
     readEquipment("/config");
 }
 

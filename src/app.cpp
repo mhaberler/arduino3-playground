@@ -23,7 +23,7 @@ void setup(void) {
     disableLoopWDT();
     disableCore0WDT();
     disableCore1WDT();
-    
+
     delay(3000);
     psRAMavail = ESP.getFreePsram() > 0;
 #ifdef M5UNIFIED
@@ -38,10 +38,10 @@ void setup(void) {
     test_spdlog();
     lvgl_setup();
     gfxdemo_setup();
-    init_sensors();
     startBLEscan();
     webserver_setup();
     nfc_setup();
+    init_sensors();
 }
 
 void loop(void) {

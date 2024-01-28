@@ -161,6 +161,9 @@ class Unit {
     uint32_t _created; // timestamp
   public:
     Unit( std::string id) : _id(id),_created(millis()) {};
+
+    // dtor: delete sensors!!
+    //       
     bool configure(JsonObject *conf);
     uint32_t created(void) {
         return _created;
