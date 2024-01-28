@@ -69,6 +69,7 @@ extern lv_obj_t *ui_animationSpeed;
 void ui_Status_screen_init(void);
 void ui_event_Status( lv_event_t * e);
 extern lv_obj_t *ui_Status;
+void ui_event_StatusPanel( lv_event_t * e);
 extern lv_obj_t *ui_StatusPanel;
 extern lv_obj_t *ui_statusHeader;
 extern lv_obj_t *ui_statusText;
@@ -101,6 +102,20 @@ extern lv_obj_t *ui_Label1;
 void ui_event_UnitCancel( lv_event_t * e);
 extern lv_obj_t *ui_UnitCancel;
 extern lv_obj_t *ui_Label7;
+// SCREEN: ui_Config
+void ui_Config_screen_init(void);
+void ui_event_Config( lv_event_t * e);
+extern lv_obj_t *ui_Config;
+extern lv_obj_t *ui_Container6;
+void ui_event_configText( lv_event_t * e);
+extern lv_obj_t *ui_configText;
+extern lv_obj_t *ui_Container7;
+void ui_event_wipeConfig( lv_event_t * e);
+extern lv_obj_t *ui_wipeConfig;
+extern lv_obj_t *ui_Label3;
+void ui_event_configCancel( lv_event_t * e);
+extern lv_obj_t *ui_configCancel;
+extern lv_obj_t *ui_Label8;
 extern lv_obj_t *ui____initial_actions0;
 
 

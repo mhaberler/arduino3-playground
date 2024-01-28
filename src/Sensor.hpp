@@ -15,6 +15,9 @@
 #include "tpms.h"
 #include "lv_observer.h"
 
+#define TOPDIR "/equipment"
+
+
 using namespace std;
 
 #define round1(x) (round((x)*1.0e1) / 1.0e1)
@@ -89,6 +92,9 @@ typedef enum {
     UT_MAX
 } unit_t;
 
+// void emptyDir(const char* dirname);
+bool wipeLittleFS(void);
+bool loadUnitFile(const char* path);
 uint8_t volt2percent(const float volt);
 const char *sensorTypeStr(const sensorType_t sensorType);
 const char *unitTypeStr(const unit_t unitType);
@@ -182,7 +188,8 @@ class Unit {
     };
 };
 
-Unit *addUnit(JsonObject conf);
+Unit *addUnit(JsonObject conf, bool save = true);
+
 // Unit *setupUnit(const unit_t unit, const sensorType_t sensorType, const std::string &mac);
 
 // typedef unordered_set<Unit*> UnitSet;

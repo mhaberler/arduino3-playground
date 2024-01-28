@@ -46,3 +46,11 @@ def returnToPrevious(event_struct):
 def setUnit(event_struct):
     return
 
+
+def eraseConfig_cb(event_struct):
+    return
+
+
+def wipeConfig(event_struct):
+    return
+

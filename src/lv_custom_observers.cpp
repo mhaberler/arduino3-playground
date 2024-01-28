@@ -89,6 +89,13 @@ extern "C"
         }
         lv_disp_load_scr(ui_Main);
     }
+
+    void wipeConfig(lv_event_t * e) {
+        LV_LOG_USER("wipinf Littlefs & reboot");
+        wipeLittleFS(); 
+        ESP.restart();
+    }
+
 }
 
 static void nfc_message_cb(lv_subject_t *subject, lv_observer_t *observer) {

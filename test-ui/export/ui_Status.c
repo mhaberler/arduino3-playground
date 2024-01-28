@@ -34,6 +34,7 @@ lv_obj_set_align( ui_statusText, LV_ALIGN_CENTER );
 lv_label_set_text(ui_statusText,"this is\nthe status\n");
 lv_obj_set_style_text_font(ui_statusText, &lv_font_montserrat_20, LV_PART_MAIN| LV_STATE_DEFAULT);
 
+lv_obj_add_event_cb(ui_StatusPanel, ui_event_StatusPanel, LV_EVENT_ALL, NULL);
 lv_obj_add_event_cb(ui_Status, ui_event_Status, LV_EVENT_ALL, NULL);
 
 }
