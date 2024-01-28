@@ -67,6 +67,7 @@ typedef enum {
     AT_FLOW,
     AT_BURNER_ON,
     AT_BURNER_OFF,
+    AT_BURNER_DURATION,
     AT_PRESSURE,
     AT_VOLTAGE,
     AT_CURRENT,
@@ -88,6 +89,8 @@ typedef enum {
     UT_BASKET,
     UT_AIRCRAFT,
     UT_VEHICLE,
+    UT_OBSERVER,
+    UT_BINDING,
     UT_MAX
 } unit_t;
 
