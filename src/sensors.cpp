@@ -6,12 +6,51 @@
 #include "TreeWalker.hpp"
 #include "fsVisitor.hpp"
 #include "logmacros.hpp"
+#include <filesystem>
+
+#define TOPDIR "/equipment"
 
 extern SpiRamAllocator spiram_allocator;
 
 JsonDocument equipment(&spiram_allocator);
 
 UnitMap units;
+
+String sanitizeLittleFSPath(const String &path) {
+    // Maximum length of LittleFS file/directory names
+    const size_t maxNameLength = 255;
+
+    String sanitizedPath = path;
+
+    // Replace invalid characters with underscores
+    for (char &c : sanitizedPath) {
+        if (c == '/' || c == '\\' || c == ':' || c == '*' || c == '?' || c == '"' || c == '<' || c == '>' || c == '|') {
+            c = '_';
+        }
+    }
+
+    // Trim leading and trailing spaces
+    sanitizedPath.trim();
+
+    // Limit length of file/directory names
+    if (sanitizedPath.length() > maxNameLength) {
+        sanitizedPath = sanitizedPath.substring(0, maxNameLength);
+    }
+
+    return sanitizedPath;
+}
+
+bool saveUnit(const std::string &id, const JsonArray &array) {
+    String path = String(TOPDIR) + String("/") + sanitizeLittleFSPath(String(id.c_str())) + String(".json");
+
+    log_e("normalizePath '%s' -> %s", id.c_str(), path.c_str());
+    LittleFS.remove(path.c_str());
+    File fd = LittleFS.open(path.c_str(), "w");
+    serializeJsonPretty(array, fd);
+
+    fd.close();
+    return true;
+}
 
 Unit *addUnit(JsonObject conf) {
     std::string id = conf["id"];
@@ -27,8 +66,11 @@ Unit *addUnit(JsonObject conf) {
             delete units[id];
         }
         units[id] = u;
-        // save unit as <id>.json
-
+        // wrap in array
+        JsonDocument doc;
+        JsonArray array = doc.to<JsonArray>();
+        array.add(conf);
+        saveUnit(id, array);
     } else {
         log_e("configure failed: %s", id.c_str());
         delete u;
@@ -63,7 +105,7 @@ static bool _fs_visit(fs::FS &fs, Stream &out, fs::File &f, uint32_t flags) {
 bool emptyDir(const char* dirname) {
 
     log_e("listing LittleFS  directory:  %s", dirname);
-    fsVisitor(LittleFS, Serial, dirname , VA_PRINT | VA_DEBUG );
+    fsVisitor(LittleFS, Serial, dirname, VA_PRINT | VA_DEBUG );
 
     return false;
 }
@@ -107,6 +149,8 @@ bool readEquipment(const char* dirname) {
                     }
                 } else  {
                     log_e("config not an array, skipping: %s ", filePath.c_str());
+                    serializeJsonPretty(unitconf, Serial);
+
                 }
             }
         }
@@ -135,8 +179,8 @@ void read_config(void) {
         return;
     }
     emptyDir("/");
-
-    readEquipment("/equipment");
+    LittleFS.mkdir(TOPDIR); // just in case
+    readEquipment(TOPDIR);
 }
 
 void init_sensors(void) {
