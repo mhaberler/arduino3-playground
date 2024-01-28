@@ -166,7 +166,7 @@ void nfc_loop(void) {
         serializeJsonPretty(jsondoc, msg);
         Serial.printf("analyseTag=%d '%s' %p\n", type, msg.c_str(),&jsondoc);
 
-        lv_subject_set_user_data(&nfcMessage, (void *)type);
+        // lv_subject_set_user_data(&nfcMessage, (void *)type);
         lv_subject_set_pointer(&nfcMessage, &jsondoc);
 
         nfc.haltTag();

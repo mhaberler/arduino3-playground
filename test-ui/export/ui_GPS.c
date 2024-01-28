@@ -24,6 +24,13 @@ lv_obj_clear_flag( ui_Container2, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 lv_obj_set_style_pad_row(ui_Container2, 5, LV_PART_MAIN| LV_STATE_DEFAULT);
 lv_obj_set_style_pad_column(ui_Container2, 5, LV_PART_MAIN| LV_STATE_DEFAULT);
 
+ui_testLabel = lv_label_create(ui_Container2);
+lv_obj_set_width( ui_testLabel, lv_pct(90));
+lv_obj_set_height( ui_testLabel, lv_pct(20));
+lv_obj_set_x( ui_testLabel, -15 );
+lv_obj_set_y( ui_testLabel, 4 );
+lv_obj_set_align( ui_testLabel, LV_ALIGN_CENTER );
+
 ui_TextArea4 = lv_textarea_create(ui_Container2);
 lv_obj_set_width( ui_TextArea4, 140);
 lv_obj_set_height( ui_TextArea4, LV_SIZE_CONTENT);   /// 50

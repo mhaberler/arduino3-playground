@@ -1,7 +1,7 @@
 [
     {
         "id" : "mqttpush",
-        "ut" : 7, // UT_MQTT_SUBSCRIBER
+        "ut" : 9, // UT_MQTT_PUSH
         "uri" : "mqtt://mqttt.mah.priv.at/vario"
     },
 

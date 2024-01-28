@@ -92,15 +92,19 @@ extern "C"
 
     void wipeConfig(lv_event_t * e) {
         LV_LOG_USER("wipinf Littlefs & reboot");
-        wipeLittleFS(); 
+        wipeLittleFS();
         ESP.restart();
     }
 
 }
 
 static void nfc_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
-    uint32_t code = (uint32_t)subject->user_data;
     jdoc = (JsonDocument *)lv_subject_get_pointer(subject);
+    if ((jdoc == NULL) || jdoc->isNull()) {
+        LV_LOG_USER("empty jdoc");
+        return;
+    }
+    uint32_t code = (*jdoc)["type"].as<uint32_t>();
 
     switch (code) {
         case BWTAG_NO_MATCH:

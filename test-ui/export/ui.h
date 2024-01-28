@@ -54,6 +54,7 @@ void ui_GPS_screen_init(void);
 void ui_event_GPS( lv_event_t * e);
 extern lv_obj_t *ui_GPS;
 extern lv_obj_t *ui_Container2;
+extern lv_obj_t *ui_testLabel;
 extern lv_obj_t *ui_TextArea4;
 // SCREEN: ui_Parameters
 void ui_Parameters_screen_init(void);

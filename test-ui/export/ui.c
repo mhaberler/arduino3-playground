@@ -43,6 +43,7 @@ void ui_GPS_screen_init(void);
 void ui_event_GPS( lv_event_t * e);
 lv_obj_t *ui_GPS;
 lv_obj_t *ui_Container2;
+lv_obj_t *ui_testLabel;
 lv_obj_t *ui_TextArea4;
 
 

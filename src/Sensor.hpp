@@ -63,6 +63,8 @@ typedef enum {
 typedef enum {
     AT_NONE,
     AT_TEMPERATURE,
+    AT_SENSOR_TEMPERATURE,
+    AT_SENSOR_BATTERY_STATUS,
     AT_HUMIDITY,
     AT_FLOW,
     AT_BURNER_ON,
@@ -89,8 +91,10 @@ typedef enum {
     UT_BASKET,
     UT_AIRCRAFT,
     UT_VEHICLE,
-    UT_OBSERVER,
+    UT_LV_OBSERVER,
     UT_BINDING,
+    UT_MQTT_SUBSCRIBER,
+    UT_MQTT_PUSH,
     UT_MAX
 } unit_t;
 
