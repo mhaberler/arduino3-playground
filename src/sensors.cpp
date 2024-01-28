@@ -3,6 +3,9 @@
 #include "ArduinoJsonCustom.h"
 #include <LittleFS.h>
 #include "blescan.hpp"
+#include "TreeWalker.hpp"
+#include "fsVisitor.hpp"
+#include "logmacros.hpp"
 
 extern SpiRamAllocator spiram_allocator;
 
@@ -34,12 +37,35 @@ Unit *addUnit(JsonObject conf) {
     return u;
 }
 
-int32_t wipeUnits(void) {
-
+static bool _fs_visit(fs::FS &fs, Stream &out, fs::File &f, uint32_t flags) {
+    bool result = false;
+    time_t t = f.getLastWrite();
+    struct tm *tm = localtime(&t);
+    bool isDir = f.isDirectory();
+    if (flags & VA_PRINT) {
+        log_e("%s %u %s", isDir ? "d" : "f", f.size(),
+              f.path());
+        // LOGD("{} {:>7} {:<50} {:%Y-%m-%d %H:%M:%S}", isDir ? "d" : "f", f.size(),
+        //      f.path(), *tm);
+    }
+    if (isDir) {
+        return true;
+    }
+    //   if (flags & VA_CACHE) {
+    //     result = psramCache.insert(fs, f.path());
+    //     if (!result && (flags & VA_DEBUG)) {
+    //       LOGD("toPsram() failed, stopping");
+    //     }
+    //   }
+    return result;
 }
 
-int32_t restoreUnits(const char* dirname) {
+bool emptyDir(const char* dirname) {
 
+    log_e("listing LittleFS  directory:  %s", dirname);
+    fsVisitor(LittleFS, Serial, dirname , VA_PRINT | VA_DEBUG );
+
+    return false;
 }
 
 bool readEquipment(const char* dirname) {
@@ -79,8 +105,8 @@ bool readEquipment(const char* dirname) {
                     for (JsonVariant element : ua) {
                         addUnit(element.as<JsonObject>());//FIXME retcode
                     }
-                } else if (unitconf.is<JsonObject>()) {
-                    addUnit(unitconf.as<JsonObject>()); //FIXME retcode
+                } else  {
+                    log_e("config not an array, skipping: %s ", filePath.c_str());
                 }
             }
         }
@@ -108,7 +134,9 @@ void read_config(void) {
         log_e("LittleFS mount failed");
         return;
     }
-    readEquipment("/config");
+    emptyDir("/");
+
+    readEquipment("/equipment");
 }
 
 void init_sensors(void) {
