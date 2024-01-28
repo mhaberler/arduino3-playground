@@ -65,7 +65,7 @@ extern "C"
         JsonDocument tmpl;
         deserializeJson(tmpl, jstxt);
         tmpl["sensors"][0]["mac"] = (*jdoc)["payload"]["MAC"];
-        addUnit(tmpl.as<JsonObject>());
+        equipment.addUnit(tmpl.as<JsonObject>());
         lv_disp_load_scr(ui_Main);
     }
 
@@ -74,7 +74,7 @@ extern "C"
         JsonDocument tmpl;
         deserializeJson(tmpl, jstxt);
         tmpl["sensors"][0]["mac"] = (*jdoc)["payload"]["MAC"];
-        addUnit(tmpl.as<JsonObject>());
+        equipment.addUnit(tmpl.as<JsonObject>());
         lv_disp_load_scr(ui_Main);
     }
 
@@ -84,7 +84,7 @@ extern "C"
             JsonArray units = jv.as<JsonArray>();
             for(JsonObject u: units) {
                 std::string id(u["id"]);
-                addUnit(u);
+                equipment.addUnit(u);
             }
         }
         lv_disp_load_scr(ui_Main);

@@ -17,7 +17,6 @@
 
 #define TOPDIR "/equipment"
 
-
 using namespace std;
 
 #define round1(x) (round((x)*1.0e1) / 1.0e1)
@@ -92,10 +91,11 @@ typedef enum {
     UT_MAX
 } unit_t;
 
-// void emptyDir(const char* dirname);
+String sanitizeLittleFSPath(const String &path);
 bool wipeLittleFS(void);
-bool loadUnitFile(const char* path);
 uint8_t volt2percent(const float volt);
+bool bleDeliver(const bleAdvMsg_t &msg);
+
 const char *sensorTypeStr(const sensorType_t sensorType);
 const char *unitTypeStr(const unit_t unitType);
 
@@ -115,6 +115,8 @@ int8_t getInt8(const uint8_t *data, int index);
 int32_t getInt32LE(const uint8_t *data, int index);
 
 class Unit;
+class Equipment;
+
 
 class Sensor {
   private:
@@ -169,7 +171,7 @@ class Unit {
     Unit( std::string id) : _id(id),_created(millis()) {};
 
     // dtor: delete sensors!!
-    //       
+    //
     bool configure(JsonObject *conf);
     uint32_t created(void) {
         return _created;
@@ -188,28 +190,24 @@ class Unit {
     };
 };
 
-Unit *addUnit(JsonObject conf, bool save = true);
+// Unit *addUnit(JsonObject conf, bool save = true);
 
 // Unit *setupUnit(const unit_t unit, const sensorType_t sensorType, const std::string &mac);
 
-// typedef unordered_set<Unit*> UnitSet;
 typedef unordered_map<std::string, Unit *> UnitMap;
 
-// class Equipment {
-//   private:
-//     UnitMap _unitmap;
-//   public:
+class Equipment {
+  private:
+    UnitMap _units;
+    const char *_topdir;
+    bool _saveUnit(const std::string &id, const JsonArray &array);
 
-//     // void add(Unit *u) {
-//     //     _unitmap.insert(u);
-//     // };
-//     void render() {
-//         for(auto u: _unitmap) {
-//             Serial.printf("unit '%s': ");
-//             u.second->print(Serial);
-//         }
-//     };
-// };
+  public:
+    Equipment(const char *topdir) : _topdir(topdir) {};
+    bool addUnit(const char *path);
+    bool addUnit(JsonObject conf, bool save = true);
+    void dump(Stream &s);
+};
 
 class Ruuvi : public Sensor {
   private:
@@ -308,4 +306,6 @@ class IMU : public Sensor {
 
 };
 
-bool bleDeliver(const bleAdvMsg_t &msg);
+extern Equipment equipment;
+
+

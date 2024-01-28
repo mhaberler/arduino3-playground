@@ -20,7 +20,7 @@ static bool _fs_visit(fs::FS &fs, Stream &out, fs::File &f, uint32_t flags) {
             if (flags & VA_DEBUG) {
                 out.printf("loading %s size %u\n", f.path(), f.size());
             }
-            loadUnitFile(f.path());
+            equipment.addUnit(f.path());
         }
         if (flags & VA_ERASE_FILES) {
             bool rc = fs.remove(f.path());
