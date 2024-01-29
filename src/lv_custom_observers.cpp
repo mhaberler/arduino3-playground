@@ -83,7 +83,6 @@ extern "C"
         if (jv.is<JsonArray>()) {
             JsonArray units = jv.as<JsonArray>();
             for(JsonObject u: units) {
-                std::string id(u["id"]);
                 equipment.addUnit(u);
             }
         }

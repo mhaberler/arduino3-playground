@@ -1,8 +1,6 @@
 #pragma once
 
-// #include <SdFat.h>
 #include <FS.h>
-// #include <Fmt.h>
 
 typedef enum {
   VA_PRINT = (1u << 0),
@@ -11,10 +9,6 @@ typedef enum {
   VA_ERASE_FILES = (1u << 4),
   VA_LOAD_CONFIG  = (1u << 8),
 } visitorAction_t;
-
-// void fsVisitor(SdFat &fs, Stream &fmt, const char *topdir = "/",
-//                uint32_t flags = 0, uint8_t levels = 10);
-
 
 void fsVisitor(fs::FS &fs, Stream &fmt, const char *topdir = "/",
                uint32_t flags = 0, uint8_t levels = 10);
