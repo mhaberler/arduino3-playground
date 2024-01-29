@@ -26,4 +26,4 @@ typedef enum {
 } uiMessage_t;
 
 bool sendUiMessage(const JsonDocument &jdoc);
-void sendUiMessage(const char *msg);
+void sendUiMessage(const char * fmt, ...);

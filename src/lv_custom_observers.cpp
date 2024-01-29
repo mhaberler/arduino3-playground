@@ -19,7 +19,9 @@ extern lv_obj_t *ui_WifiStatus;
 
 extern  void animate_battery_icon(int32_t batval) {
     lv_color_t color = lv_palette_main(LV_PALETTE_GREY);
-    const void *label = "?";
+    const char *label = "?";
+    //     lv_subject_init_color(&battery_color, lv_palette_main(LV_PALETTE_RED));
+    // lv_subject_init_pointer(&battery_label, (void *)LV_SYMBOL_BATTERY_EMPTY);
     lv_style_selector_t sel = LV_PART_MAIN | LV_STATE_DEFAULT;
 
     if (batval < 20) {
@@ -38,8 +40,8 @@ extern  void animate_battery_icon(int32_t batval) {
         color = lv_palette_main(LV_PALETTE_GREEN);
         label = LV_SYMBOL_BATTERY_FULL;
     }
-    lv_obj_set_style_text_color(ui_BatteryStatus, color, XXX);
-   lv_label_set_text(ui_BatteryStatus, label);
+    lv_obj_set_style_text_color(ui_BatteryStatus, color, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_label_set_text(ui_BatteryStatus, label);
 }
 
 static void ruuvi_report_cb(lv_subject_t *subject, lv_observer_t *observer) {
@@ -55,21 +57,6 @@ static void ruuvi_report_cb(lv_subject_t *subject, lv_observer_t *observer) {
     }
     lv_obj_t *target = (lv_obj_t *)lv_observer_get_target(observer);
     lv_label_set_text_fmt(target, fmt, ITOD100(value));
-}
-
-static void battery_group_cb(lv_subject_t *subject, lv_observer_t *observer) {
-    lv_obj_t *target = (lv_obj_t *)lv_observer_get_target(observer);
-    lv_subject_t *subject_label = lv_subject_get_group_element(subject, 0);
-    lv_subject_t *subject_color = lv_subject_get_group_element(subject, 1);
-
-    const char *label = (const char *)lv_subject_get_pointer(subject_label);
-    lv_color_t color = lv_subject_get_color(subject_color);
-
-    if (compare_colors(lv_subject_get_previous_color(subject_color), color))
-        lv_obj_set_style_text_color(target, color, (lv_style_selector_t)subject_color->user_data);
-
-    if (label != lv_subject_get_previous_pointer(subject_label))
-        lv_label_set_text(target, label);
 }
 
 static lv_obj_t *previous_screen = ui_Main;
@@ -195,7 +182,6 @@ static void ui_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
             break;
         case UM_STATUS_BATTERY: {
                 int32_t batval = jdoc["v"].as<int32_t>();
-                LV_LOG_USER("battery %d\n", batval);
                 animate_battery_icon(batval);
             }
             break;
@@ -229,7 +215,6 @@ static void register_observers(void) {
     lv_subject_add_observer_with_target(&env_temp, ruuvi_report_cb, ui_envTemp,(void*) "%.1f°");
     lv_subject_add_observer_with_target(&env_hum, ruuvi_report_cb, ui_envHum, (void*)"%.1f%%");
 
-    lv_subject_add_observer_with_target(&battery_all, battery_group_cb, ui_BatteryStatus, NULL);
     lv_subject_add_observer_with_target(&uiMessage, ui_message_cb, ui_Main, NULL);
 }
 

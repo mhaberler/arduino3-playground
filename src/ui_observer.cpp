@@ -14,9 +14,15 @@ bool sendUiMessage(const JsonDocument &jdoc) {
     return n < ss;
 }
 
-void sendUiMessage(const char *msg) {
+void sendUiMessage(const char * fmt, ...) {
+    LV_ASSERT_NULL(fmt);
+
+    va_list args;
+    va_start (args, fmt);
+    vsprintf (lv_subject_get_string_buf(&uiMessage), fmt, args);
+    va_end (args);
+
     lvgl_acquire();
-    lv_subject_copy_string(&uiMessage, msg);
     lv_subject_notify(&uiMessage);
     lvgl_release();
 }

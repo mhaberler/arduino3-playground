@@ -43,10 +43,12 @@ bool SDInit()
 
 void set_battery_indicator(int32_t batval)
 {
-    JsonDocument jdoc;
-    jdoc["um"] = UM_STATUS_BATTERY;
-    jdoc["v"] = batval;
-    sendUiMessage(jdoc);
+    sendUiMessage("{\"um\":%d,\"v\":%d}", UM_STATUS_BATTERY, batval);
+    // works the same:
+    // JsonDocument jdoc;
+    // jdoc["um"] = UM_STATUS_BATTERY;
+    // jdoc["v"] = batval;
+    // sendUiMessage(jdoc);
 }
 
 void lvgl_setup(void)
