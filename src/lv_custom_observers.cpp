@@ -4,6 +4,7 @@
 #include "lv_subjects.hpp"
 #include "ui_events.h"
 #include "ui_custom.hpp"
+#include "ui_observer.hpp"
 #include "ui.h"
 #include "lv_util.h"
 #include "ruuvi.h"
@@ -16,7 +17,30 @@ extern lv_obj_t *ui_BatteryStatus;
 extern lv_obj_t *ui_BLEStatus;
 extern lv_obj_t *ui_WifiStatus;
 
-static lv_timer_t *na_timer;
+extern  void animate_battery_icon(int32_t batval) {
+    lv_color_t color = lv_palette_main(LV_PALETTE_GREY);
+    const void *label = "?";
+    lv_style_selector_t sel = LV_PART_MAIN | LV_STATE_DEFAULT;
+
+    if (batval < 20) {
+        color = lv_palette_main(LV_PALETTE_RED);
+        label = LV_SYMBOL_BATTERY_EMPTY;
+    } else if (batval < 50) {
+        color = lv_palette_main(LV_PALETTE_RED);
+        label = LV_SYMBOL_BATTERY_1;
+    } else if (batval < 70) {
+        color = lv_palette_main(LV_PALETTE_DEEP_ORANGE);
+        label = LV_SYMBOL_BATTERY_2;
+    } else if (batval < 90) {
+        color = lv_palette_main(LV_PALETTE_GREEN);
+        label = LV_SYMBOL_BATTERY_3;
+    } else {
+        color = lv_palette_main(LV_PALETTE_GREEN);
+        label = LV_SYMBOL_BATTERY_FULL;
+    }
+    lv_obj_set_style_text_color(ui_BatteryStatus, color, XXX);
+   lv_label_set_text(ui_BatteryStatus, label);
+}
 
 static void ruuvi_report_cb(lv_subject_t *subject, lv_observer_t *observer) {
     const char *fmt = (const char *)observer->user_data;
@@ -96,7 +120,7 @@ extern "C"
     }
 }
 
-static void nfc_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
+static void ui_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
     const char *input = lv_subject_get_string(subject);
 
     DeserializationError error = deserializeJson(jdoc, input);
@@ -108,13 +132,13 @@ static void nfc_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
         LV_LOG_USER("empty jdoc");
         return;
     }
-    uint32_t code = jdoc["type"].as<uint32_t>();
+    uiMessage_t code = jdoc["um"].as<uiMessage_t>();
 
     switch (code) {
-        case BWTAG_NO_MATCH:
+        case UM_NFCMSG_NO_MATCH:
             // beep
             break;
-        case BWTAG_RUUVI: {
+        case UM_NFCMSG_RUUVI: {
                 previous_screen = lv_scr_act();
 
                 lv_label_set_text(ui_ruuviHeader, "Ruuvi Sensor detected");
@@ -125,7 +149,7 @@ static void nfc_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
                 lv_disp_load_scr(ui_Ruuvi);
             }
             break;
-        case BWTAG_PROXY_TAG: {
+        case UM_NFCMSG_PROXY_TAG: {
                 JsonVariant jv = jdoc["payload"];
 
                 if (!jv.is<JsonArray>()) {
@@ -169,6 +193,32 @@ static void nfc_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
                 lv_disp_load_scr(ui_Unit);
             }
             break;
+        case UM_STATUS_BATTERY: {
+                int32_t batval = jdoc["v"].as<int32_t>();
+                LV_LOG_USER("battery %d\n", batval);
+                animate_battery_icon(batval);
+            }
+            break;
+        case UM_STATUS_SDCARD:
+            break;
+        case UM_STATUS_BLE:
+            break;
+        case UM_STATUS_WIFI:
+            break;
+        case UM_STATUS_NFC:
+            break;
+
+        case UM_SENSOR_GPS:
+            break;
+        case UM_SENSOR_BAROMETR:
+            break;
+        case UM_SENSOR_IMU:
+            break;
+        case UM_SENSOR_ENVELOPE:
+            break;
+        case UM_SENSOR_OAT:
+            break;
+
         default:
             break;
     }
@@ -180,7 +230,7 @@ static void register_observers(void) {
     lv_subject_add_observer_with_target(&env_hum, ruuvi_report_cb, ui_envHum, (void*)"%.1f%%");
 
     lv_subject_add_observer_with_target(&battery_all, battery_group_cb, ui_BatteryStatus, NULL);
-    lv_subject_add_observer_with_target(&nfcMessage, nfc_message_cb, ui_Main, NULL);
+    lv_subject_add_observer_with_target(&uiMessage, ui_message_cb, ui_Main, NULL);
 }
 
 void lv_observer_init(void) {

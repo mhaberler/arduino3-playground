@@ -24,6 +24,6 @@ typedef enum {
 extern lv_subject_t oat_temp, oat_hum, env_temp, env_hum, wifi_color,  sdcard_status, ble_traffic;
 extern lv_subject_t battery_all, battery_color, battery_label;
 extern lv_subject_t runCompassAnimation, animationSpeed;
-extern lv_subject_t nfcMessage;
+extern lv_subject_t uiMessage;
 
 void lv_subjects_init(void);

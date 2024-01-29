@@ -27,6 +27,7 @@
 #include "lv_util.h"
 #include "lv_subjects.hpp"
 #include "ui.h"
+#include "ui_observer.hpp"
 #include "ArduinoJsonCustom.h"
 
 using StatusCode = MFRC522Constants::StatusCode;
@@ -161,13 +162,12 @@ void nfc_loop(void) {
         tag.tagToJson(jsondoc);
 
         uint32_t type = analyseTag(tag, jsondoc);
-        jsondoc["type"] = type;
+        jsondoc["um"] = type;
+        
+        sendUiMessage(jsondoc);
 
-        // FIXME eventually use serializeJson() 
-        size_t n = serializeJsonPretty(jsondoc, lv_subject_get_string_buf(&nfcMessage), lv_subject_get_string_size(&nfcMessage));
+        serializeJsonPretty(jsondoc, Serial);
 
-        Serial.printf("analyseTag=%d n=%u '%s'\n", type, n, lv_subject_get_string_buf(&nfcMessage));
-        lv_subject_notify(&nfcMessage);
         nfc.haltTag();
     }
 }

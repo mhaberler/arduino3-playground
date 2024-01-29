@@ -12,8 +12,10 @@
 #include "lv_subjects.hpp"
 #include "lv_observer.hpp"
 #include "ui.h"
+#include "ui_observer.hpp"
 #include "ui_compass.h"
 #include "ui_custom.hpp"
+#include "ArduinoJsonCustom.h"
 
 static Ticker batteryChange;
 static bool update_battery = false;
@@ -41,41 +43,10 @@ bool SDInit()
 
 void set_battery_indicator(int32_t batval)
 {
-    lv_color_t color = lv_palette_main(LV_PALETTE_GREY);
-    const void *label = "?";
-    lv_style_selector_t sel = LV_PART_MAIN | LV_STATE_DEFAULT;
-
-    if (batval < 20)
-    {
-        color = lv_palette_main(LV_PALETTE_RED);
-        label = LV_SYMBOL_BATTERY_EMPTY;
-    }
-    else if (batval < 50)
-    {
-        color = lv_palette_main(LV_PALETTE_RED);
-        label = LV_SYMBOL_BATTERY_1;
-    }
-    else if (batval < 70)
-    {
-        color = lv_palette_main(LV_PALETTE_DEEP_ORANGE);
-        label = LV_SYMBOL_BATTERY_2;
-    }
-    else if (batval < 90)
-    {
-        color = lv_palette_main(LV_PALETTE_GREEN);
-        label = LV_SYMBOL_BATTERY_3;
-    }
-    else
-    {
-        color = lv_palette_main(LV_PALETTE_GREEN);
-        label = LV_SYMBOL_BATTERY_FULL;
-    }
-    lvgl_acquire();
-    battery_color.user_data = (void *)sel;
-    lv_subject_set_color(&battery_color, color);
-    lv_subject_set_pointer(&battery_label, (void *)label);
-    lv_subject_notify(&battery_all);
-    lvgl_release();
+    JsonDocument jdoc;
+    jdoc["um"] = UM_STATUS_BATTERY;
+    jdoc["v"] = batval;
+    sendUiMessage(jdoc);
 }
 
 void lvgl_setup(void)
@@ -106,10 +77,10 @@ void lvgl_loop(void)
     if (update_battery)
     {
         // Battery icon animation
-        if (battery_value > 100)
-            battery_value = 0;
         battery_value += 10;
         set_battery_indicator(battery_value);
+        if (battery_value >= 100)
+            battery_value = 0;
 
         heading += 3;
         heading %= 360;
