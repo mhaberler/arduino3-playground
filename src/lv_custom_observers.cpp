@@ -4,7 +4,6 @@
 #include "lv_subjects.hpp"
 #include "ui_events.h"
 #include "ui_custom.hpp"
-#include "ui_observer.hpp"
 #include "ui.h"
 #include "lv_util.h"
 #include "ruuvi.h"
@@ -16,6 +15,7 @@ extern lv_obj_t *ui_SdCardStatus;
 extern lv_obj_t *ui_BatteryStatus;
 extern lv_obj_t *ui_BLEStatus;
 extern lv_obj_t *ui_WifiStatus;
+extern lv_subject_t uiMessage;
 
 extern  void animate_battery_icon(int32_t batval) {
     lv_color_t color = lv_palette_main(LV_PALETTE_GREY);

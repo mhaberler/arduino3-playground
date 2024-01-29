@@ -2,15 +2,17 @@
 #include "lv_setup.hpp"
 #include "lv_util.h"
 #include "lv_subjects.hpp"
+
 #include "nfc_input.h"
 #include "esp_heap_caps.h"
 
-#define NFC_MESSAGESIZE 8192
+
+extern bool psramFound();
 
 lv_subject_t oat_temp, oat_hum, env_temp, env_hum, wifi_color, http_status, sdcard_status, ble_traffic;
 lv_subject_t runCompassAnimation, animationSpeed;
 lv_subject_t uiMessage;
-extern bool psramFound();
+
 
 
 void lv_subjects_init(void) {
@@ -27,8 +29,8 @@ void lv_subjects_init(void) {
     lv_subject_init_int(&runCompassAnimation, 0);
     lv_subject_init_int(&animationSpeed, 30);
 
-    void *p =  heap_caps_malloc(NFC_MESSAGESIZE, MALLOC_CAP_SPIRAM);
-    lv_subject_init_string(&uiMessage, (char *)p, NULL, NFC_MESSAGESIZE, "");
+    void *p =  heap_caps_malloc(UI_MESSAGESIZE, MALLOC_CAP_SPIRAM);
+    lv_subject_init_string(&uiMessage, (char *)p, NULL, UI_MESSAGESIZE, "");
 
     lvgl_release();
 }

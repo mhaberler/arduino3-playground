@@ -12,7 +12,7 @@
 #include "lv_subjects.hpp"
 #include "lv_observer.hpp"
 #include "ui.h"
-#include "ui_observer.hpp"
+#include "ui_message.hpp"
 #include "ui_compass.h"
 #include "ui_custom.hpp"
 #include "ArduinoJsonCustom.h"

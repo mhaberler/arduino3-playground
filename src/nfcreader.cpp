@@ -27,7 +27,7 @@
 #include "lv_util.h"
 #include "lv_subjects.hpp"
 #include "ui.h"
-#include "ui_observer.hpp"
+#include "ui_message.hpp"
 #include "ArduinoJsonCustom.h"
 
 using StatusCode = MFRC522Constants::StatusCode;

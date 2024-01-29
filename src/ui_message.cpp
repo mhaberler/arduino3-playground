@@ -1,7 +1,10 @@
-#include "ui_observer.hpp"
-#include "lv_util.h"
+
+#include <lvgl.h>
 #include "lv_observer.h"
-#include "lv_subjects.hpp"
+#include "lv_util.h"
+#include "ArduinoJson.h"
+
+extern lv_subject_t uiMessage;
 
 bool sendUiMessage(const JsonDocument &jdoc) {
     if (jdoc.isNull())

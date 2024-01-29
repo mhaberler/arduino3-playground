@@ -4,6 +4,10 @@
 #include "lv_observer.h"
 #include "ui_compass.h"
 
+
+#define UI_MESSAGESIZE 8192
+
+
 #define STATUS_WIFI_UNCONFIGURED lv_palette_main(LV_PALETTE_GREY)
 #define STATUS_WIFI_STARTED lv_palette_main(LV_PALETTE_AMBER)
 #define STATUS_WIFI_SCAN_COMPLETE lv_palette_main(LV_PALETTE_GREEN)
@@ -17,9 +21,37 @@
 #define ITOD100(x) ((double)(x) / 100.0)
 #define NOT_AVAILABLE "n/a"
 
+#include "nfc_input.h"
+
+typedef enum {
+    UM_NONE,
+
+    UM_NFCMSG_NO_MATCH = BWTAG_NO_MATCH,
+    UM_NFCMSG_RUUVI = BWTAG_RUUVI,
+    UM_NFCMSG_PROXY_TAG = BWTAG_PROXY_TAG,
+
+    UM_STATUS_BATTERY,
+    UM_STATUS_SDCARD,
+    UM_STATUS_BLE,
+    UM_STATUS_WIFI,
+    UM_STATUS_NFC,
+
+    UM_SENSOR_GPS,
+    UM_SENSOR_BAROMETR,
+    UM_SENSOR_IMU,
+
+    UM_SENSOR_ENVELOPE,
+    UM_SENSOR_OAT,
+
+} uiMessage_t;
+
+
 extern lv_subject_t oat_temp, oat_hum, env_temp, env_hum, wifi_color, 
      sdcard_status, ble_traffic;
 extern lv_subject_t runCompassAnimation, animationSpeed;
-extern lv_subject_t uiMessage;
+// extern lv_subject_t uiMessage;
+
+
+
 
 void lv_subjects_init(void);
