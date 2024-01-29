@@ -1,5 +1,7 @@
 Equipment class
 binding
+
+
 logging
 
 live reconfig without reboot
@@ -8,7 +10,7 @@ splash screen
 
 producer - consumer binding
 
-producer = src name = Mopeka:ble or mqtt:sub3 
+producer = src name = Mopeka:ble or mqtt:sub3 or espnow or...
 
 consumer = dest name = alias name for lv_subject string format
 
@@ -18,9 +20,9 @@ consumer example - esp/c++
     envtemp = lv_subject + set of UI elements
         tales "temp" and "ts" attributes -> display temperature, hygro
 
-websocket:
-
-
+    websocket:
+    logger
+    teleplot
 
 binding:
     "env" -> "ui_temp"

@@ -3,6 +3,7 @@
 #include "Arduino.h"
 #include "ArduinoJson.h"
 #include "ArduinoJsonCustom.h"
+#include <FS.h>
 #include <list>
 #include <set>
 #include <unordered_set>
@@ -91,12 +92,21 @@ typedef enum {
     UT_BASKET,
     UT_AIRCRAFT,
     UT_VEHICLE,
-    UT_LV_OBSERVER,
+
+    UT_OBSERVER,
+    UT_WRITER,
+    UT_URI,
     UT_BINDING,
-    UT_MQTT_SUBSCRIBER,
-    UT_MQTT_PUSH,
     UT_MAX
 } unit_t;
+
+// typedef enum {
+//     CT_NONE = 0,
+//     CT_OBSERVER,
+//     CT_WRITER,
+//     CT_URI,
+//     CT_MAX
+// } consumerType_t;
 
 String sanitizeLittleFSPath(const String &path);
 bool wipeLittleFS(void);
@@ -123,13 +133,12 @@ int32_t getInt32LE(const uint8_t *data, int index);
 
 class Unit;
 class Equipment;
-
+class Consumer;
 
 class Sensor {
   private:
     sensorMode_t _mode;
     format_t _format;
-    lv_subject_t *_subject;
     uint32_t _created; // timestamp
   protected:
     NimBLEAddress _macAddress;
@@ -156,15 +165,31 @@ class Sensor {
     NimBLEAddress & mac();
     bool configure(JsonObject conf);
     virtual bool bleAdvertisement(const bleAdvMsg_t  &msg) = 0;
-    void setSubject(lv_subject_t *subject) {
-        _subject = subject;
-    };
     virtual const  std::string name(void) = 0;
     virtual const  std::string fullName(void) = 0;
     virtual  const std::string id(void) = 0;
     const  std::string unitName(void);
 
 };
+
+// class Consumer {
+//   private:
+//     std::string _id;
+//     consumerType_t _ct;
+//     lv_subject_t *_subject;
+//     fs::File _f;
+//     std::string _uri;
+
+//   public:
+//     Consumer(const std::string& id, lv_subject_t *subject) : _id(id),_ct(CT_OBSERVER),_subject(subject) {};
+//     Consumer(const std::string& id, fs::File &f) : _id(id),_ct(CT_WRITER),_f(f) {};
+//     Consumer(const std::string& id, const std::string& uri) : _id(id),_ct(CT_WRITER),_f(f) {};
+
+//     bool configure(JsonObject *conf);
+//     void setType(const unit_t ut) {
+//         _ut = ut;
+//     };
+// };
 
 typedef unordered_set<Sensor*> SensorSet;
 
@@ -197,9 +222,12 @@ class Unit {
     };
 };
 
-// Unit *addUnit(JsonObject conf, bool save = true);
-
-// Unit *setupUnit(const unit_t unit, const sensorType_t sensorType, const std::string &mac);
+class Consumer : public Unit {
+  private:
+    lv_subject_t *_subject;
+    fs::File _f;
+    std::string _uri;
+};
 
 typedef unordered_map<std::string, Unit *> UnitMap;
 
@@ -314,5 +342,3 @@ class IMU : public Sensor {
 };
 
 extern Equipment equipment;
-
-
