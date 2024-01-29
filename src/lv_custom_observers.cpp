@@ -182,6 +182,7 @@ static void ui_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
             break;
         case UM_STATUS_BATTERY: {
                 int32_t batval = jdoc["v"].as<int32_t>();
+                // LV_LOG_USER("batval %d", batval);
                 animate_battery_icon(batval);
             }
             break;
