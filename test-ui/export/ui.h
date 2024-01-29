@@ -89,6 +89,7 @@ extern lv_obj_t *ui_OAT;
 extern lv_obj_t *ui_Label5;
 void ui_event_Cancel( lv_event_t * e);
 extern lv_obj_t *ui_Cancel;
+void ui_event_Label6( lv_event_t * e);
 extern lv_obj_t *ui_Label6;
 // SCREEN: ui_Unit
 void ui_Unit_screen_init(void);

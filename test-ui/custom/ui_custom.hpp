@@ -11,7 +11,8 @@ extern "C"
     void mainScreenLoaded(lv_event_t *e);
     void statusScreenLoaded(lv_event_t *e);
     void nfcEvent(lv_event_t *e);
-    void setEnvelopeMac(lv_event_t *e);
-    void setOATMac(lv_event_t *e);
+    void ruuviEnvelope(lv_event_t *e);
+    void ruuviOAT(lv_event_t *e);
+    void ruuviCancel(lv_event_t *e);
     void setUnit(lv_event_t * e);
 }

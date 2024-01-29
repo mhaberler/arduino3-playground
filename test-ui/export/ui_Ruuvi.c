@@ -85,6 +85,7 @@ lv_label_set_text(ui_Label6,"Cancel\n");
 
 lv_obj_add_event_cb(ui_Envelope, ui_event_Envelope, LV_EVENT_ALL, NULL);
 lv_obj_add_event_cb(ui_OAT, ui_event_OAT, LV_EVENT_ALL, NULL);
+lv_obj_add_event_cb(ui_Label6, ui_event_Label6, LV_EVENT_ALL, NULL);
 lv_obj_add_event_cb(ui_Cancel, ui_event_Cancel, LV_EVENT_ALL, NULL);
 
 }

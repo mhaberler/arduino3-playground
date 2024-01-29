@@ -54,3 +54,7 @@ def eraseConfig_cb(event_struct):
 def wipeConfig(event_struct):
     return
 
+
+def ruuviCancel(event_struct):
+    return
+

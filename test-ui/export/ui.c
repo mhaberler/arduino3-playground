@@ -84,6 +84,7 @@ lv_obj_t *ui_OAT;
 lv_obj_t *ui_Label5;
 void ui_event_Cancel( lv_event_t * e);
 lv_obj_t *ui_Cancel;
+void ui_event_Label6( lv_event_t * e);
 lv_obj_t *ui_Label6;
 
 
@@ -214,19 +215,25 @@ lv_indev_wait_release(lv_indev_get_act());
 void ui_event_Envelope( lv_event_t * e) {
     lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
 if ( event_code == LV_EVENT_CLICKED) {
-      setEnvelopeMac( e );
+      ruuviEnvelope( e );
 }
 }
 void ui_event_OAT( lv_event_t * e) {
     lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
 if ( event_code == LV_EVENT_CLICKED) {
-      setOATMac( e );
+      ruuviOAT( e );
 }
 }
 void ui_event_Cancel( lv_event_t * e) {
     lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
 if ( event_code == LV_EVENT_CLICKED) {
       _ui_screen_change( &ui_Main, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Main_screen_init);
+}
+}
+void ui_event_Label6( lv_event_t * e) {
+    lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
+if ( event_code == LV_EVENT_CLICKED) {
+      ruuviCancel( e );
 }
 }
 void ui_event_UnitSave( lv_event_t * e) {

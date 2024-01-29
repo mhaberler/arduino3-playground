@@ -163,12 +163,9 @@ void nfc_loop(void) {
 
         uint32_t type = analyseTag(tag, jsondoc);
         jsondoc["um"] = type;
-        
         sendUiMessage(jsondoc);
-
-        serializeJsonPretty(jsondoc, Serial);
-
         nfc.haltTag();
+
     }
 }
 #else
