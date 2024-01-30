@@ -52,12 +52,6 @@ MFRC522Extended mfrc522{driver}; // Create MFRC522 instance.
 
 NfcAdapter nfc = NfcAdapter(&mfrc522);
 
-SpiRamAllocator spiram_allocator;
-// JsonDocument jsondoc(&spiram_allocator);
-
-// static SpiRamJsonDocument jsondoc(10240);
-static StaticJsonDocument<10240> jsondoc;
-
 #define BW_MIMETYPE "application/balloonware"
 
 static const char *ruuvi_ids[] = {
@@ -95,7 +89,7 @@ analyseTag(NfcTag &tag, JsonDocument &doc) {
 
                     }
                     // if we made it here, it's a Ruuvi tag
-                    auto ruuvi = doc.createNestedObject("payload");
+                    auto ruuvi = doc["payload"].to<JsonObject>();
                     ruuvi["ID"] = content[0];
                     ruuvi["MAC"] = content[1];
                     ruuvi["SW"] = content[2];
@@ -156,16 +150,16 @@ void nfc_setup(void) {
 
 void nfc_loop(void) {
     if (nfc.tagPresent()) {
-        jsondoc.clear();
         Serial.println("\nReading NFC tag");
         NfcTag tag = nfc.read();
+
+        JsonDocument jsondoc;
         tag.tagToJson(jsondoc);
 
         uint32_t type = analyseTag(tag, jsondoc);
         jsondoc["um"] = type;
         sendUiMessage(jsondoc);
         nfc.haltTag();
-
     }
 }
 #else

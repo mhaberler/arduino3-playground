@@ -100,13 +100,6 @@ typedef enum {
     UT_MAX
 } unit_t;
 
-// typedef enum {
-//     CT_NONE = 0,
-//     CT_OBSERVER,
-//     CT_WRITER,
-//     CT_URI,
-//     CT_MAX
-// } consumerType_t;
 
 String sanitizeLittleFSPath(const String &path);
 bool wipeLittleFS(void);
@@ -172,24 +165,22 @@ class Sensor {
 
 };
 
-// class Consumer {
-//   private:
-//     std::string _id;
-//     consumerType_t _ct;
-//     lv_subject_t *_subject;
-//     fs::File _f;
-//     std::string _uri;
+class Consumer {
+  private:
+    std::string _id;
+    unit_t _ut;
+    lv_subject_t *_subject;
+    fs::File _f;
+    std::string _uri;
 
-//   public:
-//     Consumer(const std::string& id, lv_subject_t *subject) : _id(id),_ct(CT_OBSERVER),_subject(subject) {};
-//     Consumer(const std::string& id, fs::File &f) : _id(id),_ct(CT_WRITER),_f(f) {};
-//     Consumer(const std::string& id, const std::string& uri) : _id(id),_ct(CT_WRITER),_f(f) {};
+  public:
+    Consumer(const std::string& id, lv_subject_t *subject) : _id(id),_ut(UT_OBSERVER),_subject(subject) {};
+    Consumer(const std::string& id, fs::File &f) : _id(id),_ut(UT_WRITER),_f(f) {};
+    Consumer(const std::string& id, const std::string& uri) : _id(id),_ut(UT_URI) {};
 
-//     bool configure(JsonObject *conf);
-//     void setType(const unit_t ut) {
-//         _ut = ut;
-//     };
-// };
+    bool configure(JsonObject *conf);
+
+};
 
 typedef unordered_set<Sensor*> SensorSet;
 
@@ -222,12 +213,12 @@ class Unit {
     };
 };
 
-class Consumer : public Unit {
-  private:
-    lv_subject_t *_subject;
-    fs::File _f;
-    std::string _uri;
-};
+// class Consumer : public Unit {
+//   private:
+//     lv_subject_t *_subject;
+//     fs::File _f;
+//     std::string _uri;
+// };
 
 typedef unordered_map<std::string, Unit *> UnitMap;
 

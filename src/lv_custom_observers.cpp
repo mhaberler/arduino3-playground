@@ -20,25 +20,24 @@ extern lv_subject_t uiMessage;
 extern  void animate_battery_icon(int32_t batval) {
     lv_color_t color = lv_palette_main(LV_PALETTE_GREY);
     const char *label = "?";
-    //     lv_subject_init_color(&battery_color, lv_palette_main(LV_PALETTE_RED));
-    // lv_subject_init_pointer(&battery_label, (void *)LV_SYMBOL_BATTERY_EMPTY);
     lv_style_selector_t sel = LV_PART_MAIN | LV_STATE_DEFAULT;
-
-    if (batval < 20) {
-        color = lv_palette_main(LV_PALETTE_RED);
-        label = LV_SYMBOL_BATTERY_EMPTY;
-    } else if (batval < 50) {
-        color = lv_palette_main(LV_PALETTE_RED);
-        label = LV_SYMBOL_BATTERY_1;
-    } else if (batval < 70) {
-        color = lv_palette_main(LV_PALETTE_DEEP_ORANGE);
-        label = LV_SYMBOL_BATTERY_2;
-    } else if (batval < 90) {
-        color = lv_palette_main(LV_PALETTE_GREEN);
-        label = LV_SYMBOL_BATTERY_3;
-    } else {
-        color = lv_palette_main(LV_PALETTE_GREEN);
-        label = LV_SYMBOL_BATTERY_FULL;
+    if (batval > -1) {
+        if (batval < 20) {
+            color = lv_palette_main(LV_PALETTE_RED);
+            label = LV_SYMBOL_BATTERY_EMPTY;
+        } else if (batval < 50) {
+            color = lv_palette_main(LV_PALETTE_RED);
+            label = LV_SYMBOL_BATTERY_1;
+        } else if (batval < 70) {
+            color = lv_palette_main(LV_PALETTE_DEEP_ORANGE);
+            label = LV_SYMBOL_BATTERY_2;
+        } else if (batval < 90) {
+            color = lv_palette_main(LV_PALETTE_GREEN);
+            label = LV_SYMBOL_BATTERY_3;
+        } else {
+            color = lv_palette_main(LV_PALETTE_GREEN);
+            label = LV_SYMBOL_BATTERY_FULL;
+        }
     }
     lv_obj_set_style_text_color(ui_BatteryStatus, color, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_label_set_text(ui_BatteryStatus, label);
@@ -60,7 +59,7 @@ static void ruuvi_report_cb(lv_subject_t *subject, lv_observer_t *observer) {
 }
 
 static lv_obj_t *previous_screen = ui_Main;
-//static
+
 
 // callbacks from the UI
 extern "C"
@@ -208,7 +207,6 @@ static void ui_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
                 int32_t batval = jdoc["v"].as<int32_t>();
                 // LV_LOG_USER("batval %d", batval);
                 animate_battery_icon(batval);
-
             }
             break;
         case UM_STATUS_SDCARD:

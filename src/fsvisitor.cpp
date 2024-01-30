@@ -30,6 +30,7 @@ static bool _fs_visit(fs::FS &fs, Stream &out, fs::File &f, uint32_t flags) {
         }
         return true; // continue
     }
+    return false;
 }
 
 void fsVisitor(fs::FS &fs, Stream &fmt, const char *topdir, uint32_t flags,
