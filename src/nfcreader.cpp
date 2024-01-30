@@ -98,6 +98,8 @@ analyseTag(NfcTag &tag, JsonDocument &doc) {
                 }
             }
             break;
+            
+        case MFRC522Constants::PICC_TYPE_MIFARE_4K:
         case MFRC522Constants::PICC_TYPE_MIFARE_1K:
         case MFRC522Constants::PICC_TYPE_MIFARE_UL: {
 
