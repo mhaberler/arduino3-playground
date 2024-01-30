@@ -1,5 +1,36 @@
 #include "Sensor.hpp"
+#include "fsVisitor.hpp"
 #include <LittleFS.h>
+
+bool Equipment::bleRegister(const NimBLEAddress &mac, Sensor *sp) {
+
+   Sensor *old =  _ble_sensors[mac];
+   _ble_sensors[mac] = sp;
+
+   if (old != NULL) {
+        delete old;
+   }
+   return true;
+}
+
+bool Equipment::bleDeliver(const bleAdvMsg_t &msg) {
+    NimBLEAddress mac = NimBLEAddress(msg.mac64);
+    Sensor *sp = _ble_sensors[mac];
+    if (sp) {
+        // log_e("deliver %s", mac.toString().c_str());
+        bool rc =  sp->bleAdvertisement(msg);
+        if (rc) {
+            Serial.printf("%s %s ", sp->unitName().c_str(), sp->fullName().c_str());
+            sp->print(Serial);
+        }
+    }
+    return false;
+}
+
+void Equipment::read(const char* dirname) {
+    fsVisitor(LittleFS, Serial, dirname, VA_DEBUG | VA_LOAD_CONFIG );
+
+}
 
 bool Equipment::addUnit(JsonObject conf, bool save) {
     std::string id = conf["id"];
@@ -9,7 +40,7 @@ bool Equipment::addUnit(JsonObject conf, bool save) {
         return false;
     }
     Unit *u = new Unit(id);
-    if (u->configure(&conf)) {
+    if (u->configure(*this, &conf)) {
         // delete previous unit
         if (_units[id]) {
             delete _units[id];

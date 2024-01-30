@@ -42,10 +42,6 @@ bool wipeLittleFS(void) {
     // fsVisitor(LittleFS, Serial, dirname, VA_DEBUG | VA_ERASE_FILES );
 }
 
-void readEquipment(const char* dirname) {
-    fsVisitor(LittleFS, Serial, dirname, VA_DEBUG | VA_LOAD_CONFIG );
-}
-
 bool wipe_lfs(void) {
     if (LittleFS.begin(false)) {
         return LittleFS.format();
@@ -56,7 +52,7 @@ bool wipe_lfs(void) {
 void process_ble() {
     bleAdvMsg_t msg;
     if (xQueueReceive(bleadv_queue, (void *)&msg, 0) == pdTRUE) {
-        bleDeliver(msg);
+        equipment.bleDeliver(msg);
     }
 }
 
@@ -66,7 +62,7 @@ void read_config(void) {
         return;
     }
     LittleFS.mkdir(TOPDIR); // just in case
-    readEquipment(TOPDIR);
+    equipment.read(TOPDIR);
 }
 
 void init_sensors(void) {

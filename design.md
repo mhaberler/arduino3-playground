@@ -61,17 +61,17 @@ typedef enum {
 } unit_t;
 
 typedef enum {
-    ST_NONE = 0,
-    ST_RUUVI,
-    ST_MOPEKA,
-    ST_TPMS,
-    ST_GPS,
-    ST_FLOWSENSOR,
-    ST_BARO,
-    ST_IMU,
-    ST_MAGNETOMETER,
-    ST_MQTT_SUBSCRIPTION,
-    ST_MAX
+    AT_NONE = 0,
+    AT_RUUVI,
+    AT_MOPEKA,
+    AT_TPMS,
+    AT_GPS,
+    AT_FLOWSENSOR,
+    AT_BARO,
+    AT_IMU,
+    AT_MAGNETOMETER,
+    AT_MQTT_SUBSCRIPTION,
+    AT_MAX
 } actorType_t;
 
 // Sensor reporting aspect
@@ -111,13 +111,13 @@ Tank: Unit and Representation example
         "rem": "oranges Tag",			// tag text
         "sensors": [					// list of sensors observing this unit
             {
-                "st": 2,				// ST_MOPEKA, see actorType_t
+                "st": 2,				// AT_MOPEKA, see actorType_t
                 "mac": "D8:C6:11:CA:12:55",	// unique id is the MAC address of this sensor
                 "min": 100,			// fuel level for empty tank, to compute usage in %
                 "max": 857				// fuel level for full tank
             },
             {
-                "st": 3,				// ST_TPMS, fuel pressure 
+                "st": 3,				// AT_TPMS, fuel pressure 
                 "mac": "80:EA:CA:11:79:6F"  // unique id is the MAC address of this sensor
             }
         ]
@@ -150,7 +150,7 @@ Tracker: Unit and MQTT Sensor example
         "dsc": "Haberler's Landcruiser",	// descriptive text for UI porposes
         "sensors": [					// list of sensors observing this unit
             {
-                "st": 9,				// ST_MQTT_SUBSCRIPTION, see actorType_t
+                "st": 9,				// AT_MQTT_SUBSCRIPTION, see actorType_t
                 "id": "mqtt://mybroker.com/vehicle/tracker", // unique id is the MQTT subscription
             }
         ]

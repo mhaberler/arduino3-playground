@@ -48,39 +48,39 @@ typedef enum {
 // NB: keep in sync with sensorTypeText()
 
 typedef enum {
-    ST_NONE = 0,
-    ST_RUUVI,
-    ST_MOPEKA,
-    ST_TPMS,
-    ST_GPS,
-    ST_FLOWSENSOR,
-    ST_BARO,
-    ST_IMU,
-    ST_MAGNETOMETER,
-    ST_MQTT_SUBSCRIPTION,
-    ST_MAX
+    AT_NONE = 0,
+    AT_RUUVI,
+    AT_MOPEKA,
+    AT_TPMS,
+    AT_GPS,
+    AT_FLOWSENSOR,
+    AT_BARO,
+    AT_IMU,
+    AT_MAGNETOMETER,
+    AT_MQTT_SUBSCRIPTION,
+    AT_MAX
 } actorType_t;
 
 typedef enum {
-    AT_NONE,
-    AT_TEMPERATURE,
-    AT_SENSOR_TEMPERATURE,
-    AT_SENSOR_BATTERY_STATUS,
-    AT_HUMIDITY,
-    AT_FLOW,
-    AT_BURNER_ON,
-    AT_BURNER_OFF,
-    AT_BURNER_DURATION,
-    AT_PRESSURE,
-    AT_VOLTAGE,
-    AT_CURRENT,
-    AT_LONGITUDE,
-    AT_LATITUDE,
-    AT_ALTITUDE,
-    AT_HSPEED,
-    AT_VSPEED,
-    AT_VACCEL,
-    AT_MAX
+    ASPT_NONE,
+    ASPT_TEMPERATURE,
+    ASPT_SENSOR_TEMPERATURE,
+    ASPT_SENSOR_BATTERY_STATUS,
+    ASPT_HUMIDITY,
+    ASPT_FLOW,
+    ASPT_BURNER_ON,
+    ASPT_BURNER_OFF,
+    ASPT_BURNER_DURATION,
+    ASPT_PRESSURE,
+    ASPT_VOLTAGE,
+    ASPT_CURRENT,
+    ASPT_LONGITUDE,
+    ASPT_LATITUDE,
+    ASPT_ALTITUDE,
+    ASPT_HSPEED,
+    ASPT_VSPEED,
+    ASPT_VACCEL,
+    ASPT_MAX
 } aspect_t;
 
 // NB: keep in sync with unitText()
@@ -247,7 +247,7 @@ class Unit {
 
     // dtor: delete sensors!!
     //
-    bool configure(JsonObject *conf);
+    bool configure(Equipment &eq, JsonObject *conf);
     uint32_t created(void) {
         return _created;
     };
@@ -267,19 +267,22 @@ class Unit {
 //     std::string _uri;
 // };
 
-typedef unordered_map<std::string, Unit *> UnitMap;
-
 class Equipment {
   private:
-    UnitMap _units;
+    unordered_map<std::string, Unit *> _units;
+    unordered_map<NimBLEAddress, Sensor *> _ble_sensors;
     const char *_topdir;
     bool _saveUnit(const std::string &id, const JsonArray &array);
 
   public:
     Equipment(const char *topdir) : _topdir(topdir) {};
+    void read(const char* dirname);
     bool addUnit(const char *path);
     bool addUnit(JsonObject conf, bool save = true);
     void dump(Stream &s);
+    bool bleDeliver(const bleAdvMsg_t &msg);
+    bool bleRegister(const NimBLEAddress &mac, Sensor *sp);
+
 };
 
 class Ruuvi : public BLESensor {
@@ -287,7 +290,7 @@ class Ruuvi : public BLESensor {
     ruuviAd_t _ruuvi_report;
   public:
     Ruuvi(Unit *u) : BLESensor(u)  {
-        _type = ST_RUUVI;
+        _type = AT_RUUVI;
     };
     void print(Print &p, format_t format = FMT_TEXT);
     void setOnUpdate(std::function<void(const char *value)> onUpdate, aspect_t what ) {}
@@ -317,7 +320,7 @@ class Mopeka : public BLESensor {
                  const size_t len, mopekaAd_t &ma);
   public:
     Mopeka(Unit *u) : BLESensor(u) {
-        _type = ST_MOPEKA;
+        _type = AT_MOPEKA;
     };
     void print(Print &p, format_t format = FMT_TEXT);
     void setOnUpdate(std::function<void(const char *value)> onUpdate, aspect_t what ) {}
@@ -345,7 +348,7 @@ class TPMS : public  BLESensor {
 
   public:
     TPMS(Unit *u) : BLESensor(u) {
-        _type = ST_TPMS;
+        _type = AT_TPMS;
     };
     void print(Print &p, format_t format = FMT_TEXT);
     void setOnUpdate(std::function<void(const char *value)> onUpdate, aspect_t what ) {}

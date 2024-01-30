@@ -17,7 +17,7 @@ bool Mopeka::configure(JsonObject conf) {
         _max_mm = conf["max"].as<int16_t>();
     }
     // Serial.printf("CONFIGURE type=%u mac=%s\n", (unsigned)_type, _macAddress.toString().c_str());
-    return (type() != ST_NONE);
+    return (type() != AT_NONE);
 };
 
 bool Mopeka::_decode(const uint8_t *data,

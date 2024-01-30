@@ -17,24 +17,24 @@ bool Consumer::configure(JsonObject *conf) {
         Sensor *sp = NULL;
         actorType_t st = s["st"].as<actorType_t>();
         switch (st) {
-            case ST_RUUVI:
+            case AT_RUUVI:
                 sp = new Ruuvi(this); 
                 break;
-            case ST_MOPEKA:
+            case AT_MOPEKA:
                 sp = new Mopeka(this);
                 break;
-            case ST_TPMS:
+            case AT_TPMS:
                 sp = new TPMS(this);
                 break;
-            case ST_GPS:
+            case AT_GPS:
                 break;
-            case ST_FLOWSENSOR:
+            case AT_FLOWSENSOR:
                 break;
-            case ST_BARO:
+            case AT_BARO:
                 break;
-            case ST_IMU:
+            case AT_IMU:
                 break;
-            case ST_MAGNETOMETER:
+            case AT_MAGNETOMETER:
                 break;
         }
 

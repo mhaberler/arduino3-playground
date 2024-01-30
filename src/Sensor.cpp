@@ -29,7 +29,7 @@ bool Sensor::configure(JsonObject conf)  {
         setAddress(conf["MAC"].as< std::string>());
     }
     // Serial.printf("CONFIGURE type=%u mac=%s\n": return ""; (unsigned)_type: return ""; _macAddress.toString().c_str());
-    return (_type != ST_NONE);
+    return (_type != AT_NONE);
 }
 
 // const  std::string& Sensor::name(void) {
@@ -61,21 +61,21 @@ const char *unitTypeStr(const unit_t ut) {
 
 const char *sensorTypeStr(const actorType_t st) {
     switch (st) {
-        case ST_RUUVI:
+        case AT_RUUVI:
             return "Ruuvi";
-        case ST_MOPEKA:
+        case AT_MOPEKA:
             return "Mopeka";
-        case ST_TPMS:
+        case AT_TPMS:
             return "TPMS";
-        case ST_GPS:
+        case AT_GPS:
             return "GPS";
-        case ST_FLOWSENSOR:
+        case AT_FLOWSENSOR:
             return "Fuel Flow";
-        case ST_BARO:
+        case AT_BARO:
             return "Barometer";
-        case ST_IMU:
+        case AT_IMU:
             return "IMU";
-        case ST_MAGNETOMETER:
+        case AT_MAGNETOMETER:
             return "Magnetometer";
         default:
             return "?";

@@ -1,10 +1,10 @@
 #include "Sensor.hpp"
 #include "blescan.hpp"
 
-unordered_map<NimBLEAddress, Sensor *> ble_sensors;
+
 const NimBLEAddress null_mac;
 
-bool Unit::configure(JsonObject *conf) {
+bool Unit::configure(Equipment &eq, JsonObject *conf) {
     log_e("Unit::configure");
 
     serializeJson((*conf),Serial);
@@ -20,24 +20,24 @@ bool Unit::configure(JsonObject *conf) {
         Sensor *sp = NULL;
         actorType_t st = s["st"].as<actorType_t>();
         switch (st) {
-            case ST_RUUVI:
+            case AT_RUUVI:
                 sp = new Ruuvi(this); 
                 break;
-            case ST_MOPEKA:
+            case AT_MOPEKA:
                 sp = new Mopeka(this);
                 break;
-            case ST_TPMS:
+            case AT_TPMS:
                 sp = new TPMS(this);
                 break;
-            case ST_GPS:
+            case AT_GPS:
                 break;
-            case ST_FLOWSENSOR:
+            case AT_FLOWSENSOR:
                 break;
-            case ST_BARO:
+            case AT_BARO:
                 break;
-            case ST_IMU:
+            case AT_IMU:
                 break;
-            case ST_MAGNETOMETER:
+            case AT_MAGNETOMETER:
                 break;
         }
 
@@ -49,7 +49,7 @@ bool Unit::configure(JsonObject *conf) {
                               id.c_str(),
                               sensorTypeStr(st),
                               sp->mac().toString().c_str());
-                ble_sensors[sp->mac()] = sp;
+                eq.bleRegister(sp->mac(), sp);
             }
         }
     }
@@ -83,20 +83,20 @@ void Unit::print(Print &p, format_t format) {}
 //     return addUnit(config.as<JsonObject>());
 // }
 
-bool bleDeliver(const bleAdvMsg_t &msg) {
+// bool bleDeliver(const bleAdvMsg_t &msg) {
 
-    NimBLEAddress mac = NimBLEAddress(msg.mac64);
-    Sensor *sp = ble_sensors[mac];
-    if (sp) {
-        // log_e("deliver %s", mac.toString().c_str());
-        bool rc =  sp->bleAdvertisement(msg);
-        if (rc) {
-            Serial.printf("%s %s ", sp->unitName().c_str(), sp->fullName().c_str());
-            sp->print(Serial);
-        }
-    }
-    return false;
-}
+//     NimBLEAddress mac = NimBLEAddress(msg.mac64);
+//     Sensor *sp = ble_sensors[mac];
+//     if (sp) {
+//         // log_e("deliver %s", mac.toString().c_str());
+//         bool rc =  sp->bleAdvertisement(msg);
+//         if (rc) {
+//             Serial.printf("%s %s ", sp->unitName().c_str(), sp->fullName().c_str());
+//             sp->print(Serial);
+//         }
+//     }
+//     return false;
+// }
 
 uint8_t volt2percent(const float v) {
     // convert voltage and scale for CR2032
