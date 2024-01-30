@@ -59,7 +59,7 @@ typedef enum {
     ST_MAGNETOMETER,
     ST_MQTT_SUBSCRIPTION,
     ST_MAX
-} sensorType_t;
+} actorType_t;
 
 typedef enum {
     AT_NONE,
@@ -100,16 +100,17 @@ typedef enum {
     UT_MAX
 } unit_t;
 
+extern  const NimBLEAddress null_mac;
 
 String sanitizeLittleFSPath(const String &path);
 bool wipeLittleFS(void);
 uint8_t volt2percent(const float volt);
 bool bleDeliver(const bleAdvMsg_t &msg);
 
-const char *sensorTypeStr(const sensorType_t sensorType);
+const char *sensorTypeStr(const actorType_t sensorType);
 const char *unitTypeStr(const unit_t unitType);
 
-void convertFromJson(JsonVariantConst src, sensorType_t& dst);
+void convertFromJson(JsonVariantConst src, actorType_t& dst);
 void convertFromJson(JsonVariantConst src, NimBLEAddress& dst);
 
 void convertToJson(const ruuviAd_t & src, JsonVariant dst);
@@ -127,35 +128,60 @@ int32_t getInt32LE(const uint8_t *data, int index);
 class Unit;
 class Equipment;
 class Consumer;
+class Producer;
 
-class Sensor {
+class Binding {
   private:
-    sensorMode_t _mode;
-    format_t _format;
-    uint32_t _created; // timestamp
+  public:
+    bool link(Producer &p, Consumer &c);
+    bool link(Unit &src, Consumer &c);
+    bool link(Unit &src, Unit &dst);
+
+};
+
+typedef unordered_set<Binding*> BindingSet;
+
+class Actor { // abstract base class of Sensor, Actuator
+  private:
   protected:
-    NimBLEAddress _macAddress;
+    actorType_t _type;
     Unit *_unit;
-    sensorType_t _type;
+    uint32_t _created; // timestamp
 
   public:
-    Sensor(Unit *u) : _created(millis()), _unit(u) {
+
+};
+
+class Producer : public Actor {
+
+};
+
+class Consumer : public Actor {
+
+};
+
+class Sensor : public Producer {
+  private:
+    // sensorMode_t _mode;
+    format_t _format;
+
+  public:
+    Sensor(Unit *u)  {
+        _created = millis();
+        _unit = u;
     };
-    void setAddress(NimBLEAddress &mac) {
-        _macAddress = mac;
-    };
-    void setAddress(const std::string &mac) {
-        _macAddress = NimBLEAddress(mac);
-    };
+
     uint32_t created(void) {
         return _created;
     };
     virtual uint32_t lastChange(void) = 0;
     virtual void print(Print &p, format_t format = FMT_TEXT) = 0;
-    sensorMode_t mode();
-    sensorType_t type();
+    // sensorMode_t mode();
+    actorType_t type();
     format_t format();
-    NimBLEAddress & mac();
+    const NimBLEAddress & mac() {
+        return null_mac;
+    }
     bool configure(JsonObject conf);
     virtual bool bleAdvertisement(const bleAdvMsg_t  &msg) = 0;
     virtual const  std::string name(void) = 0;
@@ -163,30 +189,56 @@ class Sensor {
     virtual  const std::string id(void) = 0;
     const  std::string unitName(void);
 
+    void setAddress(NimBLEAddress &mac) {};
+    void setAddress(const std::string &mac) {};
 };
 
-class Consumer {
-  private:
-    std::string _id;
-    unit_t _ut;
-    lv_subject_t *_subject;
-    fs::File _f;
-    std::string _uri;
-
+class BLESensor : public Sensor {
+  protected:
+    NimBLEAddress _macAddress;
   public:
-    Consumer(const std::string& id, lv_subject_t *subject) : _id(id),_ut(UT_OBSERVER),_subject(subject) {};
-    Consumer(const std::string& id, fs::File &f) : _id(id),_ut(UT_WRITER),_f(f) {};
-    Consumer(const std::string& id, const std::string& uri) : _id(id),_ut(UT_URI) {};
+    BLESensor(Unit *u) : Sensor(u) {};
+    void setAddress(NimBLEAddress &mac) {
+        _macAddress = mac;
+    };
+    void setAddress(const std::string &mac) {
+        _macAddress = NimBLEAddress(mac);
+    };
+    const NimBLEAddress &mac();
+};
 
-    bool configure(JsonObject *conf);
+class PollingSensor : public Sensor {  // I2C etc
 
 };
 
-typedef unordered_set<Sensor*> SensorSet;
+class ActiveSensor : public Sensor {  // GPS, URI etc - no polling needed
+
+};
+
+// class Consumer {
+//   private:
+//     std::string _id;
+//     unit_t _ut;
+//     lv_subject_t *_subject;
+//     fs::File _f;
+//     std::string _uri;
+
+//   public:
+//     Consumer(const std::string& id, lv_subject_t *subject) : _id(id),_ut(UT_OBSERVER),_subject(subject) {};
+//     Consumer(const std::string& id, fs::File &f) : _id(id),_ut(UT_WRITER),_f(f) {};
+//     Consumer(const std::string& id, const std::string& uri) : _id(id),_ut(UT_URI) {};
+
+//     bool configure(JsonObject *conf);
+
+// };
+
+typedef unordered_set<Actor*> ActorSet;
 
 class Unit {
   private:
-    SensorSet _sensorset;
+    ActorSet _actorset;
+    BindingSet _binding_set;
+
     std::string _id;
     unit_t _ut;
     uint32_t _created; // timestamp
@@ -200,16 +252,11 @@ class Unit {
         return _created;
     };
     void print(Print &p, format_t format = FMT_TEXT);
-    void add(Sensor *s);
-    Sensor *get(sensorType_t st);
     void setType(const unit_t ut) {
         _ut = ut;
     };
-    unit_t getType(void) {
-        return _ut;
-    };
     const  std::string name(void) {
-        return std::string(unitTypeStr(getType())) + ":" + _id;
+        return std::string(unitTypeStr(_ut)) + ":" + _id;
     };
 };
 
@@ -235,11 +282,11 @@ class Equipment {
     void dump(Stream &s);
 };
 
-class Ruuvi : public Sensor {
+class Ruuvi : public BLESensor {
   private:
     ruuviAd_t _ruuvi_report;
   public:
-    Ruuvi(Unit *u) : Sensor(u) {
+    Ruuvi(Unit *u) : BLESensor(u)  {
         _type = ST_RUUVI;
     };
     void print(Print &p, format_t format = FMT_TEXT);
@@ -261,7 +308,7 @@ class Ruuvi : public Sensor {
     }
 };
 
-class Mopeka : public Sensor {
+class Mopeka : public BLESensor {
   private:
     mopekaAd_t _mopeka_report;
     uint16_t _min_mm = 100;
@@ -269,7 +316,7 @@ class Mopeka : public Sensor {
     bool _decode(const uint8_t *data,
                  const size_t len, mopekaAd_t &ma);
   public:
-    Mopeka(Unit *u) : Sensor(u) {
+    Mopeka(Unit *u) : BLESensor(u) {
         _type = ST_MOPEKA;
     };
     void print(Print &p, format_t format = FMT_TEXT);
@@ -289,14 +336,15 @@ class Mopeka : public Sensor {
     const std::string fullName(void) {
         return name() + ":" + id();
     }
+
 };
 
-class TPMS : public  Sensor {
+class TPMS : public  BLESensor {
   private:
     tpmsAd_t _tpms_report;
 
   public:
-    TPMS(Unit *u) : Sensor(u) {
+    TPMS(Unit *u) : BLESensor(u) {
         _type = ST_TPMS;
     };
     void print(Print &p, format_t format = FMT_TEXT);
@@ -317,19 +365,27 @@ class TPMS : public  Sensor {
     }
 };
 
-class GPS : public Sensor {
-  public:
+// class GPS : public Sensor {
+//   public:
 
-};
+// };
 
-class Barometer : public Sensor {
-  public:
+// class Barometer : public Sensor {
+//   public:
 
-};
+// };
 
-class IMU : public Sensor {
-  public:
+// class IMU : public Sensor {
+//   public:
 
-};
+// };
+
+// class UIElement : public Consumer {
+
+// };
+
+// class Actuator : public Consumer {
+
+// };
 
 extern Equipment equipment;

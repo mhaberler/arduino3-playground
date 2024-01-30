@@ -18,7 +18,7 @@ bool Unit::configure(JsonObject *conf) {
 
     for(JsonObject s: sensors) {
         Sensor *sp = NULL;
-        sensorType_t st = s["st"].as<sensorType_t>();
+        actorType_t st = s["st"].as<actorType_t>();
         switch (st) {
             case ST_RUUVI:
                 sp = new Ruuvi(this); 
@@ -42,7 +42,7 @@ bool Unit::configure(JsonObject *conf) {
         }
 
         if (sp && sp->configure(s)) {
-            _sensorset.insert(sp);
+            _actorset.insert(sp);
             if (sp->mac() != null_mac) {
                 Serial.printf("add BLE %s:%s %s:%s\n",
                               unitTypeStr(ut),
@@ -59,11 +59,11 @@ bool Unit::configure(JsonObject *conf) {
 
 void Unit::print(Print &p, format_t format) {}
 
-void Unit::add(Sensor *s) {
-    _sensorset.insert(s);
-};
+// void Unit::add(Sensor *s) {
+//     _actorset.insert(s);
+// };
 
-// Unit *setupUnit(const unit_t unit, const sensorType_t sensorType, const std::string &mac) {
+// Unit *setupUnit(const unit_t unit, const actorType_t sensorType, const std::string &mac) {
 //     JsonDocument config;
 //     switch (unit) {
 //         case UT_ENVELOPE:
@@ -110,8 +110,8 @@ uint8_t volt2percent(const float v) {
     return (uint8_t) percent;
 }
 
-void convertFromJson(JsonVariantConst src, sensorType_t& dst) {
-    dst = (sensorType_t) src.as<unsigned int>();
+void convertFromJson(JsonVariantConst src, actorType_t& dst) {
+    dst = (actorType_t) src.as<unsigned int>();
 }
 
 void convertFromJson(JsonVariantConst src, NimBLEAddress& dst) {

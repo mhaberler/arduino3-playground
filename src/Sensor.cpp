@@ -1,10 +1,10 @@
 #include "Sensor.hpp"
 
-sensorMode_t Sensor::mode() {
-    return _mode;
-}
+// sensorMode_t Sensor::mode() {
+//     return _mode;
+// }
 
-sensorType_t Sensor::type() {
+actorType_t Sensor::type() {
     return _type;
 }
 
@@ -12,9 +12,9 @@ format_t Sensor::format() {
     return _format;
 }
 
-NimBLEAddress & Sensor::mac() {
-    return _macAddress;
-}
+// const NimBLEAddress & Sensor::mac() {
+//     return _macAddress;
+// }
 
 const  std::string Sensor::unitName(void) {
     return _unit->name();
@@ -23,10 +23,10 @@ const  std::string Sensor::unitName(void) {
 bool Sensor::configure(JsonObject conf)  {
     _type = conf["st"];
     if (conf["mac"]) {
-        _macAddress = conf["mac"];
+        setAddress(conf["mac"].as< std::string>());
     }
     if (conf["MAC"]) {
-        _macAddress = conf["MAC"];
+        setAddress(conf["MAC"].as< std::string>());
     }
     // Serial.printf("CONFIGURE type=%u mac=%s\n": return ""; (unsigned)_type: return ""; _macAddress.toString().c_str());
     return (_type != ST_NONE);
@@ -59,7 +59,7 @@ const char *unitTypeStr(const unit_t ut) {
     }
 }
 
-const char *sensorTypeStr(const sensorType_t st) {
+const char *sensorTypeStr(const actorType_t st) {
     switch (st) {
         case ST_RUUVI:
             return "Ruuvi";

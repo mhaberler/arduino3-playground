@@ -72,7 +72,7 @@ typedef enum {
     ST_MAGNETOMETER,
     ST_MQTT_SUBSCRIPTION,
     ST_MAX
-} sensorType_t;
+} actorType_t;
 
 // Sensor reporting aspect
 typedef enum {
@@ -111,7 +111,7 @@ Tank: Unit and Representation example
         "rem": "oranges Tag",			// tag text
         "sensors": [					// list of sensors observing this unit
             {
-                "st": 2,				// ST_MOPEKA, see sensorType_t
+                "st": 2,				// ST_MOPEKA, see actorType_t
                 "mac": "D8:C6:11:CA:12:55",	// unique id is the MAC address of this sensor
                 "min": 100,			// fuel level for empty tank, to compute usage in %
                 "max": 857				// fuel level for full tank
@@ -150,7 +150,7 @@ Tracker: Unit and MQTT Sensor example
         "dsc": "Haberler's Landcruiser",	// descriptive text for UI porposes
         "sensors": [					// list of sensors observing this unit
             {
-                "st": 9,				// ST_MQTT_SUBSCRIPTION, see sensorType_t
+                "st": 9,				// ST_MQTT_SUBSCRIPTION, see actorType_t
                 "id": "mqtt://mybroker.com/vehicle/tracker", // unique id is the MQTT subscription
             }
         ]

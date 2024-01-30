@@ -184,7 +184,7 @@ static void ui_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
                     JsonArray sensors = u["sensors"].as<JsonArray>();
                     for(JsonObject s: sensors) {
                         body += "  ";
-                        body += sensorTypeStr(s["st"].as<sensorType_t>());
+                        body += sensorTypeStr(s["st"].as<actorType_t>());
                         body += ":";
                         body += s["mac"].as<const char *>();
                         body += "\n";

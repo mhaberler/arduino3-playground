@@ -15,7 +15,7 @@ bool Consumer::configure(JsonObject *conf) {
 
     for(JsonObject s: sensors) {
         Sensor *sp = NULL;
-        sensorType_t st = s["st"].as<sensorType_t>();
+        actorType_t st = s["st"].as<actorType_t>();
         switch (st) {
             case ST_RUUVI:
                 sp = new Ruuvi(this); 
@@ -39,7 +39,7 @@ bool Consumer::configure(JsonObject *conf) {
         }
 
         if (sp && sp->configure(s)) {
-            _sensorset.insert(sp);
+            _actorset.insert(sp);
             if (sp->mac() != null_mac) {
                 Serial.printf("add BLE %s:%s %s:%s\n",
                               unitTypeStr(ut),
