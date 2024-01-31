@@ -16,7 +16,8 @@
 #include "tpms.h"
 #include "lv_observer.h"
 
-#define TOPDIR "/equipment"
+#define EQUIPMENT_DIR "/equipment"
+#define BINDING_DIR "/binding"
 
 using namespace std;
 
@@ -93,10 +94,10 @@ typedef enum {
     UT_AIRCRAFT,
     UT_VEHICLE,
 
-    UT_OBSERVER,
+    UT_OBSERVER,  // 7
     UT_WRITER,
     UT_URI,
-    UT_BINDING,
+    UT_BINDING, // 10
     UT_MAX
 } unit_t;
 
@@ -136,7 +137,8 @@ class Binding {
     bool link(Producer &p, Consumer &c);
     bool link(Unit &src, Consumer &c);
     bool link(Unit &src, Unit &dst);
-
+    bool link(actorType_t &src, Unit &);
+    bool link(actorType_t &src, actorType_t &to);
 };
 
 typedef unordered_set<Binding*> BindingSet;
@@ -275,7 +277,7 @@ class Equipment {
     bool _saveUnit(const std::string &id, const JsonArray &array);
 
   public:
-    Equipment(const char *topdir) : _topdir(topdir) {};
+    // Equipment(const char *topdir) : _topdir(topdir) {};
     void read(const char* dirname);
     bool addUnit(const char *path);
     bool addUnit(JsonObject conf, bool save = true);

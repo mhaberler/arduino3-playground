@@ -1,12 +1,12 @@
 [
     {
         "id" : "tempuser",
-        "ut" : 8, // UT_BINDING
+        "ut" : 10,
         "src" : "env1",
         "dts" : [
             "ui_temp",
             "log",
-            "mqttpush",
+            "mqttpush"
         ]
     }
 ]
