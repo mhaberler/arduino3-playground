@@ -58,3 +58,11 @@ def wipeConfig(event_struct):
 def ruuviCancel(event_struct):
     return
 
+
+def ruuviEnvelope(event_struct):
+    return
+
+
+def ruuviOAT(event_struct):
+    return
+

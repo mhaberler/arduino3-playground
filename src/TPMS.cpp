@@ -10,7 +10,7 @@ void TPMS::print(Print &p, format_t format) {
 }
 
 bool TPMS::configure(JsonObject conf) {
-    return Sensor::configure(conf);
+    return BLESensor::configure(conf);
 };
 
 bool  TPMS::bleAdvertisement(const bleAdvMsg_t  &msg) {

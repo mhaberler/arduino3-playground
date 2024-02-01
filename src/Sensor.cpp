@@ -16,18 +16,19 @@ format_t Sensor::format() {
 //     return _macAddress;
 // }
 
+
+void Sensor::dump(Stream &s) {
+    s.printf("--%s\n", fullName().c_str());
+}
+
 const  std::string Sensor::unitName(void) {
-    return _unit->name();
+    return _unit->id();
 }
 
 bool Sensor::configure(JsonObject conf)  {
     _type = conf["st"];
-    if (conf["mac"]) {
-        setAddress(conf["mac"].as< std::string>());
-    }
-    if (conf["MAC"]) {
-        setAddress(conf["MAC"].as< std::string>());
-    }
+    
+    log_e("------> Sensor::configure");
     // Serial.printf("CONFIGURE type=%u mac=%s\n": return ""; (unsigned)_type: return ""; _macAddress.toString().c_str());
     return (_type != AT_NONE);
 }

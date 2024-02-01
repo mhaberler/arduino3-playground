@@ -78,7 +78,7 @@ void Ruuvi::print(Print &p, format_t format) {
 }
 
 bool Ruuvi::configure(JsonObject conf) {
-    return Sensor::configure(conf);
+    return BLESensor::configure(conf);
 };
 
 bool  Ruuvi::bleAdvertisement(const bleAdvMsg_t  &msg) {

@@ -8,7 +8,7 @@ void Mopeka::print(Print &p, format_t format) {
 }
 
 bool Mopeka::configure(JsonObject conf) {
-    if (!Sensor::configure(conf))
+    if (!BLESensor::configure(conf))
         return false;
     if (conf["min"]) {
         _min_mm = conf["min"].as<int16_t>();

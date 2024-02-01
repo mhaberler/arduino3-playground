@@ -6,7 +6,10 @@
 #include <FS.h>
 #include <list>
 #include <set>
+#include <array>
+#include <vector>
 #include <unordered_map>
+#include <unordered_set>
 #include "NimBLEAddress.h"
 #include "blescan.hpp"
 #include "esp_log.h"
@@ -125,6 +128,8 @@ uint8_t getUint8(const uint8_t *data, int index);
 int8_t getInt8(const uint8_t *data, int index);
 int32_t getInt32LE(const uint8_t *data, int index);
 
+typedef unordered_set<const std::string> StringTable_t;
+
 class Unit;
 class Equipment;
 class Consumer;
@@ -148,7 +153,13 @@ class Actor { // abstract base class of Sensor, Actuator
     uint32_t _created; // timestamp
 
   public:
-
+    virtual bool configure(JsonObject conf) = 0;
+    virtual void dump(Stream &s)  = 0;
+    virtual const std::string id(void) = 0;
+    virtual const NimBLEAddress & mac() {
+        log_e("Actor:mac)");
+        return null_mac;
+    }
 };
 
 class Producer : public Actor {
@@ -158,7 +169,6 @@ class Producer : public Actor {
 class Consumer : public Actor {
 
 };
-
 
 // class Consumer {
 //   private:
@@ -176,8 +186,6 @@ class Consumer : public Actor {
 //     bool configure(JsonObject *conf);
 
 // };
-
-
 
 class Sensor : public Producer {
   private:
@@ -198,18 +206,14 @@ class Sensor : public Producer {
     // sensorMode_t mode();
     actorType_t type();
     format_t format();
-    const NimBLEAddress & mac() {
-        return null_mac;
-    }
+    void dump(Stream &s) override;
+
     bool configure(JsonObject conf);
     virtual bool bleAdvertisement(const bleAdvMsg_t  &msg) = 0;
     virtual const  std::string name(void) = 0;
     virtual const  std::string fullName(void) = 0;
     virtual  const std::string id(void) = 0;
     const  std::string unitName(void);
-
-    void setAddress(NimBLEAddress &mac) {};
-    void setAddress(const std::string &mac) {};
 };
 
 class BLESensor : public Sensor {
@@ -217,13 +221,9 @@ class BLESensor : public Sensor {
     NimBLEAddress _macAddress;
   public:
     BLESensor(Unit *u) : Sensor(u) {};
-    void setAddress(NimBLEAddress &mac) {
-        _macAddress = mac;
-    };
-    void setAddress(const std::string &mac) {
-        _macAddress = NimBLEAddress(mac);
-    };
-    const NimBLEAddress &mac();
+    bool configure(JsonObject conf);
+    const std::string id(void);
+    const NimBLEAddress & mac();
 };
 
 class PollingSensor : public Sensor {  // I2C etc
@@ -239,6 +239,8 @@ class Unit {
     std::string _id;
     unit_t _ut;
     uint32_t _created; // timestamp
+    std::unordered_map< std::string, Actor *> _actor_map;
+
   public:
     Unit( std::string id) : _id(id),_created(millis()) {};
 
@@ -249,10 +251,11 @@ class Unit {
         return _created;
     };
     void print(Print &p, format_t format = FMT_TEXT);
+    void dump(Stream &s);
     void setType(const unit_t ut) {
         _ut = ut;
     };
-    const  std::string name(void) {
+    const  std::string id(void) {
         return std::string(unitTypeStr(_ut)) + ":" + _id;
     };
 };
@@ -291,7 +294,7 @@ class Ruuvi : public BLESensor {
     };
     void print(Print &p, format_t format = FMT_TEXT);
     void setOnUpdate(std::function<void(const char *value)> onUpdate, aspect_t what ) {}
-    bool configure(JsonObject conf);
+    bool configure(JsonObject conf) override;
     bool bleAdvertisement(const bleAdvMsg_t  &msg);
     uint32_t lastChange(void) {
         return _ruuvi_report.lastchange;

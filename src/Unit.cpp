@@ -1,8 +1,15 @@
 #include "Sensor.hpp"
 #include "blescan.hpp"
 
-
 const NimBLEAddress null_mac;
+
+void Unit::dump(Stream &s) {
+    for(auto a: _actor_map) {
+        s.printf("\tactor '%s': ", a.first.c_str());
+        a.second->dump(Serial);
+        s.printf("\n");
+    }
+}
 
 bool Unit::configure(Equipment &eq, JsonObject *conf) {
     log_e("Unit::configure");
@@ -21,7 +28,7 @@ bool Unit::configure(Equipment &eq, JsonObject *conf) {
         actorType_t st = s["st"].as<actorType_t>();
         switch (st) {
             case AT_RUUVI:
-                sp = new Ruuvi(this); 
+                sp = new Ruuvi(this);
                 break;
             case AT_MOPEKA:
                 sp = new Mopeka(this);
@@ -42,6 +49,7 @@ bool Unit::configure(Equipment &eq, JsonObject *conf) {
         }
 
         if (sp && sp->configure(s)) {
+            _actor_map[sp->id()] = sp;
             if (sp->mac() != null_mac) {
                 Serial.printf("add BLE %s:%s %s:%s\n",
                               unitTypeStr(ut),
@@ -54,7 +62,6 @@ bool Unit::configure(Equipment &eq, JsonObject *conf) {
     }
     return true;
 }
-
 
 void Unit::print(Print &p, format_t format) {}
 
