@@ -6,7 +6,6 @@
 #include <FS.h>
 #include <list>
 #include <set>
-#include <unordered_set>
 #include <unordered_map>
 #include "NimBLEAddress.h"
 #include "blescan.hpp"
@@ -141,8 +140,6 @@ class Binding {
     bool link(actorType_t &src, actorType_t &to);
 };
 
-typedef unordered_set<Binding*> BindingSet;
-
 class Actor { // abstract base class of Sensor, Actuator
   private:
   protected:
@@ -161,6 +158,26 @@ class Producer : public Actor {
 class Consumer : public Actor {
 
 };
+
+
+// class Consumer {
+//   private:
+//     std::string _id;
+//     unit_t _ut;
+//     lv_subject_t *_subject;
+//     fs::File _f;
+//     std::string _uri;
+
+//   public:
+//     Consumer(const std::string& id, lv_subject_t *subject) : _id(id),_ut(UT_OBSERVER),_subject(subject) {};
+//     Consumer(const std::string& id, fs::File &f) : _id(id),_ut(UT_WRITER),_f(f) {};
+//     Consumer(const std::string& id, const std::string& uri) : _id(id),_ut(UT_URI) {};
+
+//     bool configure(JsonObject *conf);
+
+// };
+
+
 
 class Sensor : public Producer {
   private:
@@ -217,30 +234,8 @@ class ActiveSensor : public Sensor {  // GPS, URI etc - no polling needed
 
 };
 
-// class Consumer {
-//   private:
-//     std::string _id;
-//     unit_t _ut;
-//     lv_subject_t *_subject;
-//     fs::File _f;
-//     std::string _uri;
-
-//   public:
-//     Consumer(const std::string& id, lv_subject_t *subject) : _id(id),_ut(UT_OBSERVER),_subject(subject) {};
-//     Consumer(const std::string& id, fs::File &f) : _id(id),_ut(UT_WRITER),_f(f) {};
-//     Consumer(const std::string& id, const std::string& uri) : _id(id),_ut(UT_URI) {};
-
-//     bool configure(JsonObject *conf);
-
-// };
-
-typedef unordered_set<Actor*> ActorSet;
-
 class Unit {
   private:
-    ActorSet _actorset;
-    BindingSet _binding_set;
-
     std::string _id;
     unit_t _ut;
     uint32_t _created; // timestamp

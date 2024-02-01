@@ -3,10 +3,10 @@
 
 #define GIT_REPO_PRESENT 1
 
-const char *GIT_REV = "79a8103-dirty";
+const char *GIT_REV = "c8b86f9-dirty";
 const char *GIT_AUTHOR =	"Michael Haberler";
-const char *GIT_SUBJECT =	"the big rename";
+const char *GIT_SUBJECT =	"start on bindings";
 const char *GIT_BRANCH =	"actor-redesign";
-const char *GIT_COMMIT_DATE =	"Tue, 30 Jan 2024 13:33:11 +0100";
+const char *GIT_COMMIT_DATE =	"Wed, 31 Jan 2024 07:21:03 +0100";
 
 #endif

@@ -42,7 +42,6 @@ bool Unit::configure(Equipment &eq, JsonObject *conf) {
         }
 
         if (sp && sp->configure(s)) {
-            _actorset.insert(sp);
             if (sp->mac() != null_mac) {
                 Serial.printf("add BLE %s:%s %s:%s\n",
                               unitTypeStr(ut),
