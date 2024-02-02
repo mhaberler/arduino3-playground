@@ -265,7 +265,10 @@ class Unit {
     };
 };
 
-typedef Functor1wRet<Unit &, bool> UnitVisitor;
+#define UV_TANKS_ONLY BIT(0)
+#define UV_SORT_BY_TIMESTAMP BIT(1)
+
+typedef Functor2wRet<Unit &, uint32_t, bool> UnitVisitor;
 
 // class Consumer : public Unit {
 //   private:
@@ -291,7 +294,7 @@ class Equipment {
     bool bleRegister(const NimBLEAddress &mac, Sensor *sp);
     // bool addConsumer(const std::string &id, lv_subject_t *subject);
 
-    void walk(const UnitVisitor &unitVisitor);
+    void walk(const UnitVisitor &unitVisitor, const uint32_t flags);
 };
 
 class Ruuvi : public BLESensor {

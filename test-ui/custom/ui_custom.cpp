@@ -5,6 +5,7 @@
 #include "Esp.h"
 #include "nfc_input.h"
 #include "Sensor.hpp"
+#include <Functor.h>
 
 void bw_event_MAIN_PAGE( lv_event_t * e) {
     lv_event_code_t event_code = lv_event_get_code(e);
@@ -41,6 +42,11 @@ void ui_custom_init(void) {
 
 }
 
+static bool _unitVisit(Unit &u, uint32_t flags) {
+    LV_LOG_USER("%u %s", u.created(), u.id().c_str());
+    return true;
+}
+
 // callbacks from the UI
 extern "C"
 {
@@ -49,7 +55,8 @@ extern "C"
         LV_LOG_USER("free heap: %lu\n", ESP.getFreeHeap());
         LV_LOG_USER("used psram: %lu\n", ESP.getPsramSize() - ESP.getFreePsram());
 
-        equipment.dump(Serial);
+        const UnitVisitor v = makeFunctor((UnitVisitor *)NULL, _unitVisit);
+        equipment.walk(v, UV_SORT_BY_TIMESTAMP|UV_TANKS_ONLY);
     }
 
     void mainScreenLoaded(lv_event_t *e) {

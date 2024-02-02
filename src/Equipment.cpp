@@ -11,12 +11,25 @@ struct {
 }
 unitsLess;
 
-void Equipment::walk(const UnitVisitor &unitVisitor) {
+static void _visit_unit(const UnitVisitor &unitVisitor,  Unit *u, const uint32_t flags) {
+    if ((flags & UV_TANKS_ONLY) && (u->type() != UT_TANK)) {
+        return;
+    }
+    unitVisitor(*u, flags);
+}
 
-    std::vector<UnitsEntry> sorted_units(_units.begin(), _units.end());
-    std::sort(sorted_units.begin(), sorted_units.end(), unitsLess);
-    for (UnitsEntry ue: sorted_units) {
-        unitVisitor(*ue.second);
+void Equipment::walk(const UnitVisitor &unitVisitor, const uint32_t flags) {
+
+    if (flags % UV_SORT_BY_TIMESTAMP) {
+        std::vector<UnitsEntry> sorted_units(_units.begin(), _units.end());
+        std::sort(sorted_units.begin(), sorted_units.end(), unitsLess);
+        for (UnitsEntry ue: sorted_units) {
+            _visit_unit(unitVisitor, ue.second, flags);
+        }
+    } else {
+        for (auto u : _units) {
+            _visit_unit(unitVisitor, u.second, flags);
+        }
     }
 }
 
