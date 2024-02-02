@@ -1,7 +1,9 @@
 #include "Sensor.hpp"
 #include "blescan.hpp"
+#include <algorithm>
 
 const NimBLEAddress null_mac;
+
 
 void Unit::dump(Stream &s) {
     for(auto a: _actor_map) {
@@ -48,8 +50,8 @@ bool Unit::configure(Equipment &eq, JsonObject *conf) {
             case AT_MQTT_SUBSCRIPTION:
                 break;
             case AT_UI: {
-                // Binding *bp = new Binding();
-            }
+                    // Binding *bp = new Binding();
+                }
                 break;
             case AT_LOG:
                 break;

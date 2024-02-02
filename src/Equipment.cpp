@@ -2,15 +2,33 @@
 #include "fsVisitor.hpp"
 #include <LittleFS.h>
 
+typedef std::pair<std::string, Unit *> UnitsEntry;
+
+struct {
+    bool operator()(const UnitsEntry &a, const UnitsEntry &b) const {
+        return a.second->created() < b.second->created();
+    }
+}
+unitsLess;
+
+void Equipment::walk(const UnitVisitor &unitVisitor) {
+
+    std::vector<UnitsEntry> sorted_units(_units.begin(), _units.end());
+    std::sort(sorted_units.begin(), sorted_units.end(), unitsLess);
+    for (UnitsEntry ue: sorted_units) {
+        unitVisitor(*ue.second);
+    }
+}
+
 bool Equipment::bleRegister(const NimBLEAddress &mac, Sensor *sp) {
 
-   Sensor *old =  _ble_sensors[mac];
-   _ble_sensors[mac] = sp;
+    Sensor *old =  _ble_sensors[mac];
+    _ble_sensors[mac] = sp;
 
-   if (old != NULL) {
+    if (old != NULL) {
         delete old;
-   }
-   return true;
+    }
+    return true;
 }
 
 bool Equipment::bleDeliver(const bleAdvMsg_t &msg) {

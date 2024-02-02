@@ -29,6 +29,9 @@ bool Sensor::configure(JsonObject conf)  {
     return (_type != AT_NONE);
 }
 
+
+
+
 // const  std::string& Sensor::name(void) {
 //     return std::string(sensorType(_type)) + ":" + id();
 // }

@@ -17,6 +17,7 @@
 #include "mopeka.h"
 #include "tpms.h"
 #include "lv_observer.h"
+#include <Functor.h>
 
 #define EQUIPMENT_DIR "/equipment"
 #define BINDING_DIR "/binding"
@@ -159,7 +160,6 @@ class Actor { // abstract base class of Sensor, Actuator
     virtual void dump(Stream &s)  = 0;
     virtual const std::string id(void) = 0;
     virtual const NimBLEAddress & mac() {
-        log_e("Actor:mac)");
         return null_mac;
     }
 };
@@ -257,11 +257,15 @@ class Unit {
     void setType(const unit_t ut) {
         _ut = ut;
     };
-    unit_t type(void) {return _ut;};
+    unit_t type(void) {
+        return _ut;
+    };
     const  std::string id(void) {
         return std::string(unitTypeStr(_ut)) + ":" + _id;
     };
 };
+
+typedef Functor1wRet<Unit &, bool> UnitVisitor;
 
 // class Consumer : public Unit {
 //   private:
@@ -285,7 +289,9 @@ class Equipment {
     void dump(Stream &s);
     bool bleDeliver(const bleAdvMsg_t &msg);
     bool bleRegister(const NimBLEAddress &mac, Sensor *sp);
+    // bool addConsumer(const std::string &id, lv_subject_t *subject);
 
+    void walk(const UnitVisitor &unitVisitor);
 };
 
 class Ruuvi : public BLESensor {
