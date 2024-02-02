@@ -87,9 +87,8 @@ bool Equipment::addUnit(const char *path) {
 
 void Equipment::dump(Stream &s) {
     for(auto u: _units) {
-        s.printf("unit '%s': ", u.first.c_str());
-        u.second->print(Serial);
-        s.printf("\n");
+        s.printf("unit '%s':  %s\n", u.first.c_str(), unitTypeStr(u.second->type()));
+        u.second->dump(Serial);
     }
 }
 

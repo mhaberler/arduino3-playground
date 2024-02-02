@@ -7,7 +7,6 @@ void Unit::dump(Stream &s) {
     for(auto a: _actor_map) {
         s.printf("\tactor '%s': ", a.first.c_str());
         a.second->dump(Serial);
-        s.printf("\n");
     }
 }
 
@@ -45,6 +44,14 @@ bool Unit::configure(Equipment &eq, JsonObject *conf) {
             case AT_IMU:
                 break;
             case AT_MAGNETOMETER:
+                break;
+            case AT_MQTT_SUBSCRIPTION:
+                break;
+            case AT_UI: {
+                // Binding *bp = new Binding();
+            }
+                break;
+            case AT_LOG:
                 break;
         }
 

@@ -1,8 +1,6 @@
 #include "Sensor.hpp"
 
 bool BLESensor::configure(JsonObject conf)    {
-    log_e("------> BLESensor::configure");
-
     _type = conf["st"];
     if (conf["mac"]) {
         _macAddress = NimBLEAddress(conf["mac"].as< std::string>());
@@ -18,6 +16,5 @@ const  std::string BLESensor::id(void) {
 }
 
 const NimBLEAddress & BLESensor::mac() {
-    log_e("BLESensor:mac)");
     return _macAddress;
 }

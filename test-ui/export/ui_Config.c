@@ -25,6 +25,7 @@ lv_obj_set_height( ui_configText, lv_pct(80));
 lv_obj_set_x( ui_configText, 35 );
 lv_obj_set_y( ui_configText, 2 );
 lv_obj_set_align( ui_configText, LV_ALIGN_CENTER );
+lv_label_set_long_mode(ui_configText,LV_LABEL_LONG_SCROLL);
 lv_label_set_text(ui_configText,"");
 lv_obj_set_style_text_font(ui_configText, &lv_font_montserrat_18, LV_PART_MAIN| LV_STATE_DEFAULT);
 

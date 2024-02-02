@@ -61,6 +61,8 @@ typedef enum {
     AT_IMU,
     AT_MAGNETOMETER,
     AT_MQTT_SUBSCRIPTION,
+    AT_UI,
+    AT_LOG,
     AT_MAX
 } actorType_t;
 
@@ -255,6 +257,7 @@ class Unit {
     void setType(const unit_t ut) {
         _ut = ut;
     };
+    unit_t type(void) {return _ut;};
     const  std::string id(void) {
         return std::string(unitTypeStr(_ut)) + ":" + _id;
     };

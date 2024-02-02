@@ -10346,7 +10346,7 @@
               {
                 "disabled": false,
                 "nid": 1181606036,
-                "strtype": "PANEL/EventHandler",
+                "strtype": "_event/EventHandler",
                 "strval": "GESTURE_DOWN(GESTURE)",
                 "childs": [
                   {
@@ -10369,7 +10369,7 @@
                   },
                   {
                     "nid": 1164859325,
-                    "strtype": "_custom/action",
+                    "strtype": "_event/action",
                     "strval": "CHANGE SCREEN",
                     "childs": [
                       {
@@ -12952,7 +12952,7 @@
                           {
                             "disabled": false,
                             "nid": -922154310,
-                            "strtype": "LABEL/EventHandler",
+                            "strtype": "_event/EventHandler",
                             "strval": "CLICKED",
                             "childs": [
                               {
@@ -12975,7 +12975,7 @@
                               },
                               {
                                 "nid": -906510028,
-                                "strtype": "_custom/action",
+                                "strtype": "_event/action",
                                 "strval": "CALL FUNCTION",
                                 "childs": [
                                   {
@@ -17031,7 +17031,7 @@
                   {
                     "nid": -2051483536,
                     "strtype": "LABEL/Long_mode",
-                    "strval": "WRAP",
+                    "strval": "SCROLL",
                     "InheritedType": 3
                   },
                   {
@@ -17072,7 +17072,7 @@
                   {
                     "disabled": false,
                     "nid": -697106621,
-                    "strtype": "LABEL/EventHandler",
+                    "strtype": "_event/EventHandler",
                     "strval": "CLICKED",
                     "childs": [
                       {
@@ -17095,7 +17095,7 @@
                       },
                       {
                         "nid": -1890235249,
-                        "strtype": "_custom/action",
+                        "strtype": "_event/action",
                         "strval": "CHANGE SCREEN",
                         "childs": [
                           {
@@ -17148,7 +17148,7 @@
                   {
                     "disabled": false,
                     "nid": -697999111,
-                    "strtype": "LABEL/EventHandler",
+                    "strtype": "_event/EventHandler",
                     "strval": "GESTURE_UP(GESTURE)",
                     "childs": [
                       {
@@ -17171,7 +17171,7 @@
                       },
                       {
                         "nid": 2033037054,
-                        "strtype": "_custom/action",
+                        "strtype": "_event/action",
                         "strval": "CHANGE SCREEN",
                         "childs": [
                           {
@@ -19277,7 +19277,7 @@
           {
             "disabled": false,
             "nid": -794141427,
-            "strtype": "SCREEN/EventHandler",
+            "strtype": "_event/EventHandler",
             "strval": "CLICKED",
             "childs": [
               {
@@ -19300,7 +19300,7 @@
               },
               {
                 "nid": 1480682898,
-                "strtype": "_custom/action",
+                "strtype": "_event/action",
                 "strval": "CHANGE SCREEN",
                 "childs": [
                   {
@@ -19353,7 +19353,7 @@
           {
             "disabled": false,
             "nid": -993855221,
-            "strtype": "SCREEN/EventHandler",
+            "strtype": "_event/EventHandler",
             "strval": "GESTURE_UP(GESTURE)",
             "childs": [
               {
@@ -19376,7 +19376,7 @@
               },
               {
                 "nid": 1559689795,
-                "strtype": "_custom/action",
+                "strtype": "_event/action",
                 "strval": "CHANGE SCREEN",
                 "childs": [
                   {
@@ -19466,7 +19466,7 @@
     "theme_color2": 0,
     "uiExportFolderPath": "/Users/mah/Ballon/src/BalloonWare/arduino3-playground/test-ui/export",
     "projectExportFolderPath": "/Users/mah/Ballon/src/BalloonWare/arduino3-playground/test-ui/project",
-    "backup_cnt": 1043,
+    "backup_cnt": 1128,
     "autosave_cnt": 0,
     "lvgl_version": "8.3.6",
     "callfuncsexport": "CPP_FILE",
