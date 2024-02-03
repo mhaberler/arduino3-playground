@@ -18,24 +18,22 @@ static void _visit_unit(const UnitVisitor &unitVisitor,  Unit *u, const uint32_t
     unitVisitor(*u, flags, user_data);
 }
 
-uint32_t Equipment::sortAndIndexByType(const unit_t type) {
-
-    return 0;
-}
-
 void Equipment::walk(const UnitVisitor &unitVisitor, const uint32_t flags, void *user_data) {
-
-    if (flags % UV_SORT_BY_TIMESTAMP) {
-        std::vector<UnitsEntry> sorted_units(_units.begin(), _units.end());
-        std::sort(sorted_units.begin(), sorted_units.end(), unitsLess);
-        for (UnitsEntry ue: sorted_units) {
-            _visit_unit(unitVisitor, ue.second, flags, user_data);
-        }
-    } else {
-        for (auto u : _units) {
-            _visit_unit(unitVisitor, u.second, flags, user_data);
-        }
+    for (auto u : _units_by_age) {
+        _visit_unit(unitVisitor, u, flags, user_data);
     }
+
+    // if (flags % UV_SORT_BY_TIMESTAMP) {
+    //     std::vector<UnitsEntry> sorted_units(_units.begin(), _units.end());
+    //     std::sort(sorted_units.begin(), sorted_units.end(), unitsLess);
+    //     for (UnitsEntry ue: sorted_units) {
+    //         _visit_unit(unitVisitor, ue.second, flags, user_data);
+    //     }
+    // } else {
+    //     for (auto u : _units) {
+    //         _visit_unit(unitVisitor, u.second, flags, user_data);
+    //     }
+    // }
 }
 
 bool Equipment::bleRegister(const NimBLEAddress &mac, Sensor *sp) {
@@ -79,9 +77,11 @@ bool Equipment::addUnit(JsonObject conf, bool save) {
     if (u->configure(*this, &conf)) {
         // delete previous unit
         if (_units[id]) {
+            _units_by_age.erase(_units[id]);
             delete _units[id];
         }
         _units[id] = u;
+        _units_by_age.insert(u);
         if (save) {
             // wrap in array
             JsonDocument doc;

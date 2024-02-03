@@ -3,10 +3,10 @@
 
 #define GIT_REPO_PRESENT 1
 
-const char *GIT_REV = "dc0644c-dirty";
+const char *GIT_REV = "c3aa218-dirty";
 const char *GIT_AUTHOR =	"Michael Haberler";
-const char *GIT_SUBJECT =	"equipment visitor";
+const char *GIT_SUBJECT =	"introduce set of units sorted by age";
 const char *GIT_BRANCH =	"actor-redesign";
-const char *GIT_COMMIT_DATE =	"Fri, 2 Feb 2024 21:26:17 +0100";
+const char *GIT_COMMIT_DATE =	"Sat, 3 Feb 2024 04:43:38 +0100";
 
 #endif

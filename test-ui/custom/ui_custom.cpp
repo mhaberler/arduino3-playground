@@ -56,7 +56,7 @@ extern "C"
         LV_LOG_USER("used psram: %lu\n", ESP.getPsramSize() - ESP.getFreePsram());
 
         const UnitVisitor v = makeFunctor((UnitVisitor *)NULL, _unitVisit);
-        equipment.walk(v, UV_SORT_BY_TIMESTAMP|UV_TANKS_ONLY, NULL);
+        equipment.walk(v, UV_TANKS_ONLY, NULL);
     }
 
     void mainScreenLoaded(lv_event_t *e) {

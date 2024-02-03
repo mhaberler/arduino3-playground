@@ -267,7 +267,6 @@ class Unit {
 };
 
 #define UV_TANKS_ONLY BIT(0)
-#define UV_SORT_BY_TIMESTAMP BIT(1)
 
 typedef Functor3wRet<Unit &, uint32_t, void *, bool> UnitVisitor;
 
@@ -277,7 +276,6 @@ typedef Functor3wRet<Unit &, uint32_t, void *, bool> UnitVisitor;
 //     fs::File _f;
 //     std::string _uri;
 // };
-
 
 struct cmp_unit_age {
     bool operator() (Unit *a, Unit *b) const {
@@ -304,7 +302,6 @@ class Equipment {
     // bool addConsumer(const std::string &id, lv_subject_t *subject);
 
     void walk(const UnitVisitor &unitVisitor, const uint32_t flags, void *user_data);
-    uint32_t sortAndIndexByType(const unit_t type);
 };
 
 class Ruuvi : public BLESensor {
