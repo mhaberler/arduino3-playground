@@ -241,6 +241,7 @@ class Unit {
     std::string _id;
     unit_t _ut;
     uint32_t _created; // timestamp
+    uint8_t _index;
     std::unordered_map< std::string, Actor *> _actor_map;
 
   public:
@@ -268,7 +269,7 @@ class Unit {
 #define UV_TANKS_ONLY BIT(0)
 #define UV_SORT_BY_TIMESTAMP BIT(1)
 
-typedef Functor2wRet<Unit &, uint32_t, bool> UnitVisitor;
+typedef Functor3wRet<Unit &, uint32_t, void *, bool> UnitVisitor;
 
 // class Consumer : public Unit {
 //   private:
@@ -277,10 +278,18 @@ typedef Functor2wRet<Unit &, uint32_t, bool> UnitVisitor;
 //     std::string _uri;
 // };
 
+
+struct cmp_unit_age {
+    bool operator() (Unit *a, Unit *b) const {
+        return a->created() < b->created();
+    }
+};
+
 class Equipment {
   private:
     unordered_map<std::string, Unit *> _units;
     unordered_map<NimBLEAddress, Sensor *> _ble_sensors;
+    std::set<Unit *, cmp_unit_age> _units_by_age;
     const char *_topdir;
     bool _saveUnit(const std::string &id, const JsonArray &array);
 
@@ -294,7 +303,8 @@ class Equipment {
     bool bleRegister(const NimBLEAddress &mac, Sensor *sp);
     // bool addConsumer(const std::string &id, lv_subject_t *subject);
 
-    void walk(const UnitVisitor &unitVisitor, const uint32_t flags);
+    void walk(const UnitVisitor &unitVisitor, const uint32_t flags, void *user_data);
+    uint32_t sortAndIndexByType(const unit_t type);
 };
 
 class Ruuvi : public BLESensor {

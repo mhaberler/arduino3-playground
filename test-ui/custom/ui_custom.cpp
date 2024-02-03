@@ -42,7 +42,7 @@ void ui_custom_init(void) {
 
 }
 
-static bool _unitVisit(Unit &u, uint32_t flags) {
+static bool _unitVisit(Unit &u, uint32_t flags, void *user_data) {
     LV_LOG_USER("%u %s", u.created(), u.id().c_str());
     return true;
 }
@@ -56,7 +56,7 @@ extern "C"
         LV_LOG_USER("used psram: %lu\n", ESP.getPsramSize() - ESP.getFreePsram());
 
         const UnitVisitor v = makeFunctor((UnitVisitor *)NULL, _unitVisit);
-        equipment.walk(v, UV_SORT_BY_TIMESTAMP|UV_TANKS_ONLY);
+        equipment.walk(v, UV_SORT_BY_TIMESTAMP|UV_TANKS_ONLY, NULL);
     }
 
     void mainScreenLoaded(lv_event_t *e) {
