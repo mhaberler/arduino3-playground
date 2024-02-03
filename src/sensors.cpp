@@ -8,7 +8,7 @@
 #include "logmacros.hpp"
 #include <filesystem>
 
-Equipment equipment;
+Equipment equipment(EQUIPMENT_DIR);
 
 String sanitizeLittleFSPath(const String &path) {
     // Maximum length of LittleFS file/directory names
@@ -38,7 +38,6 @@ bool wipeLittleFS(void) {
     LittleFS.begin(false);
     LittleFS.format();
     return LittleFS.mkdir(EQUIPMENT_DIR);
-    return LittleFS.mkdir(EQUIPMENT_DIR);
     // LittleFS strangeness deleting files
     // fsVisitor(LittleFS, Serial, dirname, VA_DEBUG | VA_ERASE_FILES );
 }
@@ -66,7 +65,6 @@ void read_config(void) {
     LittleFS.mkdir(BINDING_DIR);
 
     equipment.read(EQUIPMENT_DIR);
-    equipment.read(BINDING_DIR);
 }
 
 void init_sensors(void) {

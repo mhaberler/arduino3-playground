@@ -6,10 +6,10 @@
 #include <FS.h>
 #include <list>
 #include <set>
-#include <array>
-#include <vector>
+// #include <array>
+// #include <vector>
 #include <unordered_map>
-#include <unordered_set>
+// #include <unordered_set>
 #include "NimBLEAddress.h"
 #include "blescan.hpp"
 #include "esp_log.h"
@@ -98,7 +98,7 @@ typedef enum {
     UT_BASKET,
     UT_AIRCRAFT,
     UT_VEHICLE,
-
+    UT_TANK_SEQUENCE,
     UT_OBSERVER,  // 7
     UT_WRITER,
     UT_URI,
@@ -130,8 +130,6 @@ uint32_t getUint32(const uint8_t *data, int index);
 uint8_t getUint8(const uint8_t *data, int index);
 int8_t getInt8(const uint8_t *data, int index);
 int32_t getInt32LE(const uint8_t *data, int index);
-
-typedef unordered_set<const std::string> StringTable_t;
 
 class Unit;
 class Equipment;
@@ -292,13 +290,13 @@ class Equipment {
   private:
     unordered_map<std::string, Unit *> _units;
     unordered_map<NimBLEAddress, Sensor *> _ble_sensors;
-    std::set<Unit *, cmp_unit_age> _units_by_age;
+    std::set<Unit *, cmp_unit_age> _tanks_by_age;
     const char *_topdir;
     bool _saveUnit(const std::string &id, const JsonArray &array);
-    uint8_t _reindex(unit_t u);
+    uint8_t _reindex_tanks(void);
 
   public:
-    // Equipment(const char *topdir) : _topdir(topdir) {};
+    Equipment(const char *topdir) : _topdir(topdir) {};
     void read(const char* dirname);
     bool addUnit(const char *path);
     bool addUnit(JsonObject conf, bool save = true);

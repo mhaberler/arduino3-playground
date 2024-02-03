@@ -20,11 +20,9 @@ bool Unit::configure(Equipment &eq, JsonObject *conf) {
 
     unit_t ut = (*conf)["ut"].as<unit_t>();
     setType(ut);
+    setIndex((*conf)["index"]);
     String dsc = (*conf)["dsc"];
     String id = (*conf)["id"];
-    uint8_t ts = (*conf)["ts"];
-    this->setIndex(ts);
-    this->setTimestamp(ts);
     JsonArray sensors = (*conf)["sensors"].as<JsonArray>();
 
     for(JsonObject s: sensors) {
@@ -63,11 +61,11 @@ bool Unit::configure(Equipment &eq, JsonObject *conf) {
         if (sp && sp->configure(s)) {
             _actor_map[sp->id()] = sp;
             if (sp->mac() != null_mac) {
-                Serial.printf("add BLE %s:%s %s:%s\n",
-                              unitTypeStr(ut),
-                              id.c_str(),
-                              sensorTypeStr(st),
-                              sp->mac().toString().c_str());
+                // Serial.printf("add BLE %s:%s %s:%s\n",
+                //               unitTypeStr(ut),
+                //               id.c_str(),
+                //               sensorTypeStr(st),
+                //               sp->mac().toString().c_str());
                 eq.bleRegister(sp->mac(), sp);
             }
         }

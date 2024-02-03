@@ -101,7 +101,7 @@ extern "C"
         if (jv.is<JsonArray>()) {
             JsonArray units = jv.as<JsonArray>();
             for(JsonObject u: units) {
-                equipment.addUnit(u);
+                equipment.addUnit(u, true);
             }
         }
         delete jdoc;
