@@ -43,7 +43,7 @@ void ui_custom_init(void) {
 }
 
 static bool _unitVisit(Unit &u, uint32_t flags, void *user_data) {
-    LV_LOG_USER("%u %s", u.created(), u.id().c_str());
+    LV_LOG_USER("%u %u %s", u.index(), u.timestamp(), u.id().c_str());
     return true;
 }
 

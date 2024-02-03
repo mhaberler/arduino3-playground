@@ -6,7 +6,7 @@ typedef std::pair<std::string, Unit *> UnitsEntry;
 
 struct {
     bool operator()(const UnitsEntry &a, const UnitsEntry &b) const {
-        return a.second->created() < b.second->created();
+        return a.second->timestamp() < b.second->timestamp();
     }
 }
 unitsLess;
@@ -22,18 +22,17 @@ void Equipment::walk(const UnitVisitor &unitVisitor, const uint32_t flags, void 
     for (auto u : _units_by_age) {
         _visit_unit(unitVisitor, u, flags, user_data);
     }
+}
 
-    // if (flags % UV_SORT_BY_TIMESTAMP) {
-    //     std::vector<UnitsEntry> sorted_units(_units.begin(), _units.end());
-    //     std::sort(sorted_units.begin(), sorted_units.end(), unitsLess);
-    //     for (UnitsEntry ue: sorted_units) {
-    //         _visit_unit(unitVisitor, ue.second, flags, user_data);
-    //     }
-    // } else {
-    //     for (auto u : _units) {
-    //         _visit_unit(unitVisitor, u.second, flags, user_data);
-    //     }
-    // }
+uint8_t Equipment::_reindex(unit_t type) {
+    uint8_t idx = 0;
+    for (auto u : _units_by_age) {
+        if (u->type() == type) {
+            u->setIndex(idx);
+            idx += 1;
+        }
+    }
+    return idx;
 }
 
 bool Equipment::bleRegister(const NimBLEAddress &mac, Sensor *sp) {
@@ -63,7 +62,6 @@ bool Equipment::bleDeliver(const bleAdvMsg_t &msg) {
 
 void Equipment::read(const char* dirname) {
     fsVisitor(LittleFS, Serial, dirname, VA_DEBUG | VA_LOAD_CONFIG );
-
 }
 
 bool Equipment::addUnit(JsonObject conf, bool save) {
@@ -80,9 +78,14 @@ bool Equipment::addUnit(JsonObject conf, bool save) {
             _units_by_age.erase(_units[id]);
             delete _units[id];
         }
+        // u->setTimestamp(millis());
         _units[id] = u;
         _units_by_age.insert(u);
+        // update unit.index() by age and unit type
+        _reindex(u->type());
         if (save) {
+            // use index as timestamp for saving
+            conf["ts"] = u->index();
             // wrap in array
             JsonDocument doc;
             JsonArray array = doc.to<JsonArray>();

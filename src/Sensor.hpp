@@ -153,7 +153,7 @@ class Actor { // abstract base class of Sensor, Actuator
   protected:
     actorType_t _type;
     Unit *_unit;
-    uint32_t _created; // timestamp
+ 
 
   public:
     virtual bool configure(JsonObject conf) = 0;
@@ -162,6 +162,7 @@ class Actor { // abstract base class of Sensor, Actuator
     virtual const NimBLEAddress & mac() {
         return null_mac;
     }
+
 };
 
 class Producer : public Actor {
@@ -196,13 +197,9 @@ class Sensor : public Producer {
 
   public:
     Sensor(Unit *u)  {
-        _created = millis();
         _unit = u;
     };
 
-    uint32_t created(void) {
-        return _created;
-    };
     virtual uint32_t lastChange(void) = 0;
     virtual void print(Print &p, format_t format = FMT_TEXT) = 0;
     // sensorMode_t mode();
@@ -240,18 +237,26 @@ class Unit {
   private:
     std::string _id;
     unit_t _ut;
-    uint32_t _created; // timestamp
     uint8_t _index;
     std::unordered_map< std::string, Actor *> _actor_map;
+       uint32_t _timestamp;
 
   public:
-    Unit( std::string id) : _id(id),_created(millis()) {};
-
+    Unit( std::string id) : _id(id) {};
+    uint32_t timestamp(void) {
+        return _timestamp;
+    };
+    void setTimestamp(uint32_t t) {
+        _timestamp = t;
+    };
     // dtor: delete sensors!!
     //
     bool configure(Equipment &eq, JsonObject *conf);
-    uint32_t created(void) {
-        return _created;
+    uint8_t index(void) {
+        return _index;
+    };
+    void setIndex(uint8_t i) {
+        _index = i;
     };
     void print(Print &p, format_t format = FMT_TEXT);
     void dump(Stream &s);
@@ -279,7 +284,7 @@ typedef Functor3wRet<Unit &, uint32_t, void *, bool> UnitVisitor;
 
 struct cmp_unit_age {
     bool operator() (Unit *a, Unit *b) const {
-        return a->created() < b->created();
+        return a->timestamp() < b->timestamp();
     }
 };
 
@@ -290,6 +295,7 @@ class Equipment {
     std::set<Unit *, cmp_unit_age> _units_by_age;
     const char *_topdir;
     bool _saveUnit(const std::string &id, const JsonArray &array);
+    uint8_t _reindex(unit_t u);
 
   public:
     // Equipment(const char *topdir) : _topdir(topdir) {};

@@ -22,6 +22,9 @@ bool Unit::configure(Equipment &eq, JsonObject *conf) {
     setType(ut);
     String dsc = (*conf)["dsc"];
     String id = (*conf)["id"];
+    uint8_t ts = (*conf)["ts"];
+    this->setIndex(ts);
+    this->setTimestamp(ts);
     JsonArray sensors = (*conf)["sensors"].as<JsonArray>();
 
     for(JsonObject s: sensors) {
