@@ -20,7 +20,7 @@ static void _visit_unit(const UnitVisitor &unitVisitor,  Unit *u, const uint32_t
 
 void Equipment::walk(const UnitVisitor &unitVisitor, const uint32_t flags, void *user_data) {
     for (auto u : _units) {
-        _visit_unit(unitVisitor, u.second, flags, user_data);
+        _visit_unit(unitVisitor, u, flags, user_data);
     }
 }
 
@@ -77,11 +77,8 @@ bool Equipment::addUnit(JsonObject conf, source_t source) {
         } else {
             u->setTimestamp(nextSeq());
         }
-        // delete previous unit
-        if (_units[id]) {
-            delete _units[id];
-        }
-        _units[id] = u;
+        delUnit(id);
+        _units.push_back(u);
 
         if (source == SRC_NFC) {
             // wrap in array and save
@@ -112,7 +109,7 @@ bool Equipment::addUnit(const char *path) {
         if (unitconf.is<JsonArray>()) {
             JsonArray ua = unitconf.as<JsonArray>();
             for (JsonVariant element : ua) {
-                addUnit(element.as<JsonObject>(), false); // do NOT save
+                addUnit(element.as<JsonObject>(), SRC_FLASHFS); // do NOT save
             }
         } else  {
             log_e("config not an array, skipping: %s ", path);
@@ -124,8 +121,8 @@ bool Equipment::addUnit(const char *path) {
 
 void Equipment::dump(Stream &s) {
     for(auto u: _units) {
-        s.printf("unit '%s':  %s\n", u.first.c_str(), unitTypeStr(u.second->type()));
-        u.second->dump(Serial);
+        s.printf("unit '%s':  %s\n", u->id().c_str(), unitTypeStr(u->type()));
+        u->dump(Serial);
     }
 }
 

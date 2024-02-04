@@ -37,6 +37,7 @@ String sanitizeLittleFSPath(const String &path) {
 bool wipeLittleFS(void) {
     LittleFS.begin(false);
     LittleFS.format();
+    LittleFS.mkdir(CONFIG_DIR);
     LittleFS.mkdir(UNITS_DIR); // just in case
     LittleFS.mkdir(SEQUENCE_DIR);
     // LittleFS strangeness deleting files
@@ -59,7 +60,7 @@ void process_ble() {
 }
 
 void read_config(void) {
-    LittleFS.begin(true);  
+    LittleFS.begin(true);
     LittleFS.mkdir(CONFIG_DIR);
     LittleFS.mkdir(UNITS_DIR);
     LittleFS.mkdir(SEQUENCE_DIR);

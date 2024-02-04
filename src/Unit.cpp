@@ -4,7 +4,6 @@
 
 const NimBLEAddress null_mac;
 
-
 void Unit::dump(Stream &s) {
     for(auto a: _actor_map) {
         s.printf("\tactor '%s': ", a.first.c_str());

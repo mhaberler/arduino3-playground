@@ -71,7 +71,7 @@ extern "C"
         JsonDocument tmpl;
         deserializeJson(tmpl, jstxt);
         tmpl["sensors"][0]["mac"] = (const char *) mac;
-        equipment.addUnit(tmpl.as<JsonObject>());
+        equipment.addUnit(tmpl.as<JsonObject>(), SRC_NFC);
         free(mac);
         lv_obj_set_user_data(ui_Ruuvi, NULL);
         lv_disp_load_scr(ui_Main);
@@ -84,7 +84,7 @@ extern "C"
         JsonDocument tmpl;
         deserializeJson(tmpl, jstxt);
         tmpl["sensors"][0]["mac"] =  (const char *) mac;
-        equipment.addUnit(tmpl.as<JsonObject>());
+        equipment.addUnit(tmpl.as<JsonObject>(), SRC_NFC);
         free(mac);
         lv_obj_set_user_data(ui_Ruuvi, NULL);
         lv_disp_load_scr(ui_Main);
@@ -101,7 +101,7 @@ extern "C"
         if (jv.is<JsonArray>()) {
             JsonArray units = jv.as<JsonArray>();
             for(JsonObject u: units) {
-                equipment.addUnit(u, true);
+                equipment.addUnit(u, SRC_NFC);
             }
         }
         delete jdoc;

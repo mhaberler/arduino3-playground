@@ -42,6 +42,7 @@ void setup(void) {
     webserver_setup();
     nfc_setup();
     init_sensors();
+    Serial.printf("C++ version: %l\n", __cplusplus);
 }
 
 void loop(void) {
