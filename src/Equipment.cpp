@@ -19,18 +19,18 @@ static void _visit_unit(const UnitVisitor &unitVisitor,  Unit *u, const uint32_t
 }
 
 void Equipment::walk(const UnitVisitor &unitVisitor, const uint32_t flags, void *user_data) {
-    for (auto u : _tanks_by_age) {
-        _visit_unit(unitVisitor, u, flags, user_data);
+    for (auto u : _units) {
+        _visit_unit(unitVisitor, u.second, flags, user_data);
     }
 }
 
 uint8_t Equipment::_reindex_tanks(void) {
     uint8_t idx = 0;
-    for (Unit *u : _tanks_by_age) {
-        log_e("reindex %d %s", idx, u->id().c_str());
-        u->setIndex(idx);
-        idx += 1;
-    }
+    // for (Unit *u : _tanks_by_age) {
+    //     log_e("reindex %d %s", idx, u->id().c_str());
+    //     u->setIndex(idx);
+    //     idx += 1;
+    // }
     return idx;
 }
 
@@ -59,8 +59,8 @@ bool Equipment::bleDeliver(const bleAdvMsg_t &msg) {
     return false;
 }
 
-void Equipment::read(const char* dirname) {
-    fsVisitor(LittleFS, Serial, dirname, VA_DEBUG | VA_LOAD_CONFIG );
+void Equipment::read(const char* dirname, uint32_t flags) {
+    fsVisitor(LittleFS, Serial, dirname, flags );
 }
 
 bool Equipment::addUnit(JsonObject conf, bool save) {
@@ -75,9 +75,6 @@ bool Equipment::addUnit(JsonObject conf, bool save) {
         if (save) {
             // got via NFC
             u->setTimestamp(millis());
-        } else {
-            // restoring from flash
-            u->setTimestamp(u->index());
         }
         // delete previous unit
         if (_units[id]) {
@@ -132,7 +129,7 @@ void Equipment::dump(Stream &s) {
 }
 
 bool Equipment::_saveUnit(const std::string &id, const JsonArray &array) {
-    String path = String(_topdir) + String("/") + sanitizeLittleFSPath(String(id.c_str())) + String(".json");
+    String path = String(UNITS_DIR) + String("/") + sanitizeLittleFSPath(String(id.c_str())) + String(".json");
 
     log_e("saveUnit normalizePath '%s' -> %s", id.c_str(), path.c_str());
     LittleFS.remove(path.c_str());

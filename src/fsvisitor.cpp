@@ -16,7 +16,7 @@ static bool _fs_visit(fs::FS &fs, Stream &out, fs::File &f, uint32_t flags) {
         return true;
     }
     if (!isDir) { // regular file
-        if (flags & VA_LOAD_CONFIG) {
+        if (flags & VA_LOAD_UNITS) {
             if (flags & VA_DEBUG) {
                 out.printf("loading %s size %u\n", f.path(), f.size());
             }

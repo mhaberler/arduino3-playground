@@ -1,0 +1,13 @@
+[
+    {
+        "id" : "tempuser",
+        "ut" : 10,
+        "src" : "env1",
+        "dts" : [
+            "ui_temp",
+            "log",
+            "mqttpush"
+        ]
+    }
+]
+

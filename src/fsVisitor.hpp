@@ -7,7 +7,8 @@ typedef enum {
   VA_DEBUG = (1u << 1),
   VA_RECURSIVE = (1u << 2),
   VA_ERASE_FILES = (1u << 4),
-  VA_LOAD_CONFIG  = (1u << 8),
+  VA_LOAD_UNITS  = (1u << 8),
+  VA_LOAD_SEQUENCE  = (1u << 16),
 } visitorAction_t;
 
 void fsVisitor(fs::FS &fs, Stream &fmt, const char *topdir = "/",

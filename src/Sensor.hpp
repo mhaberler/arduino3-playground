@@ -19,8 +19,9 @@
 #include "lv_observer.h"
 #include <Functor.h>
 
-#define EQUIPMENT_DIR "/equipment"
-#define BINDING_DIR "/binding"
+#define CONFIG_DIR "/config"
+#define UNITS_DIR "/config/units"
+#define SEQUENCE_DIR "/config/sequence"
 
 using namespace std;
 
@@ -290,14 +291,12 @@ class Equipment {
   private:
     unordered_map<std::string, Unit *> _units;
     unordered_map<NimBLEAddress, Sensor *> _ble_sensors;
-    std::set<Unit *, cmp_unit_age> _tanks_by_age;
-    const char *_topdir;
+    // std::set<Unit *, cmp_unit_age> _tanks_by_age;
     bool _saveUnit(const std::string &id, const JsonArray &array);
     uint8_t _reindex_tanks(void);
 
   public:
-    Equipment(const char *topdir) : _topdir(topdir) {};
-    void read(const char* dirname);
+    void read(const char* dirname, uint32_t flags);
     bool addUnit(const char *path);
     bool addUnit(JsonObject conf, bool save = true);
     void dump(Stream &s);
