@@ -35,13 +35,14 @@ void setup(void) {
 #else
     Serial.begin(115200);
 #endif
-    test_spdlog();
     lvgl_setup();
     gfxdemo_setup();
+    test_spdlog();
     startBLEscan();
     webserver_setup();
     nfc_setup();
     init_sensors();
+
     Serial.printf("C++ version: %ld\n", __cplusplus);
 }
 
