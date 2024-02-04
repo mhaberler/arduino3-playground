@@ -1,3 +1,5 @@
+LOGBLOCK on serial!!
+
 Equipment class
 binding
 
@@ -40,13 +42,17 @@ Consumer ops:
 
 c = new Consumer("env", <functor>)
 c = new Consumer("env", UM_<messagetype>)
+
+c = new Consumer("oair", <functor>)
+c = new Consumer("oair", UM_<messagetype>)
+
 c = new Consumer("tanks", UM_<messagetype>)
 c = new Consumer("tanks", <functor>)
 
 bind("TPMS:82:ea:ca:31:78:c8")
 
 bind ("Envelope:env1", "env"); ?
-bind ("Ruuvi:db:08:d3:33:38:ef", "env"); ?
+bind ("Ruuvi:db:08:d3:33:38:ef", "oair"); ?
 
 why not both?
 

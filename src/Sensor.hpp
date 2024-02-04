@@ -5,12 +5,11 @@
 #include "ArduinoJsonCustom.h"
 #include <FS.h>
 #include <list>
-#include <set>
-// #include <array>
+
 #include <vector>
 #include <unordered_map>
-// #include <forward_list>
-// #include <unordered_set>
+#include <algorithm>
+
 #include "NimBLEAddress.h"
 #include "blescan.hpp"
 #include "esp_log.h"
@@ -242,6 +241,8 @@ class Unit {
 
   public:
     Unit( std::string id) : _id(id) {};
+    ~Unit() { Serial.printf("Unit.dtor %s\n", _id.c_str()); };
+
     uint32_t timestamp(void) {
         return _timestamp;
     };
@@ -265,8 +266,11 @@ class Unit {
     unit_t type(void) {
         return _ut;
     };
-    const  std::string id(void) {
+    const  std::string fullName(void) {
         return std::string(unitTypeStr(_ut)) + ":" + _id;
+    };
+        const  std::string id(void) {
+        return  _id;
     };
 };
 
@@ -296,9 +300,11 @@ typedef enum {
 class Equipment {
   private:
     vector<Unit *> _units;
+    unordered_map<std::string, Unit *> _unit_by_id;
     unordered_map<NimBLEAddress, Sensor *> _ble_sensors;
     // std::set<Unit *, cmp_unit_age> _tanks_by_age;
-    bool _saveUnit(const std::string &id, const JsonArray &array);
+    bool _saveUnit(const std::string &id, const JsonDocument &doc);
+    bool _saveSequence(void);
     uint8_t _reindex_tanks(void);
     uint32_t _seq;
 
@@ -307,10 +313,19 @@ class Equipment {
     bool addUnit(const char *path);
     bool addUnit(JsonObject conf, source_t source);
     void delUnit(const std::string &id) {
+        Unit *u = NULL;
         _units.erase(std::remove_if(_units.begin(), _units.end(), [&](Unit *x) {
-            return x->id() == id;
+            if (x->id() == id) {
+                Serial.printf("delUnit %s\n", id.c_str());
+                u = x;
+                return true;
+            }
+            return false;
         }), _units.end());
+        if (u)
+            delete u;
     }
+    bool restoreSequence(const char *path);
     void dump(Stream &s);
     bool bleDeliver(const bleAdvMsg_t &msg);
     bool bleRegister(const NimBLEAddress &mac, Sensor *sp);

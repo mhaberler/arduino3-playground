@@ -20,9 +20,9 @@ void sensor_loop(void);
 bool psRAMavail;
 
 void setup(void) {
-    disableLoopWDT();
-    disableCore0WDT();
-    disableCore1WDT();
+    // disableLoopWDT();
+    // disableCore0WDT();
+    // disableCore1WDT();
 
     delay(3000);
     psRAMavail = ESP.getFreePsram() > 0;
@@ -42,7 +42,7 @@ void setup(void) {
     webserver_setup();
     nfc_setup();
     init_sensors();
-    Serial.printf("C++ version: %l\n", __cplusplus);
+    Serial.printf("C++ version: %ld\n", __cplusplus);
 }
 
 void loop(void) {

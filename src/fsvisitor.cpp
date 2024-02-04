@@ -18,9 +18,15 @@ static bool _fs_visit(fs::FS &fs, Stream &out, fs::File &f, uint32_t flags) {
     if (!isDir) { // regular file
         if (flags & VA_LOAD_UNITS) {
             if (flags & VA_DEBUG) {
-                out.printf("loading %s size %u\n", f.path(), f.size());
+                out.printf("loading Unit %s size %u\n", f.path(), f.size());
             }
             equipment.addUnit(f.path());
+        }
+        if (flags & VA_LOAD_SEQUENCE) {
+            if (flags & VA_DEBUG) {
+                out.printf("loading Sequence %s size %u\n", f.path(), f.size());
+            }
+            equipment.restoreSequence(f.path());
         }
         if (flags & VA_ERASE_FILES) {
             bool rc = fs.remove(f.path());

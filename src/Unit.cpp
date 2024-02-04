@@ -1,6 +1,6 @@
 #include "Sensor.hpp"
 #include "blescan.hpp"
-#include <algorithm>
+
 
 const NimBLEAddress null_mac;
 
