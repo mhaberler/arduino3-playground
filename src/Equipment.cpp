@@ -24,16 +24,6 @@ void Equipment::walk(const UnitVisitor &unitVisitor, const uint32_t flags, void 
     }
 }
 
-uint8_t Equipment::_reindex_tanks(void) {
-    uint8_t idx = 0;
-    // for (Unit *u : _tanks_by_age) {
-    //     log_e("reindex %d %s", idx, u->id().c_str());
-    //     u->setIndex(idx);
-    //     idx += 1;
-    // }
-    return idx;
-}
-
 bool Equipment::bleRegister(const NimBLEAddress &mac, Sensor *sp) {
 
     Sensor *old =  _ble_sensors[mac];
@@ -61,6 +51,19 @@ bool Equipment::bleDeliver(const bleAdvMsg_t &msg) {
 
 void Equipment::read(const char* dirname, uint32_t flags) {
     fsVisitor(LittleFS, Serial, dirname, flags );
+}
+
+void Equipment::delUnit(const std::string &id)      {
+    Unit *u = NULL;
+    _units.erase(std::remove_if(_units.begin(), _units.end(), [&](Unit *x) {
+        if (x->id() == id) {
+            u = x;
+            return true;
+        }
+        return false;
+    }), _units.end());
+    if (u)
+        delete u;
 }
 
 bool Equipment::addUnit(JsonObject conf, source_t source) {
@@ -137,7 +140,7 @@ bool Equipment::restoreSequence(const char *path) {
                     for(JsonVariant v : seq) {
                         Unit *u = _unit_by_id[v.as<std::string>()];
                         if (u && u->type() == UT_TANK) {
-                            log_e("restoreSequence %s %u", u->id().c_str(), idx);
+                            log_e("%s %u", u->id().c_str(), idx);
                             u->setIndex(idx);
                             idx += 1;
                         } else {
@@ -170,7 +173,7 @@ void Equipment::dump(Stream &s) {
 bool Equipment::_saveUnit(const std::string &id, const JsonDocument &doc) {
     String path = String(UNITS_DIR) + String("/") + sanitizeLittleFSPath(String(id.c_str())) + String(".json");
 
-    log_e("saveUnit normalizePath '%s' -> %s", id.c_str(), path.c_str());
+    // log_e("saveUnit normalizePath '%s' -> %s", id.c_str(), path.c_str());
     LittleFS.remove(path.c_str());
     File fd = LittleFS.open(path.c_str(), "w");
     serializeJsonPretty(doc, fd);
@@ -190,12 +193,12 @@ bool Equipment::_saveSequence(void) {
             seq.add(u->id());
         }
     }
-    serializeJsonPretty(root, Serial);
-    Serial.printf("\n");
+    // serializeJsonPretty(root, Serial);
+    // Serial.printf("\n");
 
     String path = String(SEQUENCE_DIR) + String("/") + sanitizeLittleFSPath(String("tank_sequence")) + String(".json");
 
-    log_e("_saveSequence normalizePath %s", path.c_str());
+    // log_e("_saveSequence normalizePath %s", path.c_str());
     LittleFS.remove(path.c_str());
     File fd = LittleFS.open(path.c_str(), "w");
     serializeJsonPretty(root, fd);

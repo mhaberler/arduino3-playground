@@ -12,11 +12,6 @@ void Unit::dump(Stream &s) {
 }
 
 bool Unit::configure(Equipment &eq, JsonObject *conf) {
-    log_e("Unit::configure");
-
-    serializeJson((*conf),Serial);
-    Serial.printf("\n");
-
     unit_t ut = (*conf)["ut"].as<unit_t>();
     setType(ut);
     String dsc = (*conf)["dsc"];
@@ -72,45 +67,6 @@ bool Unit::configure(Equipment &eq, JsonObject *conf) {
 }
 
 void Unit::print(Print &p, format_t format) {}
-
-// void Unit::add(Sensor *s) {
-//     _actorset.insert(s);
-// };
-
-// Unit *setupUnit(const unit_t unit, const actorType_t sensorType, const std::string &mac) {
-//     JsonDocument config;
-//     switch (unit) {
-//         case UT_ENVELOPE:
-//             config["id"] = "envelope";
-//             break;
-//         case UT_BASKET:
-//             config["id"] = "Basket";
-//             break;
-//         default:
-//             return NULL;
-//     }
-//     config["ut"] = (int) unit;
-//     JsonArray sensors = config["sensors"].to<JsonArray>();
-//     JsonObject sensor = sensors.add<JsonObject>();
-//     sensor["st"] = (int)sensorType;
-//     sensor["mac"] = mac;
-//     return addUnit(config.as<JsonObject>());
-// }
-
-// bool bleDeliver(const bleAdvMsg_t &msg) {
-
-//     NimBLEAddress mac = NimBLEAddress(msg.mac64);
-//     Sensor *sp = ble_sensors[mac];
-//     if (sp) {
-//         // log_e("deliver %s", mac.toString().c_str());
-//         bool rc =  sp->bleAdvertisement(msg);
-//         if (rc) {
-//             Serial.printf("%s %s ", sp->unitName().c_str(), sp->fullName().c_str());
-//             sp->print(Serial);
-//         }
-//     }
-//     return false;
-// }
 
 uint8_t volt2percent(const float v) {
     // convert voltage and scale for CR2032

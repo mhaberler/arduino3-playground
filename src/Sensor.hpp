@@ -302,37 +302,20 @@ class Equipment {
     vector<Unit *> _units;
     unordered_map<std::string, Unit *> _unit_by_id;
     unordered_map<NimBLEAddress, Sensor *> _ble_sensors;
-    // std::set<Unit *, cmp_unit_age> _tanks_by_age;
     bool _saveUnit(const std::string &id, const JsonDocument &doc);
     bool _saveSequence(void);
-    uint8_t _reindex_tanks(void);
     uint32_t _seq;
 
   public:
     void read(const char* dirname, uint32_t flags);
     bool addUnit(const char *path);
     bool addUnit(JsonObject conf, source_t source);
-    void delUnit(const std::string &id) {
-        Unit *u = NULL;
-        _units.erase(std::remove_if(_units.begin(), _units.end(), [&](Unit *x) {
-            if (x->id() == id) {
-                Serial.printf("delUnit %s\n", id.c_str());
-                u = x;
-                return true;
-            }
-            return false;
-        }), _units.end());
-        if (u)
-            delete u;
-    }
+    void delUnit(const std::string &id);
+
     bool restoreSequence(const char *path);
     void dump(Stream &s);
     bool bleDeliver(const bleAdvMsg_t &msg);
     bool bleRegister(const NimBLEAddress &mac, Sensor *sp);
-    // bool addConsumer(const std::string &id, lv_subject_t *subject);
-    uint32_t nextSeq(void) {
-        return _seq++;
-    }
     void walk(const UnitVisitor &unitVisitor, const uint32_t flags, void *user_data);
 };
 

@@ -64,8 +64,8 @@ void read_config(void) {
     LittleFS.mkdir(CONFIG_DIR);
     LittleFS.mkdir(UNITS_DIR);
     LittleFS.mkdir(SEQUENCE_DIR);
-    equipment.read(UNITS_DIR, VA_LOAD_UNITS|VA_DEBUG);
-    equipment.read(SEQUENCE_DIR, VA_LOAD_SEQUENCE|VA_DEBUG);
+    equipment.read(UNITS_DIR, VA_LOAD_UNITS);
+    equipment.read(SEQUENCE_DIR, VA_LOAD_SEQUENCE);
 }
 
 void init_sensors(void) {
