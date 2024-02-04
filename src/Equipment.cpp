@@ -63,7 +63,7 @@ void Equipment::read(const char* dirname, uint32_t flags) {
     fsVisitor(LittleFS, Serial, dirname, flags );
 }
 
-bool Equipment::addUnit(JsonObject conf, bool save) {
+bool Equipment::addUnit(JsonObject conf, source_t source) {
     std::string id = conf["id"];
     if (id.empty()) {
         log_e("missing id");
@@ -72,9 +72,10 @@ bool Equipment::addUnit(JsonObject conf, bool save) {
     }
     Unit *u = new Unit(id);
     if (u->configure(*this, &conf)) {
-        if (save) {
-            // got via NFC
+        if (source == SRC_NFC) {
             u->setTimestamp(millis());
+        } else {
+            u->setTimestamp(nextSeq());
         }
         // delete previous unit
         if (_units[id]) {
@@ -82,19 +83,19 @@ bool Equipment::addUnit(JsonObject conf, bool save) {
         }
         _units[id] = u;
 
-        if (save) {
-            // wrap in array
+        if (source == SRC_NFC) {
+            // wrap in array and save
             JsonDocument doc;
             JsonArray array = doc.to<JsonArray>();
             array.add(conf);
             _saveUnit(id, array);
         }
+        return true;
     } else {
         log_e("configure failed: %s", id.c_str());
         delete u;
         return false;
     }
-    return true;
 }
 
 bool Equipment::addUnit(const char *path) {

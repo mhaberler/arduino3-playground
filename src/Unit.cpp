@@ -20,7 +20,6 @@ bool Unit::configure(Equipment &eq, JsonObject *conf) {
 
     unit_t ut = (*conf)["ut"].as<unit_t>();
     setType(ut);
-    setIndex((*conf)["index"]);
     String dsc = (*conf)["dsc"];
     String id = (*conf)["id"];
     JsonArray sensors = (*conf)["sensors"].as<JsonArray>();

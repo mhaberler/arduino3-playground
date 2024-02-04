@@ -76,22 +76,22 @@ typedef enum {
 
 // Sensor reporting aspect
 typedef enum {
-    AT_NONE,
-    AT_TEMPERATURE,
-    AT_HUMIDITY,
-    AT_FLOW,
-    AT_BURNER_ON,
-    AT_BURNER_OFF,
-    AT_PRESSURE,
-    AT_VOLTAGE,
-    AT_CURRENT,
-    AT_LONGITUDE,
-    AT_LATITUDE,
-    AT_ALTITUDE,
-    AT_HSPEED,
-    AT_VSPEED,
-    AT_VACCEL,
-    AT_MAX
+    AST_NONE,
+    AST_TEMPERATURE,
+    AST_HUMIDITY,
+    AST_FLOW,
+    AST_BURNER_ON,
+    AST_BURNER_OFF,
+    AST_PRESSURE,
+    AST_VOLTAGE,
+    AST_CURRENT,
+    AST_LONGITUDE,
+    AST_LATITUDE,
+    AST_ALTITUDE,
+    AST_HSPEED,
+    AST_VSPEED,
+    AST_VACCEL,
+    AST_MAX
 } aspect_t;
 ````
 

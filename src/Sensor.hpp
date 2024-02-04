@@ -287,6 +287,12 @@ struct cmp_unit_age {
     }
 };
 
+typedef enum {
+    SRC_FLASHFS,
+    SRC_NFC,
+    SRC_SETUP
+} source_t;
+
 class Equipment {
   private:
     unordered_map<std::string, Unit *> _units;
@@ -294,16 +300,17 @@ class Equipment {
     // std::set<Unit *, cmp_unit_age> _tanks_by_age;
     bool _saveUnit(const std::string &id, const JsonArray &array);
     uint8_t _reindex_tanks(void);
+    uint32_t _seq;
 
   public:
     void read(const char* dirname, uint32_t flags);
     bool addUnit(const char *path);
-    bool addUnit(JsonObject conf, bool save = true);
+    bool addUnit(JsonObject conf, source_t source);
     void dump(Stream &s);
     bool bleDeliver(const bleAdvMsg_t &msg);
     bool bleRegister(const NimBLEAddress &mac, Sensor *sp);
     // bool addConsumer(const std::string &id, lv_subject_t *subject);
-
+    uint32_t nextSeq(void) { return _seq++; }
     void walk(const UnitVisitor &unitVisitor, const uint32_t flags, void *user_data);
 };
 
