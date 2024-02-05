@@ -40,9 +40,11 @@ typedef enum {
     UM_SENSOR_BAROMETR,
     UM_SENSOR_IMU,
 
-    UM_SENSOR_ENVELOPE,
+    UM_SENSOR_ENVELOPE, //11
     UM_SENSOR_OAT,
+    UM_SENSOR_TANK,
 
+    UM_SENSOR_TANK_LAYOUT,
 } uiMessage_t;
 
 

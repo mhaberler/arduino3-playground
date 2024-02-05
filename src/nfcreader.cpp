@@ -112,7 +112,7 @@ analyseTag(NfcTag &tag, JsonDocument &doc) {
                         String payload = String(record.getPayload(),
                                                 record.getPayloadLength());
 
-                        DynamicJsonDocument t(NFC_MAX_MSG_SIZE);
+                        JsonDocument t;
                         DeserializationError e = deserializeJson(t, payload);
                         if (e == DeserializationError::Ok) {
                             doc["payload"] = t;

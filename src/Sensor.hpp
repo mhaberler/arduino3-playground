@@ -160,7 +160,7 @@ class Actor { // abstract base class of Sensor, Actuator
     virtual const NimBLEAddress & mac() {
         return null_mac;
     }
-
+    virtual const void *pod(void) = 0;
 };
 
 class Producer : public Actor {
@@ -202,6 +202,8 @@ class Sensor : public Producer {
     virtual void print(Print &p, format_t format = FMT_TEXT) = 0;
     // sensorMode_t mode();
     actorType_t type();
+    Unit *unit(void);
+
     format_t format();
     void dump(Stream &s) override;
 
@@ -241,7 +243,9 @@ class Unit {
 
   public:
     Unit( std::string id) : _id(id) {};
-    ~Unit() { Serial.printf("Unit.dtor %s\n", _id.c_str()); };
+    ~Unit() {
+        Serial.printf("Unit.dtor %s\n", _id.c_str());
+    };
 
     uint32_t timestamp(void) {
         return _timestamp;
@@ -269,7 +273,7 @@ class Unit {
     const  std::string fullName(void) {
         return std::string(unitTypeStr(_ut)) + ":" + _id;
     };
-        const  std::string id(void) {
+    const  std::string id(void) {
         return  _id;
     };
 };
@@ -316,12 +320,14 @@ class Equipment {
     void dump(Stream &s);
     bool bleDeliver(const bleAdvMsg_t &msg);
     bool bleRegister(const NimBLEAddress &mac, Sensor *sp);
+    void deliverToUI(Sensor *sp);
     void walk(const UnitVisitor &unitVisitor, const uint32_t flags, void *user_data);
 };
 
 class Ruuvi : public BLESensor {
   private:
     ruuviAd_t _ruuvi_report;
+
   public:
     Ruuvi(Unit *u) : BLESensor(u)  {
         _type = AT_RUUVI;
@@ -343,6 +349,10 @@ class Ruuvi : public BLESensor {
     const std::string fullName(void) {
         return name() + ":" + id();
     }
+    const void *pod(void) {
+        return &_ruuvi_report;
+    }
+
 };
 
 class Mopeka : public BLESensor {
@@ -373,6 +383,9 @@ class Mopeka : public BLESensor {
     const std::string fullName(void) {
         return name() + ":" + id();
     }
+    const void *pod(void) {
+        return &_mopeka_report;
+    }
 
 };
 
@@ -399,6 +412,9 @@ class TPMS : public  BLESensor {
     };
     const std::string fullName(void) {
         return name() + ":" + id();
+    }
+    const void *pod(void) {
+        return &_tpms_report;
     }
 };
 

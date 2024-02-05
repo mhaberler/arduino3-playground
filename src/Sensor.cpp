@@ -8,6 +8,10 @@ actorType_t Sensor::type() {
     return _type;
 }
 
+Unit *Sensor::unit(void) {
+    return _unit;
+}
+
 format_t Sensor::format() {
     return _format;
 }
@@ -28,9 +32,6 @@ bool Sensor::configure(JsonObject conf)  {
     _type = conf["st"];
     return (_type != AT_NONE);
 }
-
-
-
 
 // const  std::string& Sensor::name(void) {
 //     return std::string(sensorType(_type)) + ":" + id();

@@ -40,18 +40,49 @@ int8_t getInt8(const uint8_t *data, int index) {
     return (int8_t)((data[index]));
 }
 
+// see https://github.com/ruuvi/ruuvi-sensor-protocols/blob/master/dataformat_05.md
 static void DecodeV5(const uint8_t *data, ruuviAd_t &ra) {
+    int16_t i16;
+    uint16_t u16;
+    uint8_t u8;
+
+    ra.availability = 0;
     ra.ruuvi_format = 5;
-    ra.temperature = (float)getInt16(data, 3) * 0.005;
-    ra.humidity = (float)getUint16(data, 5) * 0.0025;
-    ra.pressure = (float)getUint16(data, 7) / 100 + 500;
+
+    i16 = getInt16(data, 3);
+    if (i16 !=0x8000) ra.availability |= RUUVI_TEMPERATURE_AVAILABLE;
+    ra.temperature = (float) i16 * 0.005;
+
+    u16 = getUint16(data, 5);
+    if (u16 != 65535) ra.availability |= RUUVI_HUMIIDTY_AVAILABLE;
+    ra.humidity = (float)u16 * 0.0025;
+
+    u16 = getUint16(data, 7);
+    if (u16 != 65535) ra.availability |= RUUVI_PRESSURE_AVAILABLE;
+    ra.pressure = ((float)u16 + 50000.0) / 100.0;
+
     ra.accelX = getInt16(data, 9);
+    if (ra.accelX != 0x8000) ra.availability |= RUUVI_ACCELX_AVAILABLE;
     ra.accelY = getInt16(data, 11);
+    if (ra.accelY != 0x8000) ra.availability |= RUUVI_ACCELY_AVAILABLE;
     ra.accelZ = getInt16(data, 13);
-    ra.voltage = (data[15] << 3 | data[16] >> 5) + 1600;
-    ra.power = (data[16] & 0x1F) * 2 - 40;
-    ra.moveCount = getUint8(data, 17);
-    ra.sequence = getUint16(data, 18);
+    if (ra.accelZ != 0x8000) ra.availability |= RUUVI_ACCELZ_AVAILABLE;
+
+    u16 = data[15] << 3 | data[16];
+    if (u16 != 2047) ra.availability |= RUUVI_BATTERY_AVAILABLE;
+    ra.voltage = u16 + 1600;
+
+    u8 = data[16] & 0x1F;
+    if (u8 != 31) ra.availability |= RUUVI_TXPOWER_AVAILABLE;
+    ra.power = (u8) * 2 - 40;
+
+    u8 = getUint8(data, 17);
+    if (u8 != 255) ra.availability |= RUUVI_MOVEMENT_AVAILABLE;
+    ra.moveCount = u8;
+
+    u16 = getUint16(data, 18);
+    if (u16 != 65535) ra.availability |= RUUVI_SEQUENCE_AVAILABLE;
+    ra.sequence = u16;
 }
 
 static void DecodeV3(const uint8_t *data, ruuviAd_t &ra) {
@@ -71,8 +102,6 @@ void Ruuvi::print(Print &p, format_t format) {
     JsonDocument doc;
     doc = _ruuvi_report;
     doc["st"] = AT_RUUVI;
-    // doc["dsc"] = AT_RUUVI;
-
     serializeJson(doc, p);
     p.write("\n");
 }
@@ -105,6 +134,5 @@ bool  Ruuvi::bleAdvertisement(const bleAdvMsg_t  &msg) {
 RUUVI_DECODED:
     _ruuvi_report.lastchange = millis();
     _ruuvi_report.rssi = msg.rssi;
-    // log_e("ruuvi success");
     return true;
 }

@@ -60,7 +60,6 @@ static void ruuvi_report_cb(lv_subject_t *subject, lv_observer_t *observer) {
 
 static lv_obj_t *previous_screen = ui_Main;
 
-
 // callbacks from the UI
 extern "C"
 {
@@ -224,9 +223,40 @@ static void ui_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
             break;
         case UM_SENSOR_IMU:
             break;
-        case UM_SENSOR_ENVELOPE:
+        case UM_SENSOR_ENVELOPE: {
+                LV_LOG_USER("->env '%s'", input);
+                if (jdoc.containsKey("temp")) {
+                    lv_label_set_text_fmt(ui_envTemp, "%.1f°", jdoc["temp"].as<double>());
+                } else {
+                    lv_label_set_text(ui_envTemp, "n/a");
+                }
+                if (jdoc.containsKey("hum")) {
+                    lv_label_set_text_fmt(ui_envHum, "%.1f%%", jdoc["hum"].as<double>());
+                } else {
+                    lv_label_set_text(ui_envHum, "n/a");
+                }
+            }
             break;
-        case UM_SENSOR_OAT:
+        case UM_SENSOR_OAT: {
+                LV_LOG_USER("->oat '%s'", input);
+                if (jdoc.containsKey("temp")) {
+                    lv_label_set_text_fmt(ui_outsideTemp, "%.1f°", jdoc["temp"].as<double>());
+                } else {
+                    lv_label_set_text(ui_outsideTemp, "n/a");
+                }
+                if (jdoc.containsKey("hum")) {
+                    lv_label_set_text_fmt(ui_outsideHum, "%.1f%%", jdoc["hum"].as<double>());
+                } else {
+                    lv_label_set_text(ui_outsideHum, "n/a");
+                }
+            }
+            break;
+        case UM_SENSOR_TANK:
+            LV_LOG_USER("->tank '%s'", input);
+            break;
+
+        case UM_SENSOR_TANK_LAYOUT:
+            LV_LOG_USER("->tank_layout '%s'", input);
             break;
 
         default:

@@ -66,6 +66,16 @@ void read_config(void) {
     LittleFS.mkdir(SEQUENCE_DIR);
     equipment.read(UNITS_DIR, VA_LOAD_UNITS);
     equipment.read(SEQUENCE_DIR, VA_LOAD_SEQUENCE);
+
+    // send sensors available to UI?
+
+    // send tank layout to UI
+    // UI needs:
+    // id, color, sensors available (bitmap) %full (if available), bar (if available)
+    // [
+    //     {"id": "5020/16", "color" : 21321312, "sa" : 3, "f1": 73, "press" : 9.2},
+    //     ...
+    // ]
 }
 
 void init_sensors(void) {

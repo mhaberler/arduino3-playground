@@ -1,4 +1,6 @@
 #include "Sensor.hpp"
+#include "lv_subjects.hpp"
+#include "ui_message.hpp"
 #include "fsVisitor.hpp"
 #include <LittleFS.h>
 
@@ -24,6 +26,53 @@ void Equipment::walk(const UnitVisitor &unitVisitor, const uint32_t flags, void 
     }
 }
 
+void Equipment::deliverToUI(Sensor *sp) {
+
+    JsonDocument doc;
+    const void *decoded = sp->pod();
+    actorType_t at = sp->type();
+    unit_t ut = sp->unit()->type();
+
+    switch (at) {
+        case AT_RUUVI: {
+                const ruuviAd_t *p = (ruuviAd_t*) decoded;
+                doc = *p;
+                doc["st"] = AT_RUUVI;
+            }
+            break;
+        case AT_MOPEKA: {
+                const mopekaAd_t *p = (mopekaAd_t*) decoded;
+                doc = *p;
+                doc["st"] = AT_MOPEKA;
+            }
+            break;
+        case AT_TPMS: {
+                const tpmsAd_t *p = (tpmsAd_t*) decoded;
+                doc = *p;
+                doc["st"] = AT_TPMS;
+            }
+            break;
+        default:
+            ;
+    }
+    doc["ut"] = (int)ut;
+    switch (ut) {
+        case UT_BASKET:
+            doc["um"] = (int)UM_SENSOR_OAT;
+            break;
+        case UT_ENVELOPE:
+            doc["um"] = (int)UM_SENSOR_ENVELOPE;
+            break;
+        case UT_TANK:
+            doc["um"] = (int)UM_SENSOR_TANK;
+            doc["ix"] = sp->unit()->index();
+            break;
+        default:
+            break;
+    }
+    sendUiMessage(doc);
+}
+
 bool Equipment::bleRegister(const NimBLEAddress &mac, Sensor *sp) {
 
     Sensor *old =  _ble_sensors[mac];
@@ -42,8 +91,9 @@ bool Equipment::bleDeliver(const bleAdvMsg_t &msg) {
         // log_e("deliver %s", mac.toString().c_str());
         bool rc =  sp->bleAdvertisement(msg);
         if (rc) {
-            Serial.printf("%s %s ", sp->unitName().c_str(), sp->fullName().c_str());
-            sp->print(Serial);
+            // Serial.printf("%s %s ", sp->unitName().c_str(), sp->fullName().c_str());
+            // sp->print(Serial);
+            deliverToUI(sp);
         }
     }
     return false;

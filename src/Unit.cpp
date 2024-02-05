@@ -1,7 +1,6 @@
 #include "Sensor.hpp"
 #include "blescan.hpp"
 
-
 const NimBLEAddress null_mac;
 
 void Unit::dump(Stream &s) {
@@ -89,10 +88,14 @@ void convertFromJson(JsonVariantConst src, NimBLEAddress& dst) {
 }
 
 void convertToJson(const ruuviAd_t & src, JsonVariant dst) {
-    dst["temp"] =  round1(src.temperature);
-    dst["hum"] =  round1(src.humidity);
-    dst["press"] = round1(src.pressure);
-    dst["batt"] = volt2percent((float)src.voltage/1000.0);
+    if (src.availability & RUUVI_TEMPERATURE_AVAILABLE)
+        dst["temp"] =  round1(src.temperature);
+    if (src.availability & RUUVI_HUMIIDTY_AVAILABLE)
+        dst["hum"] =  round1(src.humidity);
+    if (src.availability & RUUVI_PRESSURE_AVAILABLE)
+        dst["press"] = round1(src.pressure);
+    if (src.availability & RUUVI_BATTERY_AVAILABLE)
+        dst["batt"] = volt2percent((float)src.voltage/1000.0);
     dst["rssi"] = src.rssi;
 }
 
