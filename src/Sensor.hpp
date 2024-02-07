@@ -138,16 +138,6 @@ class Equipment;
 class Consumer;
 class Producer;
 
-class Binding {
-  private:
-  public:
-    bool link(Producer &p, Consumer &c);
-    bool link(Unit &src, Consumer &c);
-    bool link(Unit &src, Unit &dst);
-    bool link(actorType_t &src, Unit &);
-    bool link(actorType_t &src, actorType_t &to);
-};
-
 class Actor { // abstract base class of Sensor, Actuator
   private:
   protected:
@@ -195,7 +185,6 @@ class Sensor : public Producer {
     format_t _format;
     float _min = 0.0;
     float _max = 100.0;
-    float _cap = 40.0; // liter
 
   public:
     Sensor(Unit *u)  {
@@ -217,18 +206,11 @@ class Sensor : public Producer {
     void setMax(float m) {
         _max = m;
     }
-    void setCap(float cap) {
-        _cap = cap;
-    }
-
     const float min(void) {
         return _min;
     }
     const float max(void) {
         return _max;
-    }
-    const float cap(void) {
-        return _cap;
     }
 
     bool configure(JsonObject conf);
@@ -265,6 +247,8 @@ class Unit {
     std::unordered_map< std::string, Actor *> _actor_map;
     uint32_t _timestamp;
     std::string _tagcolor;
+    std::string _description;
+    float _cap = 40.0; // liter
 
   public:
     Unit( std::string id) : _id(id), _index(-1) {};
@@ -278,6 +262,12 @@ class Unit {
     }
     const  std::string & tagColor(void) {
         return _tagcolor;
+    }
+    void setCap(float cap) {
+        _cap = cap;
+    }
+    const float cap(void) {
+        return _cap;
     }
     uint32_t timestamp(void) {
         return _timestamp;

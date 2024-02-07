@@ -273,9 +273,15 @@ static void ui_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
                     case AT_ROTAREX: // not yet
                         break;
                     case AT_MOPEKA: {
+                            if (jdoc["cap"] > 0) {
+                                float cap = jdoc["cap"].as<float>();
+                                set_cap(idx, cap);
+                            }
                             if (jdoc["stars"].as<int32_t>() > 0) {
                                 lv_coord_t pct = jdoc["pct"].as<lv_coord_t>();
                                 set_level(idx, pct);
+                                float ltr = jdoc["ltr"].as<float>();
+                                set_liters(idx, ltr);
                             }
                         }
                         break;
@@ -301,6 +307,7 @@ static void ui_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
     }
     jdoc.clear();
 }
+
 static void register_observers(void) {
     lv_subject_add_observer_with_target(&oat_temp, ruuvi_report_cb, ui_outsideTemp, (void*)"%.1f°");
     lv_subject_add_observer_with_target(&oat_hum, ruuvi_report_cb, ui_outsideHum, (void*)"%.1f%%");

@@ -60,5 +60,7 @@ extern lv_subject_t runCompassAnimation, animationSpeed;
 extern uint16_t tanks_seen;
 void set_level(int index, lv_coord_t value);
 void set_pressure(int index, lv_coord_t value);
+void set_liters(int index, float value);
+void set_cap(int index, float value);
 
 void lv_subjects_init(void);

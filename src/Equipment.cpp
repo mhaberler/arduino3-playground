@@ -44,7 +44,9 @@ void Equipment::sensorToUI(Sensor *sp) {
                 const mopekaAd_t *p = (mopekaAd_t*) decoded;
                 doc = *p;
                 doc["st"] = AT_MOPEKA;
-                doc["pct"] = (int) percentBetween(sp->min(), sp->max(), p->level);
+                int32_t pct = percentBetween(sp->min(), sp->max(), p->level);
+                doc["pct"] = pct;
+                doc["ltr"] = sp->unit()->cap() * pct / 100.0;
             }
             break;
         case AT_TPMS: {
@@ -68,6 +70,7 @@ void Equipment::sensorToUI(Sensor *sp) {
             doc["um"] = (int)UM_SENSOR_TANK;
             doc["ix"] = sp->unit()->index();
             doc["col"] = sp->unit()->tagColor();
+            doc["cap"] = sp->unit()->cap();
             break;
         default:
             break;

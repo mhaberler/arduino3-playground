@@ -20,6 +20,9 @@ bool Unit::configure(Equipment &eq, JsonObject *conf) {
     if ((*conf)["col"]) {
         setTagColor((*conf)["col"].as<std::string>());
     }
+    if ((*conf)["cap"]) {
+        setCap((*conf)["cap"].as<float>());
+    }
     JsonArray sensors = (*conf)["sensors"].as<JsonArray>();
 
     for(JsonObject s: sensors) {
