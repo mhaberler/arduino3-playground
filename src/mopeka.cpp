@@ -10,12 +10,7 @@ void Mopeka::print(Print &p, format_t format) {
 bool Mopeka::configure(JsonObject conf) {
     if (!BLESensor::configure(conf))
         return false;
-    if (conf["min"]) {
-        Sensor::setMin(conf["min"].as<float>());
-    }
-    if (conf["max"]) {
-        Sensor::setMax(conf["max"].as<float>());
-    }
+
     return (type() != AT_NONE);
 };
 

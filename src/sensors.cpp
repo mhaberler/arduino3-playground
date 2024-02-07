@@ -9,7 +9,6 @@
 #include <filesystem>
 
 Equipment equipment;
-static bool reconfigure_tanks;
 
 String sanitizeLittleFSPath(const String &path) {
     // Maximum length of LittleFS file/directory names
@@ -67,7 +66,6 @@ void read_config(void) {
     LittleFS.mkdir(SEQUENCE_DIR);
     equipment.read(UNITS_DIR, VA_LOAD_UNITS);
     equipment.read(SEQUENCE_DIR, VA_LOAD_SEQUENCE);
-    equipment.emitTankSequence();
 }
 
 void init_sensors(void) {
@@ -76,12 +74,4 @@ void init_sensors(void) {
 
 void sensor_loop(void) {
     process_ble();
-    if (reconfigure_tanks) {
-        equipment.emitTankSequence();
-        reconfigure_tanks = false;
-    }
-}
-
-void schedule_UI_reconfigure() {
-    reconfigure_tanks = true;
 }

@@ -1,5 +1,6 @@
 #include "Sensor.hpp"
 
+
 // sensorMode_t Sensor::mode() {
 //     return _mode;
 // }
@@ -30,6 +31,12 @@ const  std::string Sensor::unitName(void) {
 
 bool Sensor::configure(JsonObject conf)  {
     _type = conf["st"];
+    if (conf["min"]) {
+        setMin(conf["min"].as<float>());
+    }
+    if (conf["max"]) {
+        setMax(conf["max"].as<float>());
+    }
     return (_type != AT_NONE);
 }
 

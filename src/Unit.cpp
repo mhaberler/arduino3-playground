@@ -1,5 +1,6 @@
 #include "Sensor.hpp"
 #include "blescan.hpp"
+#include "lv_util.h"
 
 const NimBLEAddress null_mac;
 
@@ -15,7 +16,10 @@ bool Unit::configure(Equipment &eq, JsonObject *conf) {
     setType(ut);
     String dsc = (*conf)["dsc"];
     String id = (*conf)["id"];
-    String color = (*conf)["color"];
+    String color = (*conf)["col"];
+    if ((*conf)["col"]) {
+        setTagColor((*conf)["col"].as<std::string>());
+    }
     JsonArray sensors = (*conf)["sensors"].as<JsonArray>();
 
     for(JsonObject s: sensors) {

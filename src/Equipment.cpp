@@ -67,6 +67,7 @@ void Equipment::sensorToUI(Sensor *sp) {
         case UT_TANK:
             doc["um"] = (int)UM_SENSOR_TANK;
             doc["ix"] = sp->unit()->index();
+            doc["col"] = sp->unit()->tagColor();
             break;
         default:
             break;
@@ -140,7 +141,6 @@ bool Equipment::addUnit(JsonObject conf, source_t source) {
             _saveUnit(id, doc);
             _updateSequence();
         }
-        schedule_UI_reconfigure();
         return true;
     } else {
         log_e("configure failed: %s", id.c_str());
@@ -227,26 +227,6 @@ bool Equipment::restoreSequence(const char *path) {
 //     {"id": "5020/16", "color" : 21321312, "sa" : 3, "f1": 73, "press" : 9.2},
 //     ...
 // ]
-void Equipment::emitTankSequence(void) {
-    JsonDocument doc;
-    // JsonArray tseq = doc.to<JsonArray>();
-
-    for (auto u:_units) {
-        JsonDocument tmp;
-        JsonObject obj = tmp.to<JsonObject>();
-
-        if (u->type() != UT_TANK)
-            continue;
-        log_e("ts: add %s %d", u->id().c_str(), u->timestamp());
-        obj["id"] = u->id();
-        obj["ts"] = u->timestamp();
-        // obj["color"] = u->color();
-        doc.add(obj);
-    }
-    log_e("emitTankSequence:");
-    serializeJsonPretty(doc, Serial);
-
-}
 
 void Equipment::dump(Stream &s) {
     for(auto u: _units) {
