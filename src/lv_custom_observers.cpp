@@ -264,6 +264,10 @@ static void ui_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
                     LV_LOG_ERROR("MAX_TANKS=%d idx=%d", MAX_TANKS, idx);
                     break;
                 }
+                if (tanks_seen-1 < idx) {
+                    tanks_seen = idx + 1;
+                    lv_chart_set_point_count( ui_tanksChart, tanks_seen);
+                }
                 actorType_t at = jdoc["st"].as<actorType_t>();
                 switch (at) {
                     case AT_ROTAREX: // not yet
