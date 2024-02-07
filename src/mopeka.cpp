@@ -11,12 +11,11 @@ bool Mopeka::configure(JsonObject conf) {
     if (!BLESensor::configure(conf))
         return false;
     if (conf["min"]) {
-        _min_mm = conf["min"].as<int16_t>();
+        Sensor::setMin(conf["min"].as<float>());
     }
     if (conf["max"]) {
-        _max_mm = conf["max"].as<int16_t>();
+        Sensor::setMax(conf["max"].as<float>());
     }
-    // Serial.printf("CONFIGURE type=%u mac=%s\n", (unsigned)_type, _macAddress.toString().c_str());
     return (type() != AT_NONE);
 };
 

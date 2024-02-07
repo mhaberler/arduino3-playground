@@ -26,7 +26,7 @@ void Equipment::walk(const UnitVisitor &unitVisitor, const uint32_t flags, void 
     }
 }
 
-void Equipment::deliverToUI(Sensor *sp) {
+void Equipment::sensorToUI(Sensor *sp) {
 
     JsonDocument doc;
     const void *decoded = sp->pod();
@@ -44,6 +44,7 @@ void Equipment::deliverToUI(Sensor *sp) {
                 const mopekaAd_t *p = (mopekaAd_t*) decoded;
                 doc = *p;
                 doc["st"] = AT_MOPEKA;
+                doc["pct"] = (int) percentBetween(sp->min(), sp->max(), p->level);
             }
             break;
         case AT_TPMS: {
@@ -93,7 +94,7 @@ bool Equipment::bleDeliver(const bleAdvMsg_t &msg) {
         if (rc) {
             // Serial.printf("%s %s ", sp->unitName().c_str(), sp->fullName().c_str());
             // sp->print(Serial);
-            deliverToUI(sp);
+            sensorToUI(sp);
         }
     }
     return false;
@@ -137,8 +138,9 @@ bool Equipment::addUnit(JsonObject conf, source_t source) {
             JsonDocument doc;
             doc.add(conf);
             _saveUnit(id, doc);
-            _saveSequence();
+            _updateSequence();
         }
+        schedule_UI_reconfigure();
         return true;
     } else {
         log_e("configure failed: %s", id.c_str());
@@ -184,25 +186,28 @@ bool Equipment::restoreSequence(const char *path) {
         unit_t t = jdoc["ut"] | UT_NONE;
         switch (t) {
             case UT_TANK_SEQUENCE: {
-                    uint32_t idx = 0;
+                    _tanks.clear();
+                    int8_t idx = 0;
                     JsonArray seq = jdoc["seq"];
                     // set per-tank index
                     for(JsonVariant v : seq) {
                         Unit *u = _unit_by_id[v.as<std::string>()];
                         if (u && u->type() == UT_TANK) {
                             log_e("%s %u", u->id().c_str(), idx);
+                            u->setTimestamp(idx);
                             u->setIndex(idx);
+                            _tanks.push_back(u);
                             idx += 1;
                         } else {
                             log_e("no such Unit: %s",  u->id().c_str());
                         }
                     }
-                    // sort the _units vector by index, i.e creation order:
-                    std::sort(_units.begin(),
-                              _units.end(),
-                    [](Unit* const& u1, Unit* const& u2) {
-                        return (u1->index() < u2->index());
-                    });
+                    // // sort the _units vector by index, i.e creation order:
+                    // std::sort(_units.begin(),
+                    //           _units.end(),
+                    // [](Unit* const& u1, Unit* const& u2) {
+                    //     return (u1->timestamp() < u2->timestamp());
+                    // });
                     return 0;
                 }
                 break;
@@ -211,6 +216,36 @@ bool Equipment::restoreSequence(const char *path) {
         }
     }
     return true;
+}
+
+// send sensors available to UI?
+
+// send tank layout to UI
+// UI needs:
+// id, color, sensors available (bitmap) %full (if available), bar (if available)
+// [
+//     {"id": "5020/16", "color" : 21321312, "sa" : 3, "f1": 73, "press" : 9.2},
+//     ...
+// ]
+void Equipment::emitTankSequence(void) {
+    JsonDocument doc;
+    // JsonArray tseq = doc.to<JsonArray>();
+
+    for (auto u:_units) {
+        JsonDocument tmp;
+        JsonObject obj = tmp.to<JsonObject>();
+
+        if (u->type() != UT_TANK)
+            continue;
+        log_e("ts: add %s %d", u->id().c_str(), u->timestamp());
+        obj["id"] = u->id();
+        obj["ts"] = u->timestamp();
+        // obj["color"] = u->color();
+        doc.add(obj);
+    }
+    log_e("emitTankSequence:");
+    serializeJsonPretty(doc, Serial);
+
 }
 
 void Equipment::dump(Stream &s) {
@@ -231,24 +266,37 @@ bool Equipment::_saveUnit(const std::string &id, const JsonDocument &doc) {
     return true;
 }
 
-bool Equipment::_saveSequence(void) {
-
-    JsonDocument root;
-
-    JsonObject obj = root.to<JsonObject>();
-    obj["ut"] = UT_TANK_SEQUENCE;
-    JsonArray seq = obj["seq"].to<JsonArray>();
+bool Equipment::_updateSequence(void) {
+    _tanks.clear();
     for (auto u: _units) {
         if (u->type() == UT_TANK) {
-            seq.add(u->id());
+            _tanks.push_back(u);
         }
     }
-    // serializeJsonPretty(root, Serial);
-    // Serial.printf("\n");
+    // sort the _tanks vector by index, i.e creation order:
+    std::sort(_tanks.begin(),
+              _tanks.end(),
+    [](Unit* const& u1, Unit* const& u2) {
+        return (u1->timestamp() < u2->timestamp());
+    });
+
+    JsonDocument root;
+    JsonObject obj = root.to<JsonObject>();
+
+    obj["ut"] = UT_TANK_SEQUENCE;
+    JsonArray seq = obj["seq"].to<JsonArray>();
+    int8_t idx = 0;
+    for (auto u: _tanks) {
+        u->setIndex(idx);
+        idx += 1;
+        seq.add(u->id());
+    }
+    serializeJsonPretty(root, Serial);
+    Serial.printf("\n");
 
     String path = String(SEQUENCE_DIR) + String("/") + sanitizeLittleFSPath(String("tank_sequence")) + String(".json");
 
-    // log_e("_saveSequence normalizePath %s", path.c_str());
+    // log_e("_updateSequence normalizePath %s", path.c_str());
     LittleFS.remove(path.c_str());
     File fd = LittleFS.open(path.c_str(), "w");
     serializeJsonPretty(root, fd);

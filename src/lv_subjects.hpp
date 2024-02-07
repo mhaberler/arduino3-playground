@@ -7,6 +7,10 @@
 
 #define UI_MESSAGESIZE 8192
 
+#define MAX_TANKS 12
+#define MAX_PRESSURE 15
+#define MAX_LEVEL 90
+
 
 #define STATUS_WIFI_UNCONFIGURED lv_palette_main(LV_PALETTE_GREY)
 #define STATUS_WIFI_STARTED lv_palette_main(LV_PALETTE_AMBER)
@@ -53,7 +57,8 @@ extern lv_subject_t oat_temp, oat_hum, env_temp, env_hum, wifi_color,
 extern lv_subject_t runCompassAnimation, animationSpeed;
 // extern lv_subject_t uiMessage;
 
-
-
+extern uint16_t tanks_seen;
+void set_level(int index, lv_coord_t value);
+void set_pressure(int index, lv_coord_t value);
 
 void lv_subjects_init(void);

@@ -15,6 +15,7 @@ bool Unit::configure(Equipment &eq, JsonObject *conf) {
     setType(ut);
     String dsc = (*conf)["dsc"];
     String id = (*conf)["id"];
+    String color = (*conf)["color"];
     JsonArray sensors = (*conf)["sensors"].as<JsonArray>();
 
     for(JsonObject s: sensors) {
@@ -79,6 +80,14 @@ uint8_t volt2percent(const float v) {
     return (uint8_t) percent;
 }
 
+float percentBetween(float min, float max, float value) {
+    if (value <= min)
+        return 0.0;
+    if (value >= max)
+        return 100.0;
+    return 100.0 *(value - min) / (max - min);
+}
+
 void convertFromJson(JsonVariantConst src, actorType_t& dst) {
     dst = (actorType_t) src.as<unsigned int>();
 }
@@ -108,7 +117,7 @@ void convertToJson(const mopekaAd_t & src, JsonVariant dst) {
     if (src.syncPressed)
         dst["sync"] = 1;
     dst["rssi"] = src.rssi;
-    dst["batt"] = volt2percent(src.battery);
+    dst["batt"] = (uint32_t)(src.battery*100);
 }
 
 void convertToJson(const tpmsAd_t & src, JsonVariant dst) {

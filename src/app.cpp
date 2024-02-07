@@ -4,7 +4,8 @@
     #include <Arduino.h>
 #endif
 
-void startBLEscan(void);
+void ble_setup(void);
+void ble_loop(void);
 void test_spdlog(void);
 void gfxdemo_setup(void);
 void gfxdemo_loop(void);
@@ -38,7 +39,7 @@ void setup(void) {
     lvgl_setup();
     gfxdemo_setup();
     test_spdlog();
-    startBLEscan();
+    ble_setup();
     webserver_setup();
     nfc_setup();
     init_sensors();
@@ -51,6 +52,7 @@ void loop(void) {
     gfxdemo_loop();
     webserver_loop();
     nfc_loop();
+    ble_loop();
     sensor_loop();
     delay(1);
     yield(); // Stop watchdog reset

@@ -49,7 +49,7 @@ class scanCallbacks : public BLEAdvertisedDeviceCallbacks {
     }
 };
 
-void startBLEscan(void) {
+void ble_setup(void) {
 
     log_d("start BLE scan.");
     bleadv_queue = xQueueCreate(BLE_ADV_QUEUELEN, sizeof(bleAdvMsg_t));
@@ -64,9 +64,27 @@ void startBLEscan(void) {
     pBLEScan->setActiveScan(false);
     pBLEScan->setInterval(100);
     pBLEScan->setWindow(99);
+#ifdef NIMBLE_OLDAPI
+    pBLEScan->start(scanTime/1000, nullptr, false);
+#else
     pBLEScan->start(scanTime);
+#endif
+}
+
+void ble_loop(void) {
+    if(pBLEScan->isScanning() == false) {
+        // Start scan with: duration = 0 seconds(forever), no scan end callback, not a continuation of a previous scan.
+#ifdef NIMBLE_OLDAPI
+        pBLEScan->start(scanTime/1000, nullptr, false);
+#else
+        pBLEScan->start(scanTime);
+#endif
+    }
+
 }
 
 #else
-void startBLEscan(void) {}
+void ble_setup(void) {}
+void ble_loop(void) {}
+
 #endif

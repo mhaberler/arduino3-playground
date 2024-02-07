@@ -57,6 +57,7 @@ typedef enum {
     AT_RUUVI,
     AT_MOPEKA,
     AT_TPMS,
+    AT_ROTAREX,
     AT_GPS,
     AT_FLOWSENSOR,
     AT_BARO,
@@ -113,7 +114,8 @@ String sanitizeLittleFSPath(const String &path);
 bool wipeLittleFS(void);
 uint8_t volt2percent(const float volt);
 bool bleDeliver(const bleAdvMsg_t &msg);
-
+void schedule_UI_reconfigure();
+float percentBetween(float min, float max, float value);
 const char *sensorTypeStr(const actorType_t sensorType);
 const char *unitTypeStr(const unit_t unitType);
 
@@ -192,7 +194,8 @@ class Sensor : public Producer {
   private:
     // sensorMode_t _mode;
     format_t _format;
-
+    float _min = 0.0;
+    float _max = 100.0;
   public:
     Sensor(Unit *u)  {
         _unit = u;
@@ -207,6 +210,10 @@ class Sensor : public Producer {
     format_t format();
     void dump(Stream &s) override;
 
+    void setMin(float m) { _min = m;}
+    void setMax(float m) { _max = m;}
+    const float &min(void) { return _min;}
+    const float &max(void) { return _max;}
     bool configure(JsonObject conf);
     virtual bool bleAdvertisement(const bleAdvMsg_t  &msg) = 0;
     virtual const  std::string name(void) = 0;
@@ -237,14 +244,16 @@ class Unit {
   private:
     std::string _id;
     unit_t _ut;
-    uint8_t _index;
+    int8_t _index;
     std::unordered_map< std::string, Actor *> _actor_map;
     uint32_t _timestamp;
 
   public:
-    Unit( std::string id) : _id(id) {};
+    Unit( std::string id) : _id(id), _index(-1) {};
     ~Unit() {
         Serial.printf("Unit.dtor %s\n", _id.c_str());
+        // dtor: delete sensors!!
+        //
     };
 
     uint32_t timestamp(void) {
@@ -253,15 +262,21 @@ class Unit {
     void setTimestamp(uint32_t t) {
         _timestamp = t;
     };
-    // dtor: delete sensors!!
-    //
-    bool configure(Equipment &eq, JsonObject *conf);
-    uint8_t index(void) {
+
+    int8_t index(void) {
         return _index;
     };
-    void setIndex(uint8_t i) {
-        _index = i;
+    void setIndex(int8_t t) {
+        _index = t;
     };
+
+    bool configure(Equipment &eq, JsonObject *conf);
+    // uint8_t index(void) {
+    //     return _index;
+    // };
+    // void setIndex(uint8_t i) {
+    //     _index = i;
+    // };
     void print(Print &p, format_t format = FMT_TEXT);
     void dump(Stream &s);
     void setType(const unit_t ut) {
@@ -304,10 +319,11 @@ typedef enum {
 class Equipment {
   private:
     vector<Unit *> _units;
+    vector<Unit *> _tanks;
     unordered_map<std::string, Unit *> _unit_by_id;
     unordered_map<NimBLEAddress, Sensor *> _ble_sensors;
     bool _saveUnit(const std::string &id, const JsonDocument &doc);
-    bool _saveSequence(void);
+    bool _updateSequence(void);
     uint32_t _seq;
 
   public:
@@ -320,7 +336,8 @@ class Equipment {
     void dump(Stream &s);
     bool bleDeliver(const bleAdvMsg_t &msg);
     bool bleRegister(const NimBLEAddress &mac, Sensor *sp);
-    void deliverToUI(Sensor *sp);
+    void sensorToUI(Sensor *sp);
+    void emitTankSequence(void);
     void walk(const UnitVisitor &unitVisitor, const uint32_t flags, void *user_data);
 };
 
@@ -358,8 +375,6 @@ class Ruuvi : public BLESensor {
 class Mopeka : public BLESensor {
   private:
     mopekaAd_t _mopeka_report;
-    uint16_t _min_mm = 100;
-    uint16_t _max_mm = 857;
     bool _decode(const uint8_t *data,
                  const size_t len, mopekaAd_t &ma);
   public:

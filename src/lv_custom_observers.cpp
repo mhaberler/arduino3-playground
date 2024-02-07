@@ -251,8 +251,41 @@ static void ui_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
                 }
             }
             break;
-        case UM_SENSOR_TANK:
-            LV_LOG_USER("->tank '%s'", input);
+        case UM_SENSOR_TANK: {
+                // tank '{"temp":12,"level":908,"stars":3,"accX":-56,"accY":-54,"rssi":-75,"batt":0,"st":2,"ut":1,"um":13,"ix":0}'
+                // tank '{"temp":10,"level":165,"stars":1,"accX":65,"accY":-14,"rssi":-81,"batt":0,"st":2,"ut":1,"um":13,"ix":1}'
+                // tank '{"press":0.8,"temp":10.9,"loc":0,"status":false,"batt":56,"rssi":-74,"st":3,"ut":1,"um":13,"ix":0}' (in lv_custom_observers.cpp line #277)
+                int8_t idx = jdoc["ix"].as<int8_t>();
+                if (idx < 0) {
+                    LV_LOG_ERROR("idx=%d", idx);
+                    break;
+                }
+                if (idx > MAX_TANKS-1) {
+                    LV_LOG_ERROR("MAX_TANKS=%d idx=%d", MAX_TANKS, idx);
+                    break;
+                }
+                actorType_t at = jdoc["st"].as<actorType_t>();
+                switch (at) {
+                    case AT_ROTAREX: // not yet
+                        break;
+                    case AT_MOPEKA: {
+                            if (jdoc["stars"].as<int32_t>() > 0) {
+                                lv_coord_t pct = jdoc["pct"].as<lv_coord_t>();
+                                set_level(idx, pct);
+                            }
+                        }
+                        break;
+                    case AT_TPMS: {
+                            lv_coord_t pct = jdoc["press"].as<lv_coord_t>();
+                            set_pressure(idx, pct);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                LV_LOG_USER("->tank '%s'", input);
+            }
+
             break;
 
         case UM_SENSOR_TANK_LAYOUT:

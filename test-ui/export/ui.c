@@ -13,23 +13,23 @@
 void ui_Main_screen_init(void);
 void ui_event_Main( lv_event_t * e);
 lv_obj_t *ui_Main;
-lv_obj_t *ui_mainHeader;
+lv_obj_t *ui_Container8;
 lv_obj_t *ui_GPSStatus;
 lv_obj_t *ui_SdCardStatus;
 lv_obj_t *ui_BLEStatus;
 lv_obj_t *ui_WifiStatus;
 lv_obj_t *ui_BatteryStatus;
-lv_obj_t *ui_mainArea;
-lv_obj_t *ui_descriptions;
-lv_obj_t *ui_envTempLabel;
-lv_obj_t *ui_envelopeHumLabel;
-lv_obj_t *ui_outsideTempLabel;
-lv_obj_t *ui_outsideHumLabel;
-lv_obj_t *ui_values;
+void ui_event_TankContainer2( lv_event_t * e);
+lv_obj_t *ui_TankContainer2;
+lv_obj_t *ui_Container10;
+lv_obj_t *ui_tanksChart;
+lv_obj_t *ui_Container11;
 lv_obj_t *ui_envTemp;
 lv_obj_t *ui_envHum;
 lv_obj_t *ui_outsideTemp;
 lv_obj_t *ui_outsideHum;
+lv_obj_t *ui_fuelLiters;
+lv_obj_t *ui_fuelPct;
 
 
 // SCREEN: ui_Compass
@@ -149,10 +149,21 @@ lv_indev_wait_release(lv_indev_get_act());
 }
 if ( event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_BOTTOM  ) {
 lv_indev_wait_release(lv_indev_get_act());
-      _ui_screen_change( &ui_Status, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Status_screen_init);
+      _ui_screen_change( &ui_Config, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Config_screen_init);
 }
 if ( event_code == LV_EVENT_LONG_PRESSED) {
       longPressed( e );
+}
+}
+void ui_event_TankContainer2( lv_event_t * e) {
+    lv_event_code_t event_code = lv_event_get_code(e);lv_obj_t * target = lv_event_get_target(e);
+if ( event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_TOP  ) {
+lv_indev_wait_release(lv_indev_get_act());
+      _ui_screen_change( &ui_Main, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Main_screen_init);
+}
+if ( event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_BOTTOM  ) {
+lv_indev_wait_release(lv_indev_get_act());
+      _ui_screen_change( &ui_Config, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Config_screen_init);
 }
 }
 void ui_event_Compass( lv_event_t * e) {
