@@ -44,8 +44,8 @@ void set_liters(int index, float value) {
         cap_total += tank_cap_liters[i];
     }
     float pct_left = 100.0*total_left/cap_total;
-    LV_LOG_USER("pct_left %f %d  cap_total %f %d'",
-                pct_left, (int32_t)pct_left, cap_total, (int32_t)cap_total);
+    // LV_LOG_USER("pct_left %f %d  cap_total %f %d'",
+    //             pct_left, (int32_t)pct_left, cap_total, (int32_t)cap_total);
 
     lv_label_set_text_fmt(ui_fuelLiters, "%d l", (int32_t) total_left);
     lv_label_set_text_fmt(ui_fuelPct, "%d%%", (int32_t) pct_left);
