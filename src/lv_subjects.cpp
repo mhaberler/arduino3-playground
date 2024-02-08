@@ -43,10 +43,7 @@ void set_liters(int index, float value) {
         total_left += tank_liters_left[i];
         cap_total += tank_cap_liters[i];
     }
-    float pct_left = 100.0*total_left/cap_total;
-    // LV_LOG_USER("pct_left %f %d  cap_total %f %d'",
-    //             pct_left, (int32_t)pct_left, cap_total, (int32_t)cap_total);
-
+    float pct_left = 100.0 * total_left/cap_total;
     lv_label_set_text_fmt(ui_fuelLiters, "%d l", (int32_t) total_left);
     lv_label_set_text_fmt(ui_fuelPct, "%d%%", (int32_t) pct_left);
 }
@@ -54,25 +51,6 @@ void set_liters(int index, float value) {
 void set_cap(int index, float value) {
     tank_cap_liters[index] = value;
 }
-
-// ui_tanksChart = lv_chart_create(ui_Container10);
-// lv_obj_set_width( ui_tanksChart, lv_pct(60));
-// lv_obj_set_height( ui_tanksChart, lv_pct(80));
-// lv_obj_set_align( ui_tanksChart, LV_ALIGN_TOP_MID );
-// lv_chart_set_type( ui_tanksChart, LV_CHART_TYPE_BAR);
-// lv_chart_set_point_count( ui_tanksChart, 2);
-// lv_chart_set_range( ui_tanksChart, LV_CHART_AXIS_SECONDARY_Y, 1, 15);
-// lv_chart_set_axis_tick( ui_tanksChart, LV_CHART_AXIS_PRIMARY_X, 10, 5, 5, 5, true, 50);
-// lv_chart_set_axis_tick( ui_tanksChart, LV_CHART_AXIS_PRIMARY_Y, 10, 5, 5, 2, true, 50);
-// lv_chart_set_axis_tick( ui_tanksChart, LV_CHART_AXIS_SECONDARY_Y, 5, 5, 2, 5, true, 25);
-
-// lv_chart_series_t* ui_tanksChart_series_1 = lv_chart_add_series(ui_tanksChart, lv_color_hex(0x1AE0E6), LV_CHART_AXIS_PRIMARY_Y);
-// static lv_coord_t ui_tanksChart_series_1_array[] = { 0,10,20 };
-// lv_chart_set_ext_y_array(ui_tanksChart, ui_tanksChart_series_1, ui_tanksChart_series_1_array);
-
-// lv_chart_series_t* ui_tanksChart_series_2 = lv_chart_add_series(ui_tanksChart, lv_color_hex(0xED0D0D), LV_CHART_AXIS_SECONDARY_Y);
-// static lv_coord_t ui_tanksChart_series_2_array[] = { 0,10,20 };
-// lv_chart_set_ext_y_array(ui_tanksChart, ui_tanksChart_series_2, ui_tanksChart_series_2_array);
 
 void lv_tanks_init(void) {
 
@@ -85,10 +63,6 @@ void lv_tanks_init(void) {
 
 void lv_subjects_init(void) {
     lvgl_acquire();
-    lv_subject_init_int(&oat_temp, 0);
-    lv_subject_init_int(&oat_hum, 0);
-    lv_subject_init_int(&env_temp, 0);
-    lv_subject_init_int(&env_hum, 0);
 
     lv_subject_init_color(&wifi_color, STATUS_WIFI_UNCONFIGURED);
     lv_subject_init_int(&ble_traffic, 0);

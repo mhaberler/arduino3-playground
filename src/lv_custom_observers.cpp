@@ -43,20 +43,20 @@ extern  void animate_battery_icon(int32_t batval) {
     lv_label_set_text(ui_BatteryStatus, label);
 }
 
-static void ruuvi_report_cb(lv_subject_t *subject, lv_observer_t *observer) {
-    const char *fmt = (const char *)observer->user_data;
-    uint32_t last_heard = (uint32_t)subject->user_data;
-    int32_t value = lv_subject_get_int(subject);
+// static void ruuvi_report_cb(lv_subject_t *subject, lv_observer_t *observer) {
+//     const char *fmt = (const char *)observer->user_data;
+//     uint32_t last_heard = (uint32_t)subject->user_data;
+//     int32_t value = lv_subject_get_int(subject);
 
-    if ((last_heard == 0) || (lv_tick_elaps(last_heard) > RUUVI_PERIOD)) {
-        fmt = NOT_AVAILABLE;
-    } else {
-        if (lv_subject_get_previous_int(subject) == value) // no change
-            return;
-    }
-    lv_obj_t *target = (lv_obj_t *)lv_observer_get_target(observer);
-    lv_label_set_text_fmt(target, fmt, ITOD100(value));
-}
+//     if ((last_heard == 0) || (lv_tick_elaps(last_heard) > RUUVI_PERIOD)) {
+//         fmt = NOT_AVAILABLE;
+//     } else {
+//         if (lv_subject_get_previous_int(subject) == value) // no change
+//             return;
+//     }
+//     lv_obj_t *target = (lv_obj_t *)lv_observer_get_target(observer);
+//     lv_label_set_text_fmt(target, fmt, ITOD100(value));
+// }
 
 static lv_obj_t *previous_screen = ui_Main;
 
@@ -309,11 +309,6 @@ static void ui_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
 }
 
 static void register_observers(void) {
-    lv_subject_add_observer_with_target(&oat_temp, ruuvi_report_cb, ui_outsideTemp, (void*)"%.1f°");
-    lv_subject_add_observer_with_target(&oat_hum, ruuvi_report_cb, ui_outsideHum, (void*)"%.1f%%");
-    lv_subject_add_observer_with_target(&env_temp, ruuvi_report_cb, ui_envTemp,(void*) "%.1f°");
-    lv_subject_add_observer_with_target(&env_hum, ruuvi_report_cb, ui_envHum, (void*)"%.1f%%");
-
     lv_subject_add_observer_with_target(&uiMessage, ui_message_cb, ui_Main, NULL);
 }
 

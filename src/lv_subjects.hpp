@@ -52,7 +52,7 @@ typedef enum {
 } uiMessage_t;
 
 
-extern lv_subject_t oat_temp, oat_hum, env_temp, env_hum, wifi_color, 
+extern lv_subject_t wifi_color, 
      sdcard_status, ble_traffic;
 extern lv_subject_t runCompassAnimation, animationSpeed;
 // extern lv_subject_t uiMessage;
