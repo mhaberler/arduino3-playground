@@ -53,6 +53,7 @@ MFRC522Extended mfrc522{driver}; // Create MFRC522 instance.
 NfcAdapter nfc = NfcAdapter(&mfrc522);
 
 #define BW_MIMETYPE "application/balloonware"
+#define BW_ALT_MIMETYPE "bw"
 
 static const char *ruuvi_ids[] = {
     "\002idID: ",
@@ -98,7 +99,7 @@ analyseTag(NfcTag &tag, JsonDocument &doc) {
                 }
             }
             break;
-            
+
         case MFRC522Constants::PICC_TYPE_MIFARE_4K:
         case MFRC522Constants::PICC_TYPE_MIFARE_1K:
         case MFRC522Constants::PICC_TYPE_MIFARE_UL: {
@@ -106,8 +107,10 @@ analyseTag(NfcTag &tag, JsonDocument &doc) {
                 for (auto i = 0; i < nrec; i++) {
                     NdefRecord record = tag.getNdefMessage()[i];
 
-                    if (record.getType() && (strncmp((const char *)record.getType(),
-                                                     BW_MIMETYPE, record.getTypeLength()) == 0)) {
+                    if (record.getType() && ((strncmp((const char *)record.getType(),
+                                                      BW_MIMETYPE, record.getTypeLength()) == 0))||
+                            (strncmp((const char *)record.getType(),
+                                     BW_ALT_MIMETYPE, record.getTypeLength()) == 0)) {
                         // this is for us. Payload is a JSON string.
                         String payload = String(record.getPayload(),
                                                 record.getPayloadLength());
