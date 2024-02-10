@@ -43,7 +43,6 @@ extern  void animate_battery_icon(int32_t batval) {
     lv_label_set_text(ui_BatteryStatus, label);
 }
 
-
 static lv_obj_t *previous_screen = ui_Main;
 
 // callbacks from the UI
@@ -205,10 +204,10 @@ static void ui_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
 
         case UM_ENV: {
                 LV_LOG_USER("->env '%s'", input);
-                if ((millis() - jdoc["tick"].as<uint32_t>()) > RUUVI_TIMEOUT) {
+                uint32_t tick = jdoc["tick"].as<uint32_t>();
+                if ((tick == 0) || (millis() - tick) > RUUVI_TIMEOUT) {
                     lv_label_set_text(ui_envTemp, "n/a");
                     lv_label_set_text(ui_envHum, "n/a");
-
                 } else {
                     lv_label_set_text_fmt(ui_envTemp, "%.1f°", jdoc["temp"].as<double>());
                     if (jdoc.containsKey("hum")) {
@@ -220,7 +219,9 @@ static void ui_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
 
         case UM_OAT: {
                 LV_LOG_USER("->oat '%s'", input);
-                if ((millis() - jdoc["tick"].as<uint32_t>()) > RUUVI_TIMEOUT) {
+                uint32_t tick = jdoc["tick"].as<uint32_t>();
+                if ((tick == 0) || (millis() - tick) > RUUVI_TIMEOUT) {
+
                     lv_label_set_text(ui_outsideTemp, "n/a");
                     lv_label_set_text(ui_outsideHum, "n/a");
 
@@ -234,7 +235,9 @@ static void ui_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
             break;
 
         case UM_TANK_LEVEL1: {
-                if ((millis() - jdoc["tick"].as<uint32_t>()) > MOPEKA_TIMEOUT) {
+                uint32_t tick = jdoc["tick"].as<uint32_t>();
+                if ((tick == 0) || (millis() - tick) > MOPEKA_TIMEOUT) {
+
                     // TODO: mark tank level as timed out
 
                 } else {
@@ -262,7 +265,8 @@ static void ui_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
             break;
 
         case UM_TANK_PRESSURE: {
-                if ((millis() - jdoc["tick"].as<uint32_t>()) > TPMS_TIMEOUT) {
+                uint32_t tick = jdoc["tick"].as<uint32_t>();
+                if ((tick == 0) || (millis() - tick) > TPMS_TIMEOUT) {
                     // TODO: mark tank pressure as timed out
 
                 } else {

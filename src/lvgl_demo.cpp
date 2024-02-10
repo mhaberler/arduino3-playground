@@ -20,7 +20,7 @@
 
 static Ticker batteryChange, ageSensors;
 static bool update_battery = false;
-static bool age_sensors = false;
+static bool report_sensors = true; // once at startup
 static int32_t battery_value;
 static int32_t heading, mvar, sunp;
 
@@ -43,11 +43,6 @@ bool SDInit() {
 
 void set_battery_indicator(int32_t batval) {
     sendUiMessage("{\"um\":%d,\"v\":%d}", UM_STATUS_BATTERY, batval);
-    // works the same:
-    // JsonDocument jdoc;
-    // jdoc["um"] = UM_STATUS_BATTERY;
-    // jdoc["v"] = batval;
-    // sendUiMessage(jdoc);
 }
 
 void lvgl_setup(void) {
@@ -73,16 +68,16 @@ void lvgl_setup(void) {
     });
 
     ageSensors.attach_ms(62000, []() {
-        age_sensors = true;
+        report_sensors = true;
     });
 }
 
 void lvgl_loop(void) {
-    if (age_sensors) {
+    if (report_sensors) {
         lvgl_acquire();
         equipment.reportSensors();
         lvgl_release();
-        age_sensors = false;
+        report_sensors = false;
     }
     if (update_battery) {
         lvgl_acquire();
