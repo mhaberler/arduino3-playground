@@ -16,9 +16,11 @@
 #include "ui_compass.h"
 #include "ui_custom.hpp"
 #include "ArduinoJsonCustom.h"
+#include "Sensor.hpp"
 
-static Ticker batteryChange;
+static Ticker batteryChange, ageSensors;
 static bool update_battery = false;
+static bool age_sensors = false;
 static int32_t battery_value;
 static int32_t heading, mvar, sunp;
 
@@ -69,9 +71,19 @@ void lvgl_setup(void) {
     batteryChange.attach_ms(1000, []() {
         update_battery = true;
     });
+
+    ageSensors.attach_ms(62000, []() {
+        age_sensors = true;
+    });
 }
 
 void lvgl_loop(void) {
+    if (age_sensors) {
+        lvgl_acquire();
+        equipment.reportSensors();
+        lvgl_release();
+        age_sensors = false;
+    }
     if (update_battery) {
         lvgl_acquire();
         // Battery icon animation

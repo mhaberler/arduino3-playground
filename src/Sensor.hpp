@@ -23,6 +23,10 @@
 #define UNITS_DIR "/config/units"
 #define SEQUENCE_DIR "/config/sequence"
 
+#define RUUVI_TIMEOUT 62 // Ruuvi: 60sec
+#define MOPEKA_TIMEOUT 120
+#define TPMS_TIMEOUT 120
+
 using namespace std;
 
 #define round1(x) (round((x)*1.0e1) / 1.0e1)
@@ -58,8 +62,8 @@ typedef enum {
     AT_MOPEKA,
     AT_TPMS,
     AT_ROTAREX,
-    AT_GPS,
     AT_FLOWSENSOR,
+    AT_GPS,
     AT_BARO,
     AT_IMU,
     AT_MAGNETOMETER,
@@ -67,7 +71,7 @@ typedef enum {
     AT_UI,
     AT_LOG,
     AT_MAX
-} actorType_t;
+} sensorType_t;
 
 typedef enum {
     ASPT_NONE,
@@ -115,10 +119,10 @@ bool wipeLittleFS(void);
 uint8_t volt2percent(const float volt);
 bool bleDeliver(const bleAdvMsg_t &msg);
 float percentBetween(float min, float max, float value);
-const char *sensorTypeStr(const actorType_t sensorType);
+const char *sensorTypeStr(const sensorType_t sensorType);
 const char *unitTypeStr(const unit_t unitType);
 
-void convertFromJson(JsonVariantConst src, actorType_t& dst);
+void convertFromJson(JsonVariantConst src, sensorType_t& dst);
 void convertFromJson(JsonVariantConst src, NimBLEAddress& dst);
 
 void convertToJson(const ruuviAd_t & src, JsonVariant dst);
@@ -135,70 +139,32 @@ int32_t getInt32LE(const uint8_t *data, int index);
 
 class Unit;
 class Equipment;
-class Consumer;
-class Producer;
 
-class Actor { // abstract base class of Sensor, Actuator
+class Sensor  {
   private:
-  protected:
-    actorType_t _type;
-    Unit *_unit;
 
-  public:
-    virtual bool configure(JsonObject conf) = 0;
-    virtual void dump(Stream &s)  = 0;
-    virtual const std::string id(void) = 0;
-    virtual const NimBLEAddress & mac() {
-        return null_mac;
-    }
-    virtual const void *pod(void) = 0;
-};
-
-class Producer : public Actor {
-
-};
-
-class Consumer : public Actor {
-
-};
-
-// class Consumer {
-//   private:
-//     std::string _id;
-//     unit_t _ut;
-//     lv_subject_t *_subject;
-//     fs::File _f;
-//     std::string _uri;
-
-//   public:
-//     Consumer(const std::string& id, lv_subject_t *subject) : _id(id),_ut(UT_OBSERVER),_subject(subject) {};
-//     Consumer(const std::string& id, fs::File &f) : _id(id),_ut(UT_WRITER),_f(f) {};
-//     Consumer(const std::string& id, const std::string& uri) : _id(id),_ut(UT_URI) {};
-
-//     bool configure(JsonObject *conf);
-
-// };
-
-class Sensor : public Producer {
-  private:
-    // sensorMode_t _mode;
     format_t _format;
     float _min = 0.0;
     float _max = 100.0;
-
+  protected:
+    sensorType_t _type;
+    Unit *_unit;
   public:
     Sensor(Unit *u)  {
         _unit = u;
     };
-
+    virtual const NimBLEAddress & mac() {
+        return null_mac;
+    }
+    virtual const void *pod(void) = 0;
     virtual uint32_t lastChange(void) = 0;
     virtual void print(Print &p, format_t format = FMT_TEXT) = 0;
-    // sensorMode_t mode();
-    actorType_t type();
+
+    sensorType_t type();
     Unit *unit(void);
 
     format_t format();
-    void dump(Stream &s) override;
+    void dump(Stream &s);
 
     void setMin(float m) {
         _min = m;
@@ -212,8 +178,8 @@ class Sensor : public Producer {
     const float max(void) {
         return _max;
     }
-
-    bool configure(JsonObject conf);
+    virtual bool configure(JsonObject conf) = 0;
+    virtual void report(void) = 0;
     virtual bool bleAdvertisement(const bleAdvMsg_t  &msg) = 0;
     virtual const  std::string name(void) = 0;
     virtual const  std::string fullName(void) = 0;
@@ -223,7 +189,7 @@ class Sensor : public Producer {
 
 class BLESensor : public Sensor {
   protected:
-    NimBLEAddress _macAddress;
+    NimBLEAddress _macAddress = {};
   public:
     BLESensor(Unit *u) : Sensor(u) {};
     bool configure(JsonObject conf);
@@ -231,20 +197,12 @@ class BLESensor : public Sensor {
     const NimBLEAddress & mac();
 };
 
-class PollingSensor : public Sensor {  // I2C etc
-
-};
-
-class ActiveSensor : public Sensor {  // GPS, URI etc - no polling needed
-
-};
-
 class Unit {
   private:
     std::string _id;
     unit_t _ut;
     int8_t _index;
-    std::unordered_map< std::string, Actor *> _actor_map;
+    std::unordered_map< std::string, Sensor *> _sensor_map;
     uint32_t _timestamp;
     std::string _tagcolor;
     std::string _description;
@@ -275,21 +233,13 @@ class Unit {
     void setTimestamp(uint32_t t) {
         _timestamp = t;
     };
-
     int8_t index(void) {
         return _index;
     };
     void setIndex(int8_t t) {
         _index = t;
     };
-
     bool configure(Equipment &eq, JsonObject *conf);
-    // uint8_t index(void) {
-    //     return _index;
-    // };
-    // void setIndex(uint8_t i) {
-    //     _index = i;
-    // };
     void print(Print &p, format_t format = FMT_TEXT);
     void dump(Stream &s);
     void setType(const unit_t ut) {
@@ -304,18 +254,12 @@ class Unit {
     const  std::string &id(void) {
         return  _id;
     };
+    void reportSensors(void);
 };
 
 #define UV_TANKS_ONLY BIT(0)
 
 typedef Functor3wRet<Unit &, uint32_t, void *, bool> UnitVisitor;
-
-// class Consumer : public Unit {
-//   private:
-//     lv_subject_t *_subject;
-//     fs::File _f;
-//     std::string _uri;
-// };
 
 struct cmp_unit_age {
     bool operator() (Unit *a, Unit *b) const {
@@ -344,18 +288,17 @@ class Equipment {
     bool addUnit(const char *path);
     bool addUnit(JsonObject conf, source_t source);
     void delUnit(const std::string &id);
-
+    void reportSensors(void);
     bool restoreSequence(const char *path);
     void dump(Stream &s);
     bool bleDeliver(const bleAdvMsg_t &msg);
     bool bleRegister(const NimBLEAddress &mac, Sensor *sp);
-    void sensorToUI(Sensor *sp);
     void walk(const UnitVisitor &unitVisitor, const uint32_t flags, void *user_data);
 };
 
 class Ruuvi : public BLESensor {
   private:
-    ruuviAd_t _ruuvi_report;
+    ruuviAd_t _ruuvi_report = {};
 
   public:
     Ruuvi(Unit *u) : BLESensor(u)  {
@@ -363,7 +306,8 @@ class Ruuvi : public BLESensor {
     };
     void print(Print &p, format_t format = FMT_TEXT);
     void setOnUpdate(std::function<void(const char *value)> onUpdate, aspect_t what ) {}
-    bool configure(JsonObject conf) override;
+    bool configure(JsonObject conf);
+    void report(void);
     bool bleAdvertisement(const bleAdvMsg_t  &msg);
     uint32_t lastChange(void) {
         return _ruuvi_report.lastchange;
@@ -381,12 +325,15 @@ class Ruuvi : public BLESensor {
     const void *pod(void) {
         return &_ruuvi_report;
     }
+    uint32_t lastHeard(void) {
+        return _ruuvi_report.lastchange;
+    }
 
 };
 
 class Mopeka : public BLESensor {
   private:
-    mopekaAd_t _mopeka_report;
+    mopekaAd_t _mopeka_report = {};
     bool _decode(const uint8_t *data,
                  const size_t len, mopekaAd_t &ma);
   public:
@@ -396,6 +343,7 @@ class Mopeka : public BLESensor {
     void print(Print &p, format_t format = FMT_TEXT);
     void setOnUpdate(std::function<void(const char *value)> onUpdate, aspect_t what ) {}
     bool configure(JsonObject conf);
+    void report(void);
     bool bleAdvertisement(const bleAdvMsg_t  &msg);
     uint32_t lastChange(void) {
         return _mopeka_report.lastchange;
@@ -413,12 +361,14 @@ class Mopeka : public BLESensor {
     const void *pod(void) {
         return &_mopeka_report;
     }
-
+    uint32_t lastHeard(void) {
+        return _mopeka_report.lastchange;
+    }
 };
 
 class TPMS : public  BLESensor {
   private:
-    tpmsAd_t _tpms_report;
+    tpmsAd_t _tpms_report = {};
 
   public:
     TPMS(Unit *u) : BLESensor(u) {
@@ -427,6 +377,7 @@ class TPMS : public  BLESensor {
     void print(Print &p, format_t format = FMT_TEXT);
     void setOnUpdate(std::function<void(const char *value)> onUpdate, aspect_t what ) {}
     bool configure(JsonObject conf);
+    void report(void);
     bool bleAdvertisement(const bleAdvMsg_t  &msg);
     uint32_t lastChange(void) {
         return _tpms_report.lastchange;
@@ -442,6 +393,9 @@ class TPMS : public  BLESensor {
     }
     const void *pod(void) {
         return &_tpms_report;
+    }
+    uint32_t lastHeard(void) {
+        return _tpms_report.lastchange;
     }
 };
 

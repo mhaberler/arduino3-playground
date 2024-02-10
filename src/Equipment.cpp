@@ -26,63 +26,17 @@ void Equipment::walk(const UnitVisitor &unitVisitor, const uint32_t flags, void 
     }
 }
 
-void Equipment::sensorToUI(Sensor *sp) {
-
-    JsonDocument doc;
-    const void *decoded = sp->pod();
-    actorType_t at = sp->type();
-    unit_t ut = sp->unit()->type();
-
-    switch (at) {
-        case AT_RUUVI: {
-                const ruuviAd_t *p = (ruuviAd_t*) decoded;
-                doc = *p;
-                doc["st"] = AT_RUUVI;
-            }
-            break;
-        case AT_MOPEKA: {
-                const mopekaAd_t *p = (mopekaAd_t*) decoded;
-                doc = *p;
-                doc["st"] = AT_MOPEKA;
-                int32_t pct = percentBetween(sp->min(), sp->max(), p->level);
-                doc["pct"] = pct;
-                doc["ltr"] = sp->unit()->cap() * pct / 100.0;
-            }
-            break;
-        case AT_TPMS: {
-                const tpmsAd_t *p = (tpmsAd_t*) decoded;
-                doc = *p;
-                doc["st"] = AT_TPMS;
-            }
-            break;
-        default:
-            ;
+void Equipment::reportSensors(void) {
+    for (auto u: _units) {
+        u->reportSensors();
     }
-    doc["ut"] = (int)ut;
-    switch (ut) {
-        case UT_BASKET:
-            doc["um"] = (int)UM_SENSOR_OAT;
-            break;
-        case UT_ENVELOPE:
-            doc["um"] = (int)UM_SENSOR_ENVELOPE;
-            break;
-        case UT_TANK:
-            doc["um"] = (int)UM_SENSOR_TANK;
-            doc["ix"] = sp->unit()->index();
-            doc["col"] = sp->unit()->tagColor();
-            doc["cap"] = sp->unit()->cap();
-            break;
-        default:
-            break;
-    }
-    sendUiMessage(doc);
 }
 
 bool Equipment::bleRegister(const NimBLEAddress &mac, Sensor *sp) {
 
     Sensor *old =  _ble_sensors[mac];
     _ble_sensors[mac] = sp;
-
+    // log_e("bleRegister %s", mac.toString().c_str());
     if (old != NULL) {
         delete old;
     }
@@ -92,13 +46,13 @@ bool Equipment::bleRegister(const NimBLEAddress &mac, Sensor *sp) {
 bool Equipment::bleDeliver(const bleAdvMsg_t &msg) {
     NimBLEAddress mac = NimBLEAddress(msg.mac64);
     Sensor *sp = _ble_sensors[mac];
+    // log_e("deliver %s sp=%p", mac.toString().c_str(),sp);
+
     if (sp) {
-        // log_e("deliver %s", mac.toString().c_str());
         bool rc =  sp->bleAdvertisement(msg);
         if (rc) {
             // Serial.printf("%s %s ", sp->unitName().c_str(), sp->fullName().c_str());
-            // sp->print(Serial);
-            sensorToUI(sp);
+            sp->report();
         }
     }
     return false;
@@ -205,12 +159,6 @@ bool Equipment::restoreSequence(const char *path) {
                             log_e("no such Unit: %s",  u->id().c_str());
                         }
                     }
-                    // // sort the _units vector by index, i.e creation order:
-                    // std::sort(_units.begin(),
-                    //           _units.end(),
-                    // [](Unit* const& u1, Unit* const& u2) {
-                    //     return (u1->timestamp() < u2->timestamp());
-                    // });
                     return 0;
                 }
                 break;
@@ -220,16 +168,6 @@ bool Equipment::restoreSequence(const char *path) {
     }
     return true;
 }
-
-// send sensors available to UI?
-
-// send tank layout to UI
-// UI needs:
-// id, color, sensors available (bitmap) %full (if available), bar (if available)
-// [
-//     {"id": "5020/16", "color" : 21321312, "sa" : 3, "f1": 73, "press" : 9.2},
-//     ...
-// ]
 
 void Equipment::dump(Stream &s) {
     for(auto u: _units) {

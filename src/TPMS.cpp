@@ -1,4 +1,6 @@
 #include "Sensor.hpp"
+#include "ui_message.hpp"
+#include "lv_subjects.hpp"
 
 constexpr float k0 = 273.15;
 
@@ -48,4 +50,20 @@ bool  TPMS::bleAdvertisement(const bleAdvMsg_t  &msg) {
 
     log_e("tpms FAIL");
     return false;
+}
+
+void TPMS::report(void) {
+    JsonDocument doc;
+    doc = _tpms_report;
+    doc["st"] = AT_TPMS;
+    switch (unit()->type()) {
+        case UT_TANK:
+            doc["um"] = (int)UM_TANK_PRESSURE;
+            doc["ix"] = unit()->index();
+            doc["col"] = unit()->tagColor();
+            break;
+        default:
+            break;
+    }
+    sendUiMessage(doc);
 }

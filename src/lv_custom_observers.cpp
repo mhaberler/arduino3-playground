@@ -43,20 +43,6 @@ extern  void animate_battery_icon(int32_t batval) {
     lv_label_set_text(ui_BatteryStatus, label);
 }
 
-// static void ruuvi_report_cb(lv_subject_t *subject, lv_observer_t *observer) {
-//     const char *fmt = (const char *)observer->user_data;
-//     uint32_t last_heard = (uint32_t)subject->user_data;
-//     int32_t value = lv_subject_get_int(subject);
-
-//     if ((last_heard == 0) || (lv_tick_elaps(last_heard) > RUUVI_PERIOD)) {
-//         fmt = NOT_AVAILABLE;
-//     } else {
-//         if (lv_subject_get_previous_int(subject) == value) // no change
-//             return;
-//     }
-//     lv_obj_t *target = (lv_obj_t *)lv_observer_get_target(observer);
-//     lv_label_set_text_fmt(target, fmt, ITOD100(value));
-// }
 
 static lv_obj_t *previous_screen = ui_Main;
 
@@ -183,7 +169,7 @@ static void ui_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
                     JsonArray sensors = u["sensors"].as<JsonArray>();
                     for(JsonObject s: sensors) {
                         body += "  ";
-                        body += sensorTypeStr(s["st"].as<actorType_t>());
+                        body += sensorTypeStr(s["st"].as<sensorType_t>());
                         body += ":";
                         body += s["mac"].as<const char *>();
                         body += "\n";
@@ -217,95 +203,85 @@ static void ui_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
         case UM_STATUS_NFC:
             break;
 
-        case UM_SENSOR_GPS:
-            break;
-        case UM_SENSOR_BAROMETR:
-            break;
-        case UM_SENSOR_IMU:
-            break;
-        case UM_SENSOR_ENVELOPE: {
+        case UM_ENV: {
                 LV_LOG_USER("->env '%s'", input);
-                if (jdoc.containsKey("temp")) {
-                    lv_label_set_text_fmt(ui_envTemp, "%.1f°", jdoc["temp"].as<double>());
-                } else {
+                if ((millis() - jdoc["tick"].as<uint32_t>()) > RUUVI_TIMEOUT) {
                     lv_label_set_text(ui_envTemp, "n/a");
-                }
-                if (jdoc.containsKey("hum")) {
-                    lv_label_set_text_fmt(ui_envHum, "%.1f%%", jdoc["hum"].as<double>());
-                } else {
                     lv_label_set_text(ui_envHum, "n/a");
+
+                } else {
+                    lv_label_set_text_fmt(ui_envTemp, "%.1f°", jdoc["temp"].as<double>());
+                    if (jdoc.containsKey("hum")) {
+                        lv_label_set_text_fmt(ui_envHum, "%.1f%%", jdoc["hum"].as<double>());
+                    }
                 }
             }
             break;
-        case UM_SENSOR_OAT: {
+
+        case UM_OAT: {
                 LV_LOG_USER("->oat '%s'", input);
-                if (jdoc.containsKey("temp")) {
-                    lv_label_set_text_fmt(ui_outsideTemp, "%.1f°", jdoc["temp"].as<double>());
-                } else {
+                if ((millis() - jdoc["tick"].as<uint32_t>()) > RUUVI_TIMEOUT) {
                     lv_label_set_text(ui_outsideTemp, "n/a");
-                }
-                if (jdoc.containsKey("hum")) {
-                    lv_label_set_text_fmt(ui_outsideHum, "%.1f%%", jdoc["hum"].as<double>());
-                } else {
                     lv_label_set_text(ui_outsideHum, "n/a");
+
+                } else {
+                    lv_label_set_text_fmt(ui_outsideTemp, "%.1f°", jdoc["temp"].as<double>());
+                    if (jdoc.containsKey("hum")) {
+                        lv_label_set_text_fmt(ui_outsideHum, "%.1f%%", jdoc["hum"].as<double>());
+                    }
                 }
             }
             break;
-        case UM_SENSOR_TANK: {
-                // tank '{"temp":12,"level":908,"stars":3,"accX":-56,"accY":-54,"rssi":-75,"batt":0,"st":2,"ut":1,"um":13,"ix":0}'
-                // tank '{"temp":10,"level":165,"stars":1,"accX":65,"accY":-14,"rssi":-81,"batt":0,"st":2,"ut":1,"um":13,"ix":1}'
-                // tank '{"press":0.8,"temp":10.9,"loc":0,"status":false,"batt":56,"rssi":-74,"st":3,"ut":1,"um":13,"ix":0}' (in lv_custom_observers.cpp line #277)
-                int8_t idx = jdoc["ix"].as<int8_t>();
-                if (idx < 0) {
-                    LV_LOG_ERROR("idx=%d", idx);
-                    break;
-                }
-                if (idx > MAX_TANKS-1) {
-                    LV_LOG_ERROR("MAX_TANKS=%d idx=%d", MAX_TANKS, idx);
-                    break;
-                }
-                if (tanks_seen-1 < idx) {
-                    tanks_seen = idx + 1;
-                    lv_chart_set_point_count( ui_tanksChart, tanks_seen);
-                }
-                actorType_t at = jdoc["st"].as<actorType_t>();
-                switch (at) {
-                    case AT_ROTAREX: // not yet
-                        break;
-                    case AT_MOPEKA: {
-                            if (jdoc["cap"] > 0) {
-                                float cap = jdoc["cap"].as<float>();
-                                set_cap(idx, cap);
-                            }
-                            if (jdoc["stars"].as<int32_t>() > 0) {
-                                lv_coord_t pct = jdoc["pct"].as<lv_coord_t>();
-                                set_level(idx, pct);
-                                float ltr = jdoc["ltr"].as<float>();
-                                set_liters(idx, ltr);
-                            }
-                        }
-                        break;
-                    case AT_TPMS: {
-                            lv_coord_t pct = jdoc["press"].as<lv_coord_t>();
-                            set_pressure(idx, pct);
-                        }
-                        break;
-                    default:
-                        break;
-                }
-                LV_LOG_USER("->tank '%s'", input);
-            }
 
+        case UM_TANK_LEVEL1: {
+                if ((millis() - jdoc["tick"].as<uint32_t>()) > MOPEKA_TIMEOUT) {
+                    // TODO: mark tank level as timed out
+
+                } else {
+
+                    // tank '{"temp":12,"level":908,"stars":3,"accX":-56,"accY":-54,"rssi":-75,"batt":0,"st":2,"ut":1,"um":13,"ix":0}'
+                    // tank '{"temp":10,"level":165,"stars":1,"accX":65,"accY":-14,"rssi":-81,"batt":0,"st":2,"ut":1,"um":13,"ix":1}'
+                    int8_t idx = jdoc["ix"].as<int8_t>();
+                    if (tanks_seen-1 < idx) {
+                        tanks_seen = idx + 1;
+                        lv_chart_set_point_count( ui_tanksChart, tanks_seen);
+                    }
+                    if (jdoc["cap"] > 0) {
+                        float cap = jdoc["cap"].as<float>();
+                        set_cap(idx, cap);
+                    }
+                    if (jdoc["stars"].as<int32_t>() > 0) {
+                        lv_coord_t pct = jdoc["pct"].as<lv_coord_t>();
+                        set_level(idx, pct);
+                        float ltr = jdoc["ltr"].as<float>();
+                        set_liters(idx, ltr);
+                    }
+                }
+                LV_LOG_USER("->level1 '%s'", input);
+            }
             break;
 
-        case UM_SENSOR_TANK_LAYOUT:
-            LV_LOG_USER("->tank_layout '%s'", input);
+        case UM_TANK_PRESSURE: {
+                if ((millis() - jdoc["tick"].as<uint32_t>()) > TPMS_TIMEOUT) {
+                    // TODO: mark tank pressure as timed out
+
+                } else {
+                    // tank '{"press":0.8,"temp":10.9,"loc":0,"status":false,"batt":56,"rssi":-74,"st":3,"ut":1,"um":13,"ix":0}' (in lv_custom_observers.cpp line #277)
+                    int8_t idx = jdoc["ix"].as<int8_t>();
+                    if (tanks_seen-1 < idx) {
+                        tanks_seen = idx + 1;
+                        lv_chart_set_point_count( ui_tanksChart, tanks_seen);
+                    }
+                    lv_coord_t pct = jdoc["press"].as<lv_coord_t>();
+                    set_pressure(idx, pct);
+                }
+                LV_LOG_USER("->pressure '%s'", input);
+            }
             break;
 
         default:
             break;
     }
-    jdoc.clear();
 }
 
 static void register_observers(void) {

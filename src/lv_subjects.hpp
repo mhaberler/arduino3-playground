@@ -4,13 +4,11 @@
 #include "lv_observer.h"
 #include "ui_compass.h"
 
-
 #define UI_MESSAGESIZE 8192
 
 #define MAX_TANKS 12
 #define MAX_PRESSURE 15
 #define MAX_LEVEL 90
-
 
 #define STATUS_WIFI_UNCONFIGURED lv_palette_main(LV_PALETTE_GREY)
 #define STATUS_WIFI_STARTED lv_palette_main(LV_PALETTE_AMBER)
@@ -40,24 +38,37 @@ typedef enum {
     UM_STATUS_WIFI,
     UM_STATUS_NFC,
 
-    UM_SENSOR_GPS,
-    UM_SENSOR_BAROMETR,
-    UM_SENSOR_IMU,
+    UM_ENV,
+    UM_OAT,
 
-    UM_SENSOR_ENVELOPE, //11
-    UM_SENSOR_OAT,
-    UM_SENSOR_TANK,
+    UM_ENV_TEMP,
+    UM_OAT_TEMP,
+    UM_ENV_HUM,
+    UM_OAT_HUM,
 
-    UM_SENSOR_TANK_LAYOUT,
+    UM_TANK_LEVEL1,
+    UM_TANK_LEVEL2,
+    UM_TANK_PRESSURE,
+
+    UM_BARO_PRESSURE,
+    UM_BARO_ALTITUDE,
+    UM_BARO_VSPEED,
+    UM_BARO_VACCEL,
+
+    UM_GPS_FIX,
+    UM_GPS_NUM_SATS,
+    UM_GPS_HSPEED,
+    UM_GPS_VSPEED,
+    UM_GPS_COURSE,
+    UM_MAG_ORIENTATION
+
 } uiMessage_t;
 
-
-extern lv_subject_t wifi_color, 
-     sdcard_status, ble_traffic;
+extern lv_subject_t wifi_color,
+       sdcard_status, ble_traffic;
 extern lv_subject_t runCompassAnimation, animationSpeed;
-// extern lv_subject_t uiMessage;
 
-extern uint16_t tanks_seen;
+extern int16_t tanks_seen;
 void set_level(int index, lv_coord_t value);
 void set_pressure(int index, lv_coord_t value);
 void set_liters(int index, float value);

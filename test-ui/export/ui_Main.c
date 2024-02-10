@@ -126,31 +126,37 @@ ui_envTemp = lv_label_create(ui_Container11);
 lv_obj_set_width( ui_envTemp, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_envTemp, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_align( ui_envTemp, LV_ALIGN_CENTER );
+lv_label_set_text(ui_envTemp,"n/a");
 
 ui_envHum = lv_label_create(ui_Container11);
 lv_obj_set_width( ui_envHum, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_envHum, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_align( ui_envHum, LV_ALIGN_CENTER );
+lv_label_set_text(ui_envHum,"n/a");
 
 ui_outsideTemp = lv_label_create(ui_Container11);
 lv_obj_set_width( ui_outsideTemp, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_outsideTemp, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_align( ui_outsideTemp, LV_ALIGN_CENTER );
+lv_label_set_text(ui_outsideTemp,"n/a");
 
 ui_outsideHum = lv_label_create(ui_Container11);
 lv_obj_set_width( ui_outsideHum, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_outsideHum, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_align( ui_outsideHum, LV_ALIGN_CENTER );
+lv_label_set_text(ui_outsideHum,"n/a");
 
 ui_fuelLiters = lv_label_create(ui_Container11);
 lv_obj_set_width( ui_fuelLiters, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_fuelLiters, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_align( ui_fuelLiters, LV_ALIGN_CENTER );
+lv_label_set_text(ui_fuelLiters,"n/a");
 
 ui_fuelPct = lv_label_create(ui_Container11);
 lv_obj_set_width( ui_fuelPct, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_fuelPct, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_align( ui_fuelPct, LV_ALIGN_CENTER );
+lv_label_set_text(ui_fuelPct,"n/a");
 
 lv_obj_add_event_cb(ui_TankContainer2, ui_event_TankContainer2, LV_EVENT_ALL, NULL);
 lv_obj_add_event_cb(ui_Main, ui_event_Main, LV_EVENT_ALL, NULL);

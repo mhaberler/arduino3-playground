@@ -13,7 +13,7 @@ lv_subject_t oat_temp, oat_hum, env_temp, env_hum, wifi_color, http_status, sdca
 lv_subject_t runCompassAnimation, animationSpeed;
 lv_subject_t uiMessage;
 
-uint16_t tanks_seen = 0;
+int16_t tanks_seen = 2;
 static lv_coord_t tank_level_series[MAX_TANKS];  // =  {LV_CHART_POINT_NONE};
 static lv_coord_t tank_pressure_series[MAX_TANKS]; //  = {LV_CHART_POINT_NONE};
 static float tank_liters_left[MAX_TANKS];

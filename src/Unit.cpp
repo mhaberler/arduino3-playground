@@ -5,7 +5,7 @@
 const NimBLEAddress null_mac;
 
 void Unit::dump(Stream &s) {
-    for(auto a: _actor_map) {
+    for(auto a: _sensor_map) {
         s.printf("\tactor '%s': ", a.first.c_str());
         a.second->dump(Serial);
     }
@@ -27,16 +27,19 @@ bool Unit::configure(Equipment &eq, JsonObject *conf) {
 
     for(JsonObject s: sensors) {
         Sensor *sp = NULL;
-        actorType_t st = s["st"].as<actorType_t>();
+        sensorType_t st = s["st"].as<sensorType_t>();
         switch (st) {
             case AT_RUUVI:
                 sp = new Ruuvi(this);
+                sp->configure(*conf);
                 break;
             case AT_MOPEKA:
                 sp = new Mopeka(this);
+                sp->configure(*conf);
                 break;
             case AT_TPMS:
                 sp = new TPMS(this);
+                sp->configure(*conf);
                 break;
             case AT_GPS:
                 break;
@@ -59,7 +62,7 @@ bool Unit::configure(Equipment &eq, JsonObject *conf) {
         }
 
         if (sp && sp->configure(s)) {
-            _actor_map[sp->id()] = sp;
+            _sensor_map[sp->id()] = sp;
             if (sp->mac() != null_mac) {
                 // Serial.printf("add BLE %s:%s %s:%s\n",
                 //               unitTypeStr(ut),
@@ -71,6 +74,12 @@ bool Unit::configure(Equipment &eq, JsonObject *conf) {
         }
     }
     return true;
+}
+
+void Unit::reportSensors(void) {
+    for(auto a: _sensor_map) {
+        a.second->report();
+    }
 }
 
 void Unit::print(Print &p, format_t format) {}
@@ -95,8 +104,8 @@ float percentBetween(float min, float max, float value) {
     return 100.0 *(value - min) / (max - min);
 }
 
-void convertFromJson(JsonVariantConst src, actorType_t& dst) {
-    dst = (actorType_t) src.as<unsigned int>();
+void convertFromJson(JsonVariantConst src, sensorType_t& dst) {
+    dst = (sensorType_t) src.as<unsigned int>();
 }
 
 void convertFromJson(JsonVariantConst src, NimBLEAddress& dst) {
@@ -113,6 +122,7 @@ void convertToJson(const ruuviAd_t & src, JsonVariant dst) {
     if (src.availability & RUUVI_BATTERY_AVAILABLE)
         dst["batt"] = volt2percent((float)src.voltage/1000.0);
     dst["rssi"] = src.rssi;
+    dst["tick"] = src.lastchange;
 }
 
 void convertToJson(const mopekaAd_t & src, JsonVariant dst) {
@@ -125,6 +135,7 @@ void convertToJson(const mopekaAd_t & src, JsonVariant dst) {
         dst["sync"] = 1;
     dst["rssi"] = src.rssi;
     dst["batt"] = (uint32_t)(src.battery*100);
+    dst["tick"] = src.lastchange;
 }
 
 void convertToJson(const tpmsAd_t & src, JsonVariant dst) {
@@ -134,4 +145,5 @@ void convertToJson(const tpmsAd_t & src, JsonVariant dst) {
     dst["status"] = src.status;
     dst["batt"] = src.batpct;
     dst["rssi"] = src.rssi;
+    dst["tick"] = src.lastchange;
 }

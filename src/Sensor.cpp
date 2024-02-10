@@ -5,7 +5,7 @@
 //     return _mode;
 // }
 
-actorType_t Sensor::type() {
+sensorType_t Sensor::type() {
     return _type;
 }
 
@@ -17,9 +17,6 @@ format_t Sensor::format() {
     return _format;
 }
 
-// const NimBLEAddress & Sensor::mac() {
-//     return _macAddress;
-// }
 
 void Sensor::dump(Stream &s) {
     s.printf("%s %s\n", fullName().c_str(), sensorTypeStr( type()));
@@ -40,14 +37,6 @@ bool Sensor::configure(JsonObject conf)  {
     return (_type != AT_NONE);
 }
 
-// const  std::string& Sensor::name(void) {
-//     return std::string(sensorType(_type)) + ":" + id();
-// }
-
-// const  std::string Sensor::fullName() {
-//     return "XXX"; // _unit->name(); //  + ":" + name();
-// };
-
 bool Sensor::bleAdvertisement(const bleAdvMsg_t  &msg) {
     return false;
 }
@@ -67,7 +56,7 @@ const char *unitTypeStr(const unit_t ut) {
     }
 }
 
-const char *sensorTypeStr(const actorType_t st) {
+const char *sensorTypeStr(const sensorType_t st) {
     switch (st) {
         case AT_RUUVI:
             return "Ruuvi";

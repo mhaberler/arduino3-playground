@@ -1,4 +1,6 @@
 #include "Sensor.hpp"
+#include "ui_message.hpp"
+#include "lv_subjects.hpp"
 
 void Mopeka::print(Print &p, format_t format) {
     JsonDocument doc;
@@ -88,4 +90,25 @@ bool  Mopeka::bleAdvertisement(const bleAdvMsg_t  &msg) {
     }
     _mopeka_report.lastchange = millis();
     return true;
+}
+
+void Mopeka::report(void) {
+    JsonDocument doc;
+    doc = _mopeka_report;
+    doc["st"] = AT_MOPEKA;
+    switch (unit()->type()) {
+        case UT_TANK: {
+                doc["um"] = (int)UM_TANK_LEVEL1;
+                doc["ix"] = unit()->index();
+                int32_t pct = percentBetween(min(), max(), _mopeka_report.level);
+                doc["pct"] = pct;
+                doc["ltr"] = unit()->cap() * pct / 100.0;
+                doc["cap"] = unit()->cap();
+                doc["col"] = unit()->tagColor();
+            }
+            break;
+        default:
+            break;
+    }
+    sendUiMessage(doc);
 }

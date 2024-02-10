@@ -1,4 +1,6 @@
 #include "Sensor.hpp"
+#include "lv_subjects.hpp"
+#include "ui_message.hpp"
 
 bool BLESensor::configure(JsonObject conf)    {
     _type = conf["st"];
@@ -18,3 +20,4 @@ const  std::string BLESensor::id(void) {
 const NimBLEAddress & BLESensor::mac() {
     return _macAddress;
 }
+

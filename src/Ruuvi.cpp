@@ -1,4 +1,6 @@
 #include "Sensor.hpp"
+#include "ui_message.hpp"
+#include "lv_subjects.hpp"
 
 int16_t getInt16(const uint8_t *data, int index) {
     return (int16_t)((data[index] << 8) + (data[index + 1]));
@@ -135,4 +137,21 @@ RUUVI_DECODED:
     _ruuvi_report.lastchange = millis();
     _ruuvi_report.rssi = msg.rssi;
     return true;
+}
+
+void Ruuvi::report(void) {
+    JsonDocument doc;
+    doc = _ruuvi_report;
+    doc["st"] = AT_RUUVI;
+    switch (unit()->type()) {
+        case UT_BASKET:
+            doc["um"] = (int)UM_OAT;
+            break;
+        case UT_ENVELOPE:
+            doc["um"] = (int)UM_ENV;
+            break;
+        default:
+            break;
+    }
+    sendUiMessage(doc);
 }
