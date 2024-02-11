@@ -142,11 +142,7 @@ static void lvgl_read(lv_indev_drv_t *indev_driver,
     data->state = LV_INDEV_STATE_REL;
 #if defined(M5UNIFIED)
     lgfx::touch_point_t tp[1];
-
     M5.update();
-
-    M5.Display.getTouchRaw(&touchX, &touchY);
-
     int nums = M5.Display.getTouchRaw(tp, 1);
     if (nums) {
         data->state = LV_INDEV_STATE_PR;
