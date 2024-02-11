@@ -10,7 +10,9 @@
  */
 
 #include "LilyGo_AMOLED.h"
+#ifndef ADC_BROKEN
 #include <esp_adc_cal.h>
+#endif
 #include <driver/gpio.h>
 
 #define SEND_BUF_SIZE           (16384)
@@ -125,12 +127,17 @@ uint16_t LilyGo_AMOLED::getBattVoltage(void)
                 }
             }
         } else if (boards->adcPins != -1) {
+    #ifndef ADC_BROKEN
             esp_adc_cal_characteristics_t adc_chars;
             esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_11, ADC_WIDTH_BIT_12, 1100, &adc_chars);
             uint32_t v1 = 0,  raw = 0;
             raw = analogRead(boards->adcPins);
             v1 = esp_adc_cal_raw_to_voltage(raw, &adc_chars) * 2;
             return v1;
+    #else
+            return 0;
+    #endif
+
         }
     }
     return 0;
