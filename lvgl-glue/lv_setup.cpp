@@ -69,16 +69,15 @@
 #include <lvgl.h>
 #include "LilyGo_Display.h"
 
-        #define SCREEN_WIDTH 600
-        #define SCREEN_HEIGHT 450
+#define SCREEN_WIDTH 600
+#define SCREEN_HEIGHT 450
 
 static lv_disp_drv_t disp_drv;
 static lv_indev_drv_t  indev_drv;
 
 LilyGo_AMOLED display;
 
-static void lv_rounder_cb(lv_disp_drv_t *disp_drv, lv_area_t *area)
-{
+static void lv_rounder_cb(lv_disp_drv_t *disp_drv, lv_area_t *area) {
     // make sure all coordinates are even
     if (area->x1 & 1)
         area->x1--;
@@ -170,16 +169,7 @@ static void lvgl_read(lv_indev_drv_t *indev_driver,
 #endif
     }
 #endif
-#ifdef LILYGO_T4S3
-    static int16_t x, y;
-    uint8_t touched =   static_cast<LilyGo_Display *>(indev_driver->user_data)->getPoint(&x, &y, 1);
-    if ( touched ) {
-        data->point.x = x;
-        data->point.y = y;
-        data->state = LV_INDEV_STATE_PR;
-        return;
-    }
-#endif
+
 
 #ifdef LILYGO_S3CAP
     lgfx::v1::touch_point_t tp;
@@ -193,6 +183,19 @@ static void lvgl_read(lv_indev_drv_t *indev_driver,
 #endif
     }
 #endif
+#endif
+#ifdef LILYGO_T4S3
+    static int16_t x, y;
+    uint8_t touched =   static_cast<LilyGo_Display *>(indev_driver->user_data)->getPoint(&x, &y, 1);
+    if ( touched ) {
+        data->point.x = x;
+        data->point.y = y;
+        data->state = LV_INDEV_STATE_PR;
+#ifdef TRACE_TOUCH
+        Serial.printf("xy %d %d\n", data->point.x, data->point.y);
+#endif
+        return;
+    }
 #endif
 }
 
@@ -245,6 +248,16 @@ void lv_begin() {
 #endif
     lv_disp_drv_register(&disp_drv);
 
+#ifdef LILYGO_T4S3
+    if (display.hasTouch()) {
+        lv_indev_drv_init( &indev_drv );
+        indev_drv.type = LV_INDEV_TYPE_POINTER;
+        indev_drv.read_cb = lvgl_read;
+        indev_drv.user_data = &display;
+        lv_indev_t *touch_indev = lv_indev_drv_register( &indev_drv );
+        lv_indev_set_group(touch_indev, lv_group_get_default());
+    }
+#else
     /*Initialize the input device driver*/
     static lv_indev_drv_t indev_drv;
     lv_indev_drv_init(&indev_drv);
@@ -252,6 +265,7 @@ void lv_begin() {
     indev_drv.read_cb = lvgl_read;
     lv_indev_t *touch_indev = lv_indev_drv_register(&indev_drv);
     lv_indev_set_group(touch_indev, lv_group_get_default());
+#endif
 
     /* Create and start a periodic timer interrupt to call lv_tick_inc */
     const esp_timer_create_args_t lv_periodic_timer_args = {
