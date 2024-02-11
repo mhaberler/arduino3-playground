@@ -205,7 +205,7 @@ static void ui_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
         case UM_ENV: {
                 LV_LOG_USER("->env '%s'", input);
                 uint32_t tick = jdoc["tick"].as<uint32_t>();
-                if ((tick == 0) || (millis() - tick) > RUUVI_TIMEOUT) {
+                if ((tick == 0) || (millis() - tick) > RUUVI_TIMEOUT*1000) {
                     lv_label_set_text(ui_envTemp, "n/a");
                     lv_label_set_text(ui_envHum, "n/a");
                 } else {
@@ -220,7 +220,7 @@ static void ui_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
         case UM_OAT: {
                 LV_LOG_USER("->oat '%s'", input);
                 uint32_t tick = jdoc["tick"].as<uint32_t>();
-                if ((tick == 0) || (millis() - tick) > RUUVI_TIMEOUT) {
+                if ((tick == 0) || (millis() - tick) > RUUVI_TIMEOUT*1000) {
 
                     lv_label_set_text(ui_outsideTemp, "n/a");
                     lv_label_set_text(ui_outsideHum, "n/a");
@@ -236,7 +236,7 @@ static void ui_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
 
         case UM_TANK_LEVEL1: {
                 uint32_t tick = jdoc["tick"].as<uint32_t>();
-                if ((tick == 0) || (millis() - tick) > MOPEKA_TIMEOUT) {
+                if ((tick == 0) || (millis() - tick) > MOPEKA_TIMEOUT*1000) {
 
                     // TODO: mark tank level as timed out
 
@@ -266,7 +266,7 @@ static void ui_message_cb(lv_subject_t *subject, lv_observer_t *observer) {
 
         case UM_TANK_PRESSURE: {
                 uint32_t tick = jdoc["tick"].as<uint32_t>();
-                if ((tick == 0) || (millis() - tick) > TPMS_TIMEOUT) {
+                if ((tick == 0) || (millis() - tick) > TPMS_TIMEOUT*1000) {
                     // TODO: mark tank pressure as timed out
 
                 } else {
