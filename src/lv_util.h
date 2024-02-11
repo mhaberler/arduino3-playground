@@ -3,7 +3,6 @@
 #include <lvgl.h>
 #include "lv_observer.h"
 
-
 #ifdef __cplusplus
 extern "C"
 {
@@ -11,9 +10,17 @@ extern "C"
 lv_color_t lv_color_from_sharpRGB(const char *c);
 // Function to compare two lv_color_t values
 static inline int compare_colors(lv_color_t color1, lv_color_t color2) {
+
+#if LV_COLOR_16_SWAP == 0
     return (color1.ch.red == color2.ch.red) &&
            (color1.ch.green == color2.ch.green) &&
            (color1.ch.blue == color2.ch.blue);
+#else
+    return (color1.ch.red == color2.ch.red) &&
+           (color1.ch.green_h == color2.ch.green_h) &&
+           (color1.ch.green_l == color2.ch.green_l) &&
+           (color1.ch.blue == color2.ch.blue);
+#endif
 }
 void lvgl_acquire(void);
 void lvgl_release(void);
@@ -44,7 +51,6 @@ static inline char *lv_subject_get_string_buf(lv_subject_t *subject) {
     }
     return NULL;
 }
-
 
 #if LV_USE_USER_DATA
 /**

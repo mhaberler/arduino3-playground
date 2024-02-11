@@ -10,7 +10,6 @@
     #include <lvgl.h>
 
     M5GFX display;
-    static lv_disp_draw_buf_t draw_buf;
     static lv_color_t *buf;
 #endif
 
@@ -63,10 +62,36 @@
     #endif
 
     LGFX display;
-
-    static lv_disp_draw_buf_t draw_buf;
-    // static lv_color_t buf[2][SCREEN_WIDTH * 10];
 #endif
+
+#ifdef LILYGO_T4S3
+#include <LilyGo_AMOLED.h>
+#include <lvgl.h>
+#include "LilyGo_Display.h"
+
+        #define SCREEN_WIDTH 600
+        #define SCREEN_HEIGHT 450
+
+static lv_disp_drv_t disp_drv;
+static lv_indev_drv_t  indev_drv;
+
+LilyGo_AMOLED display;
+
+static void lv_rounder_cb(lv_disp_drv_t *disp_drv, lv_area_t *area)
+{
+    // make sure all coordinates are even
+    if (area->x1 & 1)
+        area->x1--;
+    if (!(area->x2 & 1))
+        area->x2++;
+    if (area->y1 & 1)
+        area->y1--;
+    if (!(area->y2 & 1))
+        area->y2++;
+}
+#endif
+
+static lv_disp_draw_buf_t draw_buf;
 
 /* Creates a semaphore to handle concurrent call to lvgl stuff
  * If you wish to call *any* lvgl function from other threads/tasks
@@ -107,14 +132,15 @@ static void lvgl_flush(lv_disp_drv_t *disp, const lv_area_t *area,
     display.pushPixels((uint16_t *)&color_p->full, w * h, true);
 #endif
 #endif
+#ifdef LILYGO_T4S3
+    static_cast<LilyGo_Display *>(disp->user_data)->pushColors(area->x1, area->y1, w, h, (uint16_t *)color_p);
+#endif
     lv_disp_flush_ready(disp);
 }
 
 static void lvgl_read(lv_indev_drv_t *indev_driver,
                       lv_indev_data_t *data) {
-    uint16_t touchX, touchY;
     data->state = LV_INDEV_STATE_REL;
-
 #if defined(M5UNIFIED)
     lgfx::touch_point_t tp[1];
 
@@ -134,6 +160,7 @@ static void lvgl_read(lv_indev_drv_t *indev_driver,
 #endif
 #if defined(LOVYANGFX)
 #if defined(CORES3) || defined(CORE2) || defined(SUNTON7IN) || defined(ELECROW_DLC35020S)
+    uint16_t touchX, touchY;
     if (display.getTouch(&touchX, &touchY)) {
         data->state = LV_INDEV_STATE_PR;
         data->point.x = touchX;
@@ -141,6 +168,16 @@ static void lvgl_read(lv_indev_drv_t *indev_driver,
 #ifdef TRACE_TOUCH
         Serial.printf("xy %d %d\n", data->point.x, data->point.y);
 #endif
+    }
+#endif
+#ifdef LILYGO_T4S3
+    static int16_t x, y;
+    uint8_t touched =   static_cast<LilyGo_Display *>(indev_driver->user_data)->getPoint(&x, &y, 1);
+    if ( touched ) {
+        data->point.x = x;
+        data->point.y = y;
+        data->state = LV_INDEV_STATE_PR;
+        return;
     }
 #endif
 
@@ -169,7 +206,11 @@ void lv_begin() {
     lv_group_set_default(lv_group_create());
     lv_log_register_print_cb(my_log_cb);
 
+#ifdef LILYGO_T4S3
+    display.beginAMOLED_241();
+#else
     display.init();
+#endif
 #if defined(INITIAL_ROTATION)
     display.setRotation(INITIAL_ROTATION);
 #endif
@@ -193,6 +234,15 @@ void lv_begin() {
     disp_drv.ver_res = display.height();
     disp_drv.flush_cb = lvgl_flush;
     disp_drv.draw_buf = &draw_buf;
+
+#ifdef LILYGO_T4S3
+    bool full_refresh = display.needFullRefresh();
+    disp_drv.full_refresh = full_refresh;
+    disp_drv.user_data = &display;
+    if (!full_refresh) {
+        disp_drv.rounder_cb = lv_rounder_cb;
+    }
+#endif
     lv_disp_drv_register(&disp_drv);
 
     /*Initialize the input device driver*/
@@ -274,6 +324,11 @@ extern "C"
         }
     }
 }
+#ifdef LILYGO_T4S3
+const char *boardName(void) {
+    return "LilyGo T4-S3";
+}
+#endif
 
 #ifdef M5UNIFIED
 const char *boardName(void) {
@@ -370,6 +425,6 @@ const char *boardName(void) {
 }
 #endif
 
-#if !defined(LOVYANGFX) && !defined(M5UNIFIED)
+#if !defined(LOVYANGFX) && !defined(M5UNIFIED)  && !defined(LILYGO_T4S3)
 void lv_begin(void) {}
 #endif

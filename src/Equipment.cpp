@@ -4,14 +4,6 @@
 #include "fsVisitor.hpp"
 #include <LittleFS.h>
 
-typedef std::pair<std::string, Unit *> UnitsEntry;
-
-struct {
-    bool operator()(const UnitsEntry &a, const UnitsEntry &b) const {
-        return a.second->timestamp() < b.second->timestamp();
-    }
-}
-unitsLess;
 
 static void _visit_unit(const UnitVisitor &unitVisitor,  Unit *u, const uint32_t flags, void *user_data) {
     if ((flags & UV_TANKS_ONLY) && (u->type() != UT_TANK)) {
