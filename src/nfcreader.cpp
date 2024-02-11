@@ -154,6 +154,9 @@ void nfc_setup(void) {
 }
 
 void nfc_loop(void) {
+#ifdef NFC_NEEDS_LVGL_LOCK
+    lvgl_acquire();
+#endif
     if (nfc.tagPresent()) {
         Serial.println("\nReading NFC tag");
         NfcTag tag = nfc.read();
@@ -166,6 +169,9 @@ void nfc_loop(void) {
         sendUiMessage(jsondoc);
         nfc.haltTag();
     }
+#ifdef NFC_NEEDS_LVGL_LOCK
+    lvgl_release();
+#endif
 }
 #else
 void nfc_setup(void) {}
