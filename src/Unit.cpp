@@ -134,7 +134,7 @@ void convertToJson(const mopekaAd_t & src, JsonVariant dst) {
     if (src.syncPressed)
         dst["sync"] = 1;
     dst["rssi"] = src.rssi;
-    dst["batt"] = (uint32_t)(src.battery*100);
+    dst["batt"] = volt2percent(src.battery);
     dst["tick"] = src.lastchange;
 }
 
