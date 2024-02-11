@@ -136,6 +136,9 @@ analyseTag(NfcTag &tag, JsonDocument &doc) {
 }
 
 void nfc_setup(void) {
+#ifdef NFC_NEEDS_LVGL_LOCK
+    lvgl_acquire();
+#endif
 #ifdef USE_I2C
 #ifdef I2C0_SDA
     Wire.begin(I2C0_SDA, I2C0_SCL, I2C0_SPEED);
@@ -150,7 +153,9 @@ void nfc_setup(void) {
     nfc.setMifareKey(&key);
     MFRC522Debug::PCD_DumpVersionToSerial(
         mfrc522, Serial); // Show version of PCD - MFRC522 Card Reader.
-
+#ifdef NFC_NEEDS_LVGL_LOCK
+    lvgl_release();
+#endif
 }
 
 void nfc_loop(void) {

@@ -44,7 +44,7 @@
         #define LGFX_AUTODETECT
         #include <M5Core2.h>
         #include <LovyanGFX.hpp>
-        #include <LGFX_AUTODETECT.hpp> // クラス"LGFX"を準備
+        #include <LGFX_AUTODETECT.hpp>
         #define SCREEN_WIDTH 320
         #define SCREEN_HEIGHT 240
     #endif
