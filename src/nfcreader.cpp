@@ -48,6 +48,8 @@ const SPISettings spiSettings = SPISettings(SPI_CLOCK_DIV4, MSBFIRST,
 MFRC522DriverSPI driver{ss_pin, spiClass, spiSettings}; // Create SPI driver.
 #endif
 
+static bool mfrc522_initialized = false;
+
 MFRC522Extended mfrc522{driver}; // Create MFRC522 instance.
 
 NfcAdapter nfc = NfcAdapter(&mfrc522);
@@ -61,6 +63,12 @@ static const char *ruuvi_ids[] = {
     "\002swSW: ",
     "\002dt",
 };
+
+bool detect_i2cdevice(TwoWire *_port, uint8_t addr) {
+    _port->beginTransmission(addr);
+    uint8_t err = _port->endTransmission();
+    return  (err == 0);
+}
 
 bwTagType_t
 analyseTag(NfcTag &tag, JsonDocument &doc) {
@@ -139,6 +147,7 @@ void nfc_setup(void) {
 #ifdef NFC_NEEDS_LVGL_LOCK
     lvgl_acquire();
 #endif
+
 #ifdef USE_I2C
 #ifdef I2C0_SDA
     Wire.begin(I2C0_SDA, I2C0_SCL, I2C0_SPEED);
@@ -148,35 +157,54 @@ void nfc_setup(void) {
 #else
     SPI.begin(SCK_PIN, MISO_PIN, MOSI_PIN, SS_PIN);
 #endif
-    mfrc522.PCD_Init(); // Init MFRC522
-    nfc.begin();
-    nfc.setMifareKey(&key);
-    MFRC522Debug::PCD_DumpVersionToSerial(
-        mfrc522, Serial); // Show version of PCD - MFRC522 Card Reader.
+
 #ifdef NFC_NEEDS_LVGL_LOCK
     lvgl_release();
 #endif
 }
 
 void nfc_loop(void) {
-#ifdef NFC_NEEDS_LVGL_LOCK
-    lvgl_acquire();
-#endif
-    if (nfc.tagPresent()) {
-        Serial.println("\nReading NFC tag");
-        NfcTag tag = nfc.read();
+    bool readerfound = detect_i2cdevice(&Wire, customAddress);
 
-        JsonDocument jsondoc;
-        tag.tagToJson(jsondoc);
-
-        uint32_t type = analyseTag(tag, jsondoc);
-        jsondoc["um"] = type;
-        sendUiMessage(jsondoc);
-        nfc.haltTag();
+    if (readerfound ^ mfrc522_initialized) { // different
+        // change
+        if (readerfound) {
+            // just plugged in
+            log_e("RFID reader detected");
+            mfrc522.PCD_Init();  // causes useless Wire.begin()
+            nfc.begin();
+            nfc.setMifareKey(&key);
+            MFRC522Debug::PCD_DumpVersionToSerial(
+                mfrc522, Serial); // Show version of PCD - MFRC522 Card Reader.
+            mfrc522_initialized = true;
+        } else {
+            // unplugged
+            if (mfrc522_initialized)
+                log_e("RFID reader was unplugged");
+            mfrc522_initialized = false;
+            return;
+        }
     }
+    if (mfrc522_initialized) {
 #ifdef NFC_NEEDS_LVGL_LOCK
-    lvgl_release();
+        lvgl_acquire();
 #endif
+        if (nfc.tagPresent()) {
+            Serial.println("\nReading NFC tag");
+            NfcTag tag = nfc.read();
+
+            JsonDocument jsondoc;
+            tag.tagToJson(jsondoc);
+
+            uint32_t type = analyseTag(tag, jsondoc);
+            jsondoc["um"] = type;
+            sendUiMessage(jsondoc);
+            nfc.haltTag();
+        }
+#ifdef NFC_NEEDS_LVGL_LOCK
+        lvgl_release();
+#endif
+    }
 }
 #else
 void nfc_setup(void) {}

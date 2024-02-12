@@ -3,6 +3,7 @@
 #else
     #include <Arduino.h>
 #endif
+#include <Ticker.h>
 
 void ble_setup(void);
 void ble_loop(void);
@@ -19,6 +20,10 @@ void init_sensors(void);
 void sensor_loop(void);
 
 bool psRAMavail;
+
+static bool rfid_test;
+
+static Ticker secondTicker;
 
 void setup(void) {
     // disableLoopWDT();
@@ -43,7 +48,9 @@ void setup(void) {
     webserver_setup();
     nfc_setup();
     init_sensors();
-
+    secondTicker.attach_ms(300, []() {
+        rfid_test = true;
+    });
     Serial.printf("C++ version: %ld\n", __cplusplus);
 }
 
@@ -51,7 +58,10 @@ void loop(void) {
     lvgl_loop();
     gfxdemo_loop();
     webserver_loop();
-    nfc_loop();
+    if (rfid_test) {
+        nfc_loop();
+        rfid_test = false;
+    }
     ble_loop();
     sensor_loop();
     delay(1);
